@@ -1,0 +1,508 @@
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+
+<meta charset="utf-8">
+
+
+
+<!-- begin SEO -->
+
+
+
+
+
+
+
+
+
+<title>A step-by-step guide to variational inference (3): mean field approximation - Yang Yang</title>
+
+
+
+
+
+
+
+<meta property="og:locale" content="en-US">
+<meta property="og:site_name" content="Yang Yang">
+<meta property="og:title" content="A step-by-step guide to variational inference (3): mean field approximation">
+
+
+  <link rel="canonical" href="https://yyang768osu.github.io/posts/2012/08/variational_inference_3/">
+  <meta property="og:url" content="https://yyang768osu.github.io/posts/2012/08/variational_inference_3/">
+
+
+
+  <meta property="og:description" content="We have learned that E-M algorithm tries to find a ML or MAP solution to the parameters of a generative model. It is build on top of two major premises:">
+
+
+
+
+
+  
+
+  
+
+
+
+
+
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2018-08-05T00:00:00-07:00">
+
+
+
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context" : "http://schema.org",
+      "@type" : "Person",
+      "name" : "Yang Yang",
+      "url" : "https://yyang768osu.github.io",
+      "sameAs" : null
+    }
+  </script>
+
+
+
+
+
+
+<!-- end SEO -->
+
+
+<link href="https://yyang768osu.github.io/feed.xml" type="application/atom+xml" rel="alternate" title="Yang Yang Feed">
+
+<!-- http://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="https://yyang768osu.github.io/assets/css/main.css">
+
+<meta http-equiv="cleartype" content="on">
+    
+
+<!-- start custom head snippets -->
+
+<link rel="apple-touch-icon" sizes="57x57" href="https://yyang768osu.github.io/images/apple-touch-icon-57x57.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="60x60" href="https://yyang768osu.github.io/images/apple-touch-icon-60x60.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="72x72" href="https://yyang768osu.github.io/images/apple-touch-icon-72x72.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="76x76" href="https://yyang768osu.github.io/images/apple-touch-icon-76x76.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="114x114" href="https://yyang768osu.github.io/images/apple-touch-icon-114x114.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="120x120" href="https://yyang768osu.github.io/images/apple-touch-icon-120x120.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="144x144" href="https://yyang768osu.github.io/images/apple-touch-icon-144x144.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="152x152" href="https://yyang768osu.github.io/images/apple-touch-icon-152x152.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="180x180" href="https://yyang768osu.github.io/images/apple-touch-icon-180x180.png?v=M44lzPylqQ">
+<link rel="icon" type="image/png" href="https://yyang768osu.github.io/images/favicon-32x32.png?v=M44lzPylqQ" sizes="32x32">
+<link rel="icon" type="image/png" href="https://yyang768osu.github.io/images/android-chrome-192x192.png?v=M44lzPylqQ" sizes="192x192">
+<link rel="icon" type="image/png" href="https://yyang768osu.github.io/images/favicon-96x96.png?v=M44lzPylqQ" sizes="96x96">
+<link rel="icon" type="image/png" href="https://yyang768osu.github.io/images/favicon-16x16.png?v=M44lzPylqQ" sizes="16x16">
+<link rel="manifest" href="https://yyang768osu.github.io/images/manifest.json?v=M44lzPylqQ">
+<link rel="mask-icon" href="https://yyang768osu.github.io/images/safari-pinned-tab.svg?v=M44lzPylqQ" color="#000000">
+<link rel="shortcut icon" href="/images/favicon.ico?v=M44lzPylqQ">
+<meta name="msapplication-TileColor" content="#000000">
+<meta name="msapplication-TileImage" content="https://yyang768osu.github.io/images/mstile-144x144.png?v=M44lzPylqQ">
+<meta name="msapplication-config" content="https://yyang768osu.github.io/images/browserconfig.xml?v=M44lzPylqQ">
+<meta name="theme-color" content="#ffffff">
+<link rel="stylesheet" href="https://yyang768osu.github.io/assets/css/academicons.css"/>
+
+<script type="text/x-mathjax-config"> MathJax.Hub.Config({ TeX: { equationNumbers: { autoNumber: "all" } } }); </script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      displayMath: [ ['$$', '$$'] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/latest.js?config=TeX-MML-AM_CHTML' async></script>
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        <button><div class="navicon"></div></button>
+        <ul class="visible-links">
+          <li class="masthead__menu-item masthead__menu-item--lg"><a href="https://yyang768osu.github.io/">Yang Yang</a></li>
+          
+            
+            <li class="masthead__menu-item"><a href="https://yyang768osu.github.io/year-archive/">Blog Posts</a></li>
+          
+        </ul>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+    
+
+
+
+
+
+<div id="main" role="main">
+  
+
+
+  <div class="sidebar sticky">
+  
+
+
+
+<div itemscope itemtype="http://schema.org/Person">
+
+  <div class="author__avatar">
+    
+    	<img src="https://yyang768osu.github.io/images/profile.png" class="author__avatar" alt="Yang Yang">
+    
+  </div>
+
+  <div class="author__content">
+    <h3 class="author__name">Yang Yang</h3>
+    <p class="author__bio">Qualcomm AI Research</p>
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li><i class="fa fa-fw fa-map-marker" aria-hidden="true"></i> San Diego, California</li>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+        <li><a href="https://github.com/yyang768osu"><i class="fa fa-fw fa-github" aria-hidden="true"></i> Github</a></li>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+        <li><a href="https://scholar.google.com/citations?user=mcncpioAAAAJ&hl=en"><i class="ai ai-google-scholar-square ai-fw"></i> Google Scholar</a></li>
+      
+      
+      
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+    <meta itemprop="headline" content="A step-by-step guide to variational inference (3): mean field approximation">
+    <meta itemprop="description" content="We have learned that E-M algorithm tries to find a ML or MAP solution to the parameters of a generative model. It is build on top of two major premises:">
+    <meta itemprop="datePublished" content="August 05, 2018">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 class="page__title" itemprop="headline">A step-by-step guide to variational inference (3): mean field approximation
+</h1>
+          
+            <p class="page__meta"><i class="fa fa-clock-o" aria-hidden="true"></i> 
+
+
+  
+	  7 minute read
+	
+</p>
+          
+        
+        
+        
+          <p class="page__date"><strong><i class="fa fa-fw fa-calendar" aria-hidden="true"></i> Published:</strong> <time datetime="2018-08-05T00:00:00-07:00">August 05, 2018</time></p>
+        
+        
+             
+        
+    
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        <p>We have learned that E-M algorithm tries to find a ML or MAP solution to the parameters of a generative model. It is build on top of two major premises:</p>
+
+<ol>
+  <li>$\ln p(X,Z;\theta)$ is in a much simpler form than $\ln P(X;\theta)$,</li>
+  <li>$\ln p(Z|X;\theta)$ is easy to obtain.</li>
+</ol>
+
+<p>While the first one is often true in that both $p(X|Z;\theta)$ and $p(Z;\theta)$ given as part of the model and are usually designed to be simple, the second one is a very strong assumption and does not hold in most cases. In what follows, we modify notation slightly by assuming that there is prior distribution on any parameters of interest, and conceptually merge $\theta$ as part of the latent variable $Z$ that are common across different data samples and remove $\theta$ from the notation.</p>
+
+<p>As we discussed in the previous post/section, the Bayesian inference problem is to find the posterior probability $p(Z|X)$, which is in general very hard due to the integral/summation (in most cases multi-dimensional integral/summation) in the denominator below</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+p(Z|X) = \frac{p(X|Z)p(Z)}{\int p(X|Z)p(Z) dZ}.
+\end{align*}</script>
+
+<p>We also showed that with the introduction of a variational distribution $q(Z)$, we can convert the problem of finding $p(X|Z)$ as an optimization problem below</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+p(Z|X) &= \arg\max_{q}\mathcal{L}(q).
+\end{align*} %]]></script>
+
+<p>However, this optimization problem above is still very hard and it does not lend itself to any easy solution. Here, the objective $\mathcal{L}(q)$, called the variational lower-bound, is a functional as it maps a function into a scalar value, and the domain is the space of all functions.</p>
+
+<p>Since it is hard to optimize the variational lower bound as is, one may wonder, how about constraining the search space of $q$ from all potential functions to within a limited function space? Could that make the problem simpler? Even though we may not find the optimal solution after restricting the set of functions we could search from, the hope is that by doing so we can device practical algorithms with solutions that are reasonably close to the true posterior. This is exactly the idea behind mean field approximation.</p>
+
+<p>In the mean field method, we add a constraint to the domain of the optimization: instead of allowing $q(Z)$ to be in arbitrary form, we only look at cases when it can be factorized into a product form with disjoint latent variables in each multiplicative factor. More specifically, we divide the dimension of latent variables into $K$ groups $Z=[Z_1, Z_2, \ldots, Z_K]$ and enforce $q$ to have the form of $q(Z)=q_1(Z_1)q_2(Z_2)\ldots q_K(Z_K)$. Put it in precise math, we have</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+q^* = \underset{q=q_1 q_2 \ldots q_K}{\arg\max}\mathcal{L}(q)
+\end{align*}</script>
+
+<p>Referring back to the equation on the decomposition of observed data log-likelihood</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+\ln p(X) = \text{KL}(q || p(Z|X)) + \mathcal{L}(q),
+\end{align*}</script>
+
+<p>we know that by maximizing $\mathcal{L}(q)$ with respect to functions with form $q(Z)=\prod_{k=1}^K q_k(Z_k)$, we are try to find one function in the confined function space (defined as the set of functions that can be factorized as such) that is closest to the true posterior $ p(Z|X)$ measured with KL divergence. It is worth emphasizing that we are merely constraining $q(Z)$ to have this factorization form, and do not make any assumption on what each individual factor would look like.</p>
+
+<p>Let us plug in the factorized form of $q(Z) = \prod_{k=1}^K q_k(Z_k)$ in the expression of the variational lower bound, yielding</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+\mathcal{L}(q) =& \int q(Z)\ln\frac{p(X, Z)}{q(Z)}dZ\\
+=& \int q(Z)\ln p(X, Z)dZ +  \int q(Z)\ln\frac{1}{q(Z)}dZ\\
+=& \int \prod_{k=1}^K q_k(Z_k) \ln p(X, Z)dZ +  \sum_{k=1}^K\int q_k(Z_k)\ln\frac{1}{q_k(Z_k)}dZ_k.
+\end{align*} %]]></script>
+
+<p>The second term is just the entropy of $q$, which, given the assumption that it can be decomposed into independent factors, becomes the summation of the entropy for each individual $q_k$.</p>
+
+<p>It may not be immediately apparent why this modified formulation is any easier to solve. Nevertheless, let us proceed by making the temporary assumption that among the $K$ factors, all are known except for one factor $q_j$. Then, we just need to maximize $\mathcal{L}$ with respect to $q_j$ with all the other factors $q_{k}, k\not=j$ as given. The variational lower bound can be rewritten as</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+&\int q_j(Z_j) \mathbb{E}_{q_k, k\not=j}[\ln p(X,Z)]dZ_j + \int q_j(Z_j)\ln \frac{1}{q_j(Z_j)}dZ_j + \text{constant}\\
+=&\int q_j(Z_j)\ln\frac{\exp\left( \mathbb{E}_{q_k, k\not=j}[\ln p(X,Z)]\right)}{q_j(Z_j)}dZ_j + \text{constant}
+\end{align*} %]]></script>
+
+<p>Since any term that does not involve $q_j$ would not affect the solution to $\arg\max_{q_j}\mathcal{L}(q)$, we just mark those as constant. Here it comes a key observation: notice how the non-constant term resembles the definition of a negative KL divergence between $q_j(Z_j)$ and $\mathbb{E}_{q_k, k\not=j}$ $\exp\left( \mathbb{E}_{q_k, k\not=j}[\ln p(X,Z)]\right)$. The only issue is that $\exp\left( \mathbb{E}_{q_k, k\not=j}[\ln p(X,Z)]\right)$ may not be a proper probability measure that sum/integrate to $1$. Luckily, since scaling $\exp\left( \mathbb{E}_{q_k, k\not=j}[\ln p(X,Z)]\right)$ only amounts to adding/subtracting a constant term, we know that $\mathcal{L}(q)$ is maximized when</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+q_j(Z_j)  \propto \exp\left( \mathbb{E}_{q_k, k\not=j}[\ln p(X,Z)]\right),
+\end{align*}</script>
+
+<p>or more accurately,</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+q_j(Z_j)  = \frac{\exp\left( \mathbb{E}_{q_k, k\not=j}[\ln p(X,Z)]\right)}{\int \exp\left( \mathbb{E}_{q_k, k\not=j}[\ln p(X,Z)]\right) dZ_j}.
+\end{align*}</script>
+
+<p>This result tells us that, among the $K$ factors, if we have all but one factor fixed, then the optimal solution of that left out function that maximize the variation lower bound (or equivalently, minimizes the KL divergence to the true posterior distribution) can be written in the above form as a function of all the other factors.</p>
+
+<p>This leads to a nice iterative solution that iteratively visits each factor, and maximize the variational lower bound with respect to the target factor treating all the other factors as known. In special cases, the normalization constant term in the dominator of the above equation could be directly inferred if the numerator term already suggests certain type of known distribution.</p>
+
+<p>It is interesting to note that, to apply this mean-field-approximation method, one only need to make the assumption on how to partition the latent variable dimensions into disjoint groups, one for each factor, without making any assumption on the detailed function form of any factor. The detail form of the factorized distribution would be obtained as a result of the iterative procedure.</p>
+
+<p>There is one caveat that we should mention. Looking at the equation above, to find the optimal factor $q_j$, assuming all the other are know, we still need to make sure that the expectation $\mathbb{E}_{q_k, k\not=j}[\ln p(X,Z)]$ results in tractable form. Given that the expectation itself is a multi-dimensional integral/summation, in general it is hard to guarantee a closed form expression. The expectation is tractable with specific models and specific ways on which the latent variables are partitioned, which limits the cases where mean-field-approximation could be applied.</p>
+
+<p>Here we introduced mean field approximation from the perspective of Bayesian inference. As a final remark, it is straightforward to show that it also provide a way to evaluate observed data likelihood and thus can be useful with model-selection as well. According to the identity involving the variational lower bound, we know that as we maximize $\mathcal{L}$, not only do we obtain a variational distribution that is close to the true posterior in the KL divergence sense, we also obtained a surrogate for the log-likelihood, as the lower bound $\mathcal{L}$ is a lower bound which gets tighter as it becomes larger.</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+\ln p(X) = \text{KL}(q || p(Z|X)) + \mathcal{L}(q),
+\end{align*}</script>
+
+<p>If we are given $M$ models, then one can conduct mean field method on each of them, obtain the corresponding optimized variational lower-bound, and use it as the surrogate to rate the likelihood of each model. We can even combine the prior distribution of the $M$ models, if there is any, to obtain a maximum a posterior (MAP) selection of the model.</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+  
+
+
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fa fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="https://yyang768osu.github.io/tags/#variational-inference" class="page__taxonomy-item" rel="tag">variational inference</a>
+    
+    </span>
+  </p>
+
+
+
+
+      </footer>
+
+      
+
+<section class="page__share">
+  
+    <h4 class="page__share-title">Share on</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=https://yyang768osu.github.io/posts/2012/08/variational_inference_3/" class="btn btn--twitter" title="Share on Twitter"><i class="fa fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https://yyang768osu.github.io/posts/2012/08/variational_inference_3/" class="btn btn--facebook" title="Share on Facebook"><i class="fa fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://plus.google.com/share?url=https://yyang768osu.github.io/posts/2012/08/variational_inference_3/" class="btn btn--google-plus" title="Share on Google Plus"><i class="fa fa-fw fa-google-plus" aria-hidden="true"></i><span> Google+</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https://yyang768osu.github.io/posts/2012/08/variational_inference_3/" class="btn btn--linkedin" title="Share on LinkedIn"><i class="fa fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+      
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://yyang768osu-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+
+
+
+      
+
+
+  <nav class="pagination">
+    
+      <a href="https://yyang768osu.github.io/posts/2012/08/varitional_inference_2/" class="pagination--pager" title="A step-by-step guide to variational inference (2): expectation maximization
+">Previous</a>
+    
+    
+      <a href="https://yyang768osu.github.io/posts/2012/08/variational_inference_4/" class="pagination--pager" title="A step-by-step guide to variational inference (4): variational auto encoder
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+
+
+  
+  
+</div>
+
+
+    </script>
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<a href="/sitemap/">Sitemap</a>
+<!-- end custom footer snippets -->
+
+        
+
+<div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+    
+    
+    
+      <li><a href="http://github.com/yyang768osu"><i class="fa fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+    
+    
+    <li><a href="https://yyang768osu.github.io/feed.xml"><i class="fa fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2018 Yang Yang. Powered by <a href="http://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>, a fork of <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    <script src="https://yyang768osu.github.io/assets/js/main.min.js"></script>
+
+
+
+
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', '', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+
+  </body>
+</html>
+

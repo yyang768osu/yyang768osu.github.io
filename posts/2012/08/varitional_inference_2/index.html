@@ -1,0 +1,518 @@
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+
+<meta charset="utf-8">
+
+
+
+<!-- begin SEO -->
+
+
+
+
+
+
+
+
+
+<title>A step-by-step guide to variational inference (2): expectation maximization - Yang Yang</title>
+
+
+
+
+
+
+
+<meta property="og:locale" content="en-US">
+<meta property="og:site_name" content="Yang Yang">
+<meta property="og:title" content="A step-by-step guide to variational inference (2): expectation maximization">
+
+
+  <link rel="canonical" href="https://yyang768osu.github.io/posts/2012/08/varitional_inference_2/">
+  <meta property="og:url" content="https://yyang768osu.github.io/posts/2012/08/varitional_inference_2/">
+
+
+
+  <meta property="og:description" content="In the previous post/section we went through the derivation of variational lower-bound, and showed how it helps convert the Bayesian inference and density estimation problem to an optimization problem. Let’s briefly recap the problem setup and restate some key points.">
+
+
+
+
+
+  
+
+  
+
+
+
+
+
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2018-08-05T00:00:00-07:00">
+
+
+
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context" : "http://schema.org",
+      "@type" : "Person",
+      "name" : "Yang Yang",
+      "url" : "https://yyang768osu.github.io",
+      "sameAs" : null
+    }
+  </script>
+
+
+
+
+
+
+<!-- end SEO -->
+
+
+<link href="https://yyang768osu.github.io/feed.xml" type="application/atom+xml" rel="alternate" title="Yang Yang Feed">
+
+<!-- http://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="https://yyang768osu.github.io/assets/css/main.css">
+
+<meta http-equiv="cleartype" content="on">
+    
+
+<!-- start custom head snippets -->
+
+<link rel="apple-touch-icon" sizes="57x57" href="https://yyang768osu.github.io/images/apple-touch-icon-57x57.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="60x60" href="https://yyang768osu.github.io/images/apple-touch-icon-60x60.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="72x72" href="https://yyang768osu.github.io/images/apple-touch-icon-72x72.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="76x76" href="https://yyang768osu.github.io/images/apple-touch-icon-76x76.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="114x114" href="https://yyang768osu.github.io/images/apple-touch-icon-114x114.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="120x120" href="https://yyang768osu.github.io/images/apple-touch-icon-120x120.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="144x144" href="https://yyang768osu.github.io/images/apple-touch-icon-144x144.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="152x152" href="https://yyang768osu.github.io/images/apple-touch-icon-152x152.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="180x180" href="https://yyang768osu.github.io/images/apple-touch-icon-180x180.png?v=M44lzPylqQ">
+<link rel="icon" type="image/png" href="https://yyang768osu.github.io/images/favicon-32x32.png?v=M44lzPylqQ" sizes="32x32">
+<link rel="icon" type="image/png" href="https://yyang768osu.github.io/images/android-chrome-192x192.png?v=M44lzPylqQ" sizes="192x192">
+<link rel="icon" type="image/png" href="https://yyang768osu.github.io/images/favicon-96x96.png?v=M44lzPylqQ" sizes="96x96">
+<link rel="icon" type="image/png" href="https://yyang768osu.github.io/images/favicon-16x16.png?v=M44lzPylqQ" sizes="16x16">
+<link rel="manifest" href="https://yyang768osu.github.io/images/manifest.json?v=M44lzPylqQ">
+<link rel="mask-icon" href="https://yyang768osu.github.io/images/safari-pinned-tab.svg?v=M44lzPylqQ" color="#000000">
+<link rel="shortcut icon" href="/images/favicon.ico?v=M44lzPylqQ">
+<meta name="msapplication-TileColor" content="#000000">
+<meta name="msapplication-TileImage" content="https://yyang768osu.github.io/images/mstile-144x144.png?v=M44lzPylqQ">
+<meta name="msapplication-config" content="https://yyang768osu.github.io/images/browserconfig.xml?v=M44lzPylqQ">
+<meta name="theme-color" content="#ffffff">
+<link rel="stylesheet" href="https://yyang768osu.github.io/assets/css/academicons.css"/>
+
+<script type="text/x-mathjax-config"> MathJax.Hub.Config({ TeX: { equationNumbers: { autoNumber: "all" } } }); </script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      displayMath: [ ['$$', '$$'] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/latest.js?config=TeX-MML-AM_CHTML' async></script>
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        <button><div class="navicon"></div></button>
+        <ul class="visible-links">
+          <li class="masthead__menu-item masthead__menu-item--lg"><a href="https://yyang768osu.github.io/">Yang Yang</a></li>
+          
+            
+            <li class="masthead__menu-item"><a href="https://yyang768osu.github.io/year-archive/">Blog Posts</a></li>
+          
+        </ul>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+    
+
+
+
+
+
+<div id="main" role="main">
+  
+
+
+  <div class="sidebar sticky">
+  
+
+
+
+<div itemscope itemtype="http://schema.org/Person">
+
+  <div class="author__avatar">
+    
+    	<img src="https://yyang768osu.github.io/images/profile.png" class="author__avatar" alt="Yang Yang">
+    
+  </div>
+
+  <div class="author__content">
+    <h3 class="author__name">Yang Yang</h3>
+    <p class="author__bio">Qualcomm AI Research</p>
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li><i class="fa fa-fw fa-map-marker" aria-hidden="true"></i> San Diego, California</li>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+        <li><a href="https://github.com/yyang768osu"><i class="fa fa-fw fa-github" aria-hidden="true"></i> Github</a></li>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+        <li><a href="https://scholar.google.com/citations?user=mcncpioAAAAJ&hl=en"><i class="ai ai-google-scholar-square ai-fw"></i> Google Scholar</a></li>
+      
+      
+      
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+    <meta itemprop="headline" content="A step-by-step guide to variational inference (2): expectation maximization">
+    <meta itemprop="description" content="In the previous post/section we went through the derivation of variational lower-bound, and showed how it helps convert the Bayesian inference and density estimation problem to an optimization problem. Let’s briefly recap the problem setup and restate some key points.">
+    <meta itemprop="datePublished" content="August 05, 2018">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 class="page__title" itemprop="headline">A step-by-step guide to variational inference (2): expectation maximization
+</h1>
+          
+            <p class="page__meta"><i class="fa fa-clock-o" aria-hidden="true"></i> 
+
+
+  
+	  8 minute read
+	
+</p>
+          
+        
+        
+        
+          <p class="page__date"><strong><i class="fa fa-fw fa-calendar" aria-hidden="true"></i> Published:</strong> <time datetime="2018-08-05T00:00:00-07:00">August 05, 2018</time></p>
+        
+        
+             
+        
+    
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        <p>In the previous post/section we went through the derivation of variational lower-bound, and showed how it helps convert the Bayesian inference and density estimation problem to an optimization problem. Let’s briefly recap the problem setup and restate some key points.</p>
+
+<p>Consider a very general generative graphic model where each data point $x^{(n)}$ is generated from a latent variable $z^{(n)}$ conforming to a given distribution $p(X|Z;\theta)$, with $z^{(n)}$ itself drawn from a given prior distribution $p(Z; \theta)$. $\theta$ captures the set of variables that the two probabilities are parameterized with. Two fundamental problems are to (1) estimate the density of existing dataset $X$, i.e. $p(X;\theta)$ and (2) derive the posterior probability of the latent variable $Z$ given the observed data $X$, i.e., $p(Z|X;\theta)$. The exact solution of both problems requires the evaluation of the often intractable integral $\int P(X| Z;\theta)P(Z;\theta)dZ$.</p>
+
+<p>With the introduction of a variational/free distribution function $q(Z)$, we have the following identity:</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+\ln p(X;\theta) = \text{KL}{\big(}q||p(Z|X;\theta){\big)} + \mathcal{L}(q,\theta),
+\end{align*}</script>
+
+<p>which says that the marginalized probability of dataset $X$ can be decomposed into a sum of two terms with the first one being the KL divergence between $q(Z)$ and the true posterior distribution $p(Z|X;\theta)$ and the second one expressed below.</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+\mathcal{L}(q,\theta)=\int q(Z) \ln \frac{P(Z,X;\theta)}{q(Z)}dZ,
+\end{align*}</script>
+
+<p>which is referred to as the variational lower bound: it is called a lower-bound as it is always less than $\ln p(X;\theta)$ as a result of the non-negativity of KL divergence, and it is called variational as it is itself a functional that maps a variational/free distribution function $q$ to a scalar value. This identity is quite exquisite in that it turns both the density estimation problem and the latent variable inference problem into an optimization problem, evident from the two equations below</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+\ln p(X;\theta) &= \max_{q}\mathcal{L}(q,\theta)\\
+p(Z|X;\theta) &= \arg\max_{q}\mathcal{L}(q,\theta).
+\end{align*} %]]></script>
+
+<p>The problem that Expectation Maximization algorithm designs to solve is the maximum likelihood estimate of the parameter $\theta$. Remind you that $\theta$ is the parameter of the graphic model, and the task is to find a $\theta$ such that the model best explain the existing data. In precise term, the problem is</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+\max_{\theta}\ln p(X;\theta).
+\end{align*}</script>
+
+<p>Now, resorting to the variational lower bound, equivalently we can also focus on the following maximization-maximization problem</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+\max_{\theta}\ln p(X;\theta) = \max_{\theta}\max_{q}\mathcal{L}(q,\theta),
+\end{align*}</script>
+
+<p>A natural question is: why would this be easier to evaluate compared with maximizing $\ln p(X;\theta)$ head on? did we increase our burden by considering a double-maximization optimization problem rather than a single-maximization one?</p>
+
+<p>To answer we need to have the objective function under scrutiny. First thing we should keep in mind is that the two probability distributions $p(Z;\theta)$ and $p(X|Z;\theta)$ are given as part of the model assumption, and they usually come in the form of well-known distributions, e.g., Gaussian, multinomial, exponential, etc. Thus, the joint likelihood of observed and hidden variable $p(Z,X;\theta)=p(Z;\theta)p(X|Z;\theta)$ is in an amenable form. Also, quite often, taking logarithm on it would break up all the multiplicative terms as summation, resulting in quite tractable from. Better yet, the parameters $\theta$ that we need to compute gradient with, may naturally be decomposed into different terms in the summation, making the calculation of derivative easy with respect to individual parameters. Looking at the detailed expression of $\mathcal{L}(q,\theta)$, indeed, we have the log-likelihood of the joint observed-latent variable.</p>
+
+<p>On the other hand, to compute the marginalized likelihood of the observed data only, i.e., $P(X;\theta)$, one need to sum or integrate out the effect of $Z$ from $p(Z,X;\theta)$, which may lead to complicated expression. While the evaluation of $P(X;\theta)$ may still be fine when, e.g., the marginalization only requires the summation of a finite number of terms (which is the case for the Gaussian mixture model), the real deal breaker is the difficulty in taking derivative of the log-likelihood with respective to the parameters: taking  logarithm on $P(X;\theta)$ almost surely won’t result in nice decomposition, as the logarithm is gated by the integral or summation, and the log-sum expression is a lot harder to break when we compute the derivative with respect to the parameters $\theta$.</p>
+
+<p>Coming back to the maximization-maximization problem, it is natural to devise an iterative algorithm that maximize the objective function $\mathcal{L}(q,\theta)$ with alternating axis:</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+\text{E step: }&q^{(t)} = \arg\max_{q}\mathcal{L}(q,\theta^{(t)})\\
+\text{M step: }&\theta^{(t+1)} = \arg\max_{\theta}\mathcal{L}(q^{(t)}, \theta) 
+\end{align*} %]]></script>
+
+<p>It is worth mentioning that the first optimization problem is in general a very difficult one, as it requires searching through the whole function space. According to the derivation of the variational lower bound derivation we know that the optimal solution is the posterior distribution $p(Z|X;\theta^{(t)})$, which is hard to obtain. Actually finding an approximated posterior by maximizing the variational lower bound is the main theme in variational inference. Techniques of mean-field-approximation, and variational auto-encoder, which we will cover in detail later, targets at this problem alone.</p>
+
+<p>To proceed, we make a very strong assumption that $p(Z|X;\theta^{(t)})$ can be easily obtained. As we will see later that with certain simple model (e.g., Gaussian mixture model), it is indeed a valid assumption, nevertheless it is the key assumption that significantly limits the application of the expectation maximization algorithm.</p>
+
+<p>Anyway, for now let us live with this strong assumption, then the first problem is solved as</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+\text{E step: }q^{(t)} = p(Z|X;\theta^{(t)}).
+\end{align*}</script>
+
+<p>Coming back to the second maximization problem, with $q^{(t)}$ fixed, we can decompose the variational lower bound as</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+\mathcal{L}(q^{(t)}, \theta) = \int q^{(t)}(Z)\ln p(X,Z;\theta)dZ + \int q^{(t)}(Z) \ln\frac{1}{q^{(t)}(Z)}dZ.
+\end{align*}</script>
+
+<p>The second term above is just a constant term reflecting the entropy of $q^{(t)}$, so let us ignore it, and then the second maximization problem reduces to</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+\text{M step: }\theta^{(t+1)} =&\max_{\theta} \int p(Z|X;\theta^{(t)}) \ln P(Z,X;\theta)dZ. 
+\end{align*} %]]></script>
+
+<p>The maximization target above can be viewed as finding the expectation of complete data (combining observed variable and latent variable) log likelihood, where the expectation is with respect to a fixed distribution on the latent variable $Z$.</p>
+
+<p>Let’s put the two steps together and review the whole iterative process. We are given a model with a set of parameters captured in $\theta$. The task is find the values of the parameters $\theta$ such that the model best explain the existing observed data at hand. At the beginning, we take a random guess on the value of the parameters. With that initial parameters, we find the posterior probability of the latent variable for each data point $x$ in the training data set $X$. Then, using that posterior probability, we calculate the expected complete-data log-likelihood, and try to find parameters $\theta$ so that the complete-data log-likelihood is maximized. With $\theta$ updated, we refresh our calculation of the posterior probability and iterative the process.</p>
+
+<p>In fact, K-means clustering algorithm is one instance of expectation-maximization procedure with certain specific model assumption. It is helpful to think of the iterative process from the perspective of K-means clustering: for K-means clustering, we can imagine that a one-dimensional latent variable with value from $1$ to $K$, implying the registration to one of the $K$ clusters. The parameter of the model is the center of the clusters, denoted as $\theta={c_1, \ldots, c_K}$. In the initial setup, we randomly set these $K$ cluster centers. For each data, we assign it to the nearest cluster, which is effectively assigning its latent variable. This step corresponds to finding the posterior distribution (E-step), with one of the clustering having probability $1$. After each data is assigned to its cluster with the initial values of the cluster centers, which gives us complete data in the form of (observed data, latent variable) pair, the next step is to adjust the center based on its constituent. This step corresponds to the maximizing of the expected complete-data log-likelihood (M-step), although this expectation is taken in degenerate form as the posterior probability for the latent variable is in the form of $0/1$.</p>
+
+<ol>
+  <li>The E-M iterative algorithm is guaranteed to reach a local maximum on the log-likelihood of the observed data $p(X;\theta)$, as both steps increases it.</li>
+  <li>It is not necessary to find the maximum in the M-step. So long as the updated $\theta$ increase the complete-data log-likelihood, we are still in the right direction.</li>
+  <li>So far we focused on finding the maximum-likelihood (ML) solution to $\theta$ (local maximum). In the case when there is prior distribution $p_\text{prior}(\theta)$ on $\theta$, we can use the same process to find a maximum-a-posterior (MAP) solution (local maximum), utilizing the fact that $p(\theta|X) \propto p(X|\theta)p_\text{prior}(\theta)$. The problem is modified as</li>
+</ol>
+
+<script type="math/tex; mode=display">\begin{align*}
+\max_{\theta}\ln p(\theta|X) = \max_{\theta}\left(\max_{q}\mathcal{L}(q,\theta) {\color{red} + \ln p_\text{prior}(\theta)}\right),
+\end{align*}</script>
+
+<p>with slightly modified procedure below</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+\text{E step: }&q^{(t)} = p(Z|X,\theta^{(t)})\\
+\text{M step: }&\theta^{(t+1)} =\max_{\theta} \int p(Z|X,\theta^{(t)}) \ln P(Z,X|\theta)dZ {\color{red} + \ln p_\text{prior}(\theta)}. 
+\end{align*} %]]></script>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+  
+
+
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fa fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="https://yyang768osu.github.io/tags/#variational-inference" class="page__taxonomy-item" rel="tag">variational inference</a>
+    
+    </span>
+  </p>
+
+
+
+
+      </footer>
+
+      
+
+<section class="page__share">
+  
+    <h4 class="page__share-title">Share on</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=https://yyang768osu.github.io/posts/2012/08/varitional_inference_2/" class="btn btn--twitter" title="Share on Twitter"><i class="fa fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https://yyang768osu.github.io/posts/2012/08/varitional_inference_2/" class="btn btn--facebook" title="Share on Facebook"><i class="fa fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://plus.google.com/share?url=https://yyang768osu.github.io/posts/2012/08/varitional_inference_2/" class="btn btn--google-plus" title="Share on Google Plus"><i class="fa fa-fw fa-google-plus" aria-hidden="true"></i><span> Google+</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https://yyang768osu.github.io/posts/2012/08/varitional_inference_2/" class="btn btn--linkedin" title="Share on LinkedIn"><i class="fa fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+      
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://yyang768osu-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+
+
+
+      
+
+
+  <nav class="pagination">
+    
+      <a href="https://yyang768osu.github.io/posts/2012/08/variational_inference_1/" class="pagination--pager" title="A step-by-step guide to variational inference (1): variational lower bound
+">Previous</a>
+    
+    
+      <a href="https://yyang768osu.github.io/posts/2012/08/variational_inference_3/" class="pagination--pager" title="A step-by-step guide to variational inference (3): mean field approximation
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+
+
+  
+  
+</div>
+
+
+    </script>
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<a href="/sitemap/">Sitemap</a>
+<!-- end custom footer snippets -->
+
+        
+
+<div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+    
+    
+    
+      <li><a href="http://github.com/yyang768osu"><i class="fa fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+    
+    
+    <li><a href="https://yyang768osu.github.io/feed.xml"><i class="fa fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2018 Yang Yang. Powered by <a href="http://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>, a fork of <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    <script src="https://yyang768osu.github.io/assets/js/main.min.js"></script>
+
+
+
+
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', '', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+
+  </body>
+</html>
+

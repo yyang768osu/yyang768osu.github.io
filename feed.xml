@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="https://yyang768osu.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://yyang768osu.github.io/" rel="alternate" type="text/html" /><updated>2018-08-08T18:03:30-07:00</updated><id>https://yyang768osu.github.io/</id><title type="html">Yang Yang</title><subtitle>Engineer at Qualcomm</subtitle><author><name>Yang Yang</name></author><entry><title type="html">A step-by-step guide to variational inference (4): variational auto encoder</title><link href="https://yyang768osu.github.io/posts/2012/08/variational_inference_4/" rel="alternate" type="text/html" title="A step-by-step guide to variational inference (4): variational auto encoder" /><published>2018-08-05T00:00:00-07:00</published><updated>2018-08-05T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2012/08/variational-inference-IV-variational-auto-encoder</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2012/08/variational_inference_4/">&lt;p&gt;The variational lower bound $\mathcal{L}$ sits in the core of variational inference. It connects the density estimation problem with the Bayesian inference problem through a variational (free to vary) distribution $q$, and it converts both problems into an optimization problem. Here let’s briefly revisit the identity associated with variational lower bound&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\ln p(X;\theta) &amp;= \text{KL}{\big(}q|| p(Z|X;\theta){\big)} + \mathcal{L}(q,\theta)\\
+\text{where }\mathcal{L}(q, \theta) &amp;=\int q(Z) \ln \frac{p(X,Z;\theta)}{q(Z)} dZ
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;The identity holds for any arbitrary probability function $q$. $\mathcal{L}$ is a lower bound for the data log-likelihood $\ln p(X;\theta)$ given the non-negativity of the KL divergence. From the identify we can obtain the following two equations&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{aligned}
+\ln p(X;\theta) &amp;= \max_{q} \mathcal{L}(q,\theta)\\
+p(Z|X;\theta) &amp;= \underset{q}{\arg\max} \mathcal{L}(q,\theta),
+\end{aligned} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;which testified the claim that both density estimation (LHS of the first equation) and Bayesian inference (LHS of the second equation) are linked with the same optimization function. There are two implications if we increases the value of $\mathcal{L}$ by tweaking the distribution $q$: (1) $\mathcal{L}$ becomes a tighter lower bound of $\ln p(X;\theta)$, meaning that it is closer to the true data log-likelihood (2) the distribution function $q$ itself is closer to the true posterior distribution measured in KL divergence.&lt;/p&gt;
+
+&lt;p&gt;Often, we are also given the task of finding the ML estimate of the parameter $\theta$ (or MAP estimate of the parameter $\theta$), which requires taking the maximum of $\ln p(X;\theta)$ (or $\ln p(X|\theta) + \ln p_\text{prior}(\theta)$ for the MAP case) with respect to $\theta$, yielding the following problem&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+\max_{\theta}\max_{q}\mathcal{L}(q, \theta).
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;By increasing the variation lower bound $\mathcal{L}$ with respect to $\theta$, by which the model is parameterized, we are essentially searching for model that can better fit to the data.&lt;/p&gt;
+
+&lt;p&gt;It should be clear that is it desirable to maximize $\mathcal{L}$ with respect to both the variational distribution $q$ and the generative parameter $\theta$: maximize it with respect to $q$ would yield a better inference function; maximize it with respect to $\theta$ would give us a better model.&lt;/p&gt;
+
+&lt;p&gt;Instead of allowing $q$ to be any function within the probability function space, for analytical tractability, we assume that it is parameterized by $\phi$ and is a function of the observed data $x$, denoted as $q_\phi(x)$. For the generative model, let us modified the notation slightly by assuming that the prior distribution $p(z)$ is unparameterized, and denote the conditional generative probability as $p_\theta(x|z)$, leading to the following expression of the variational lower bound&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+\mathcal{L}(\phi, \theta, x^{(i)}) = \int q_\phi\left(z^{(i)}|x^{(i)}\right)\ln \frac{p_\theta\left(x^{(i)}|z^{(i)}\right)p\left(z^{(i)}\right)}{q_\phi\left(z^{(i)}|x^{(i)}\right)}dz^{(i)}
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;Note that we used to express the variational lower bound in terms of the complete observed dataset $X={x^{(1)},\ldots, x^{(N)}}$ as well as the corresponding latent variables $Z={z^{(1)},\ldots, z^{(N)}}$. Since each data point and the corresponding latent variables are generated independently, it can be decomposed into the summation of $N$ terms, one for each data point $x^{(i)}$ as shown above. Those $N$ identity equations are linked through global parameter $\phi$ and $\theta$.&lt;/p&gt;
+
+&lt;p&gt;As discussed before, to obtain a better model and to obtain a closer approximation to the true posterior inference function, one needs to differentiate and optimize $\sum_{i=1}^N\mathcal{L}(\phi, \theta, x^{(i)})$ for with respect to both $\phi$, the parameter of the inference function, and $\theta$, the parameter of the model. Okay, now we have a plan: let us calculate the gradient to both parameters, and be done with the problem by applying our favorite stochastic gradient descent algorithm to find a solution. Actually we will show later that such a stochastic training framework is analogous to using an auto-encoder architecture with a specific regularization function.&lt;/p&gt;
+
+&lt;p&gt;Soon enough you will realize a major challenge: it is not clear how to differentiate against $\phi$. There is very little chance for us to expect a close-form expression if we directly differentiate what is inside the integral and then integrate, as the integral itself is hard even without the differentiation. We will  spend some time here to dig into the issue, which is the key to the understanding of the variational auto-encoding algorithm.&lt;/p&gt;
+
+&lt;p&gt;Since the lower-bound exists in the form of the expectation with respect to the variational distribution $q_\phi$, the work-around here is to seek for Monte-Carlo estimation for the integral with the sampling from distribution $q_\phi\left(z^{(i)}|x^{(i)}\right)$. Let us focus on the following general problem: $\nabla_\phi \mathbb{E}_{q_\phi(z|x)}\left[f(z)\right]$, there are two approaches that use sampling to approximate the expectation:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Approach 1&lt;/strong&gt;:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+&amp;\nabla_\phi \mathbb{E}_{q_\phi(z|x)}\left[f(z)\right] \\
+=&amp;\int \nabla_\phi q_\phi(z|x)  f(z) dz\\
+=&amp;\int q_\phi(z|x) \frac{\nabla_\phi q_\phi(z|x)}{q_\phi(z|x)}  f(z) dz\\
+=&amp; \int q_\phi(z|x)  \nabla_\phi \ln q_\phi(z|x) f(z) dz \\
+\text{(Monte Carlo)} \approx &amp;\frac{1}{S}\sum_{s=1}^S \nabla_\phi \ln q_\phi(z^{[s]}|x) f(z^{[s]}) 
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;&lt;strong&gt;Approach 2&lt;/strong&gt;:&lt;/p&gt;
+
+&lt;p&gt;Let us make an additional assumption on $q_\phi(z|x)$: assume that we can obtain samples of $z$ by first sampling through a distribution $p(\epsilon)$ that is independent of $\phi$, and then apply a $(\phi,x)$-dependent transformation of  $g_\phi(\epsilon, x)$. Effectively we are assuming that the random variable $\mathcal{Z}$ is a $\phi-$dependent function of a $\phi$-independent random variable $\mathcal{E}$: $\mathcal{Z} = g_\phi(\mathcal{E},x)$. Reflecting this assumption in the differential of expectation, we obtain&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+&amp;\nabla_\phi \mathbb{E}_{q_\phi(z|x)}\left[f(z)\right]\\
+=&amp;\nabla_\phi \int q_\phi(z|x)f(z) dz\\
+\text{(parameter substitution)}=&amp;\nabla_\phi \int p(\epsilon)f(g_\phi(\epsilon, x))d\epsilon\\
+=&amp; \int p(\epsilon) \nabla_\phi f(g_\phi(\epsilon, x))d\epsilon\\
+\text{(Monte Carlo)}\approx&amp; \frac{1}{S}\sum_{s=1}^S  \nabla_\phi f(g_\phi(\epsilon^{[s]},x))
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;This seems like a good solution: the Monte Carlo sampling itself is not a function of $\phi$, and $\phi$ just appear as the parameter of the transformation function  $g_\phi$ that maps the samples from $\mathcal{E}$ to the samples in $\mathcal{Z}$. In this case $q_\phi$ is just the induced distribution dictated by the prior distribution of $\mathcal{E}$ as well as the transformation function $g_\epsilon$. This parameter substitution technique is branded as &lt;em&gt;the reparameterization trick&lt;/em&gt; in the original paper of variational auto encoder.&lt;/p&gt;
+
+&lt;p&gt;The next immediate question is, are we allowed to design the prior distribution of $\mathcal{E}$ and the transformation function $g_\phi$ in any arbitrary form? You may wonder why do we even care. Well there is a hidden factor that we need to take care of before claiming victory. Looking at the variational lower bound, not only do we need to integrate with respect to the distribution $q_\phi$, which can be achieved using Monte Carlo by the help of this reparameterization trick, we also need to ensure a closed-form expression of the density function $q_\phi(z|x)$ itself, as it lives inside the expectation/integral as part of the function $f$. This limits the way we can choose the random variable $\mathcal{E}$ and the function $g_\phi$.&lt;/p&gt;
+
+&lt;p&gt;For any monotonic function $g_\phi$, the induced distribution $q_\phi$ can be derived as&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+q_\phi(z) = p_\epsilon\left(g_\phi^{-1}(z)\right)\left|\frac{\partial g_\phi^{-1}(z)}{\partial z}\right|.
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;To enforce a closed form expression for $q_\phi$, we have two general design choices on $p_\epsilon$ and $g_\phi$, as is evident from the expression above: (1) let $p_\epsilon$ be a uniform distribution on $[0,1]$ and $g_\phi=\text{CDF}^{-1}$ be the inverse of any distribution with closed-form cumulative distribution function. (2) let $p_\epsilon$ be any distribution with closed form density and $g_\phi$ be an easy form of monotonic function, e.g., a linear function.&lt;/p&gt;
+
+&lt;p&gt;In the context of variational auto encoder in the original paper, $p_\epsilon$ is chosen as the standard normal distribution, the second design choice is picked.  $g_\phi$ is a linear function of $\epsilon$, whose slope and intercept is an arbitrary function of $x$ and $\phi$ characterized using a neural network. In which case the induced distribution $q_\phi$ is a normal distribution whose mean and variances is determined by a neural network with the input $x$ and parameter $\phi$.&lt;/p&gt;
+
+&lt;p&gt;Now that we went through what &lt;em&gt;the reparameterization trick&lt;/em&gt; is, let us return back to the problem of finding the gradient of $\mathcal{L}(\phi, \theta, x^{(i)})$ with respect to $\phi$ and $\theta$. Applying the reparameterization trick, we obtain the following gradient-friendly Monte Carlo estimate of the variational lower bound&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\mathcal{L}(\phi, \theta, x^{(i)}) =&amp; \int q_\phi\left(z^{(i)}|x^{(i)}\right)\ln \frac{p_\theta\left(x^{(i)}|z^{(i)}\right)p\left(z^{(i)}\right)}{q_\phi\left(z^{(i)}|x^{(i)}\right)}dz^{(i)}\\
+\text{(Monte Carlo)}\approx&amp;\frac{1}{S}\sum_{s=1}^S \ln  \frac{p_\theta\left(x^{(i)}|z^{(i)[s]}\right)p\left(z^{(i)[s]}\right)}{q_\phi\left(z^{(i)[s]}|x^{(i)}\right)}\\
+\text{(Reparameterization)}=&amp;\frac{1}{S}\sum_{s=1}^S \ln  \frac{p_\theta\left(x^{(i)}|g_\phi (\epsilon^{[s]}, x^{(i)})\right)p\left(g_\phi (\epsilon^{[s]}, x^{(i)})\right)}{q_\phi\left(g_\phi (\epsilon^{[s]}, x^{(i)})|x^{(i)}\right)}\\
+\text{where } \epsilon^{[s]}&amp;\text{ is drawn i.i.d. from }p_\epsilon. 
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;Here’s an alternative way to decompose $\mathcal{L}$ and apply Monte Carlo and reparameterization, for which there is a close form expression for the second term (KL divergence) and only the first part is approximated.&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\mathcal{L}(\phi, \theta, x^{(i)}) =&amp; \int q_\phi\left(z^{(i)}|x^{(i)}\right)\ln \frac{p_\theta\left(x^{(i)}|z^{(i)}\right)p\left(z^{(i)}\right)}{q_\phi\left(z^{(i)}|x^{(i)}\right)}dz^{(i)}\\
+=&amp;\int q_\phi\left(z^{(i)}|x^{(i)}\right)\ln p_\theta\left(x^{(i)}|z^{(i)}\right) dz^{(i)}-\text{KL}\left( q_\phi\left(z^{(i)}|x^{(i)}\right){\Big|\Big|} p\left(z^{(i)}\right)\right)\\
+\text{(Monte Carlo)}\approx&amp; \frac{1}{S}\sum_{s=1}^S \ln p_\theta\left(x^{(i)}|z^{(i)[s]}\right)  -\text{KL}\left( q_\phi\left(z^{(i)}|x^{(i)}\right){\Big|\Big|} p\left(z^{(i)}\right)\right)\\
+\text{(Reparameterization)}\approx&amp; \frac{1}{S}\sum_{s=1}^S \ln p_\theta\left(x^{(i)}|g_\phi (\epsilon^{[s]}, x^{(i)})\right)  -\text{KL}\left( q_\phi\left(z^{(i)}|x^{(i)}\right){\Big|\Big|} p\left(z^{(i)}\right)\right)
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;This decomposition leads to the interpretation of probabilistic auto-encoder, which is named variational auto-encoder as it rooted from the maximization of the variational lower bound.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/vae.png&quot; alt=&quot;Variational Auto Encoder&quot; /&gt;&lt;/p&gt;</content><author><name>Yang Yang</name></author><category term="variational inference" /><summary type="html">The variational lower bound $\mathcal{L}$ sits in the core of variational inference. It connects the density estimation problem with the Bayesian inference problem through a variational (free to vary) distribution $q$, and it converts both problems into an optimization problem. Here let’s briefly revisit the identity associated with variational lower bound</summary></entry><entry><title type="html">A step-by-step guide to variational inference (3): mean field approximation</title><link href="https://yyang768osu.github.io/posts/2012/08/variational_inference_3/" rel="alternate" type="text/html" title="A step-by-step guide to variational inference (3): mean field approximation" /><published>2018-08-05T00:00:00-07:00</published><updated>2018-08-05T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2012/08/variational-inference-III-mean-field-approximation</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2012/08/variational_inference_3/">&lt;p&gt;We have learned that E-M algorithm tries to find a ML or MAP solution to the parameters of a generative model. It is build on top of two major premises:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;$\ln p(X,Z;\theta)$ is in a much simpler form than $\ln P(X;\theta)$,&lt;/li&gt;
+  &lt;li&gt;$\ln p(Z|X;\theta)$ is easy to obtain.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;While the first one is often true in that both $p(X|Z;\theta)$ and $p(Z;\theta)$ given as part of the model and are usually designed to be simple, the second one is a very strong assumption and does not hold in most cases. In what follows, we modify notation slightly by assuming that there is prior distribution on any parameters of interest, and conceptually merge $\theta$ as part of the latent variable $Z$ that are common across different data samples and remove $\theta$ from the notation.&lt;/p&gt;
+
+&lt;p&gt;As we discussed in the previous post/section, the Bayesian inference problem is to find the posterior probability $p(Z|X)$, which is in general very hard due to the integral/summation (in most cases multi-dimensional integral/summation) in the denominator below&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+p(Z|X) = \frac{p(X|Z)p(Z)}{\int p(X|Z)p(Z) dZ}.
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;We also showed that with the introduction of a variational distribution $q(Z)$, we can convert the problem of finding $p(X|Z)$ as an optimization problem below&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+p(Z|X) &amp;= \arg\max_{q}\mathcal{L}(q).
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;However, this optimization problem above is still very hard and it does not lend itself to any easy solution. Here, the objective $\mathcal{L}(q)$, called the variational lower-bound, is a functional as it maps a function into a scalar value, and the domain is the space of all functions.&lt;/p&gt;
+
+&lt;p&gt;Since it is hard to optimize the variational lower bound as is, one may wonder, how about constraining the search space of $q$ from all potential functions to within a limited function space? Could that make the problem simpler? Even though we may not find the optimal solution after restricting the set of functions we could search from, the hope is that by doing so we can device practical algorithms with solutions that are reasonably close to the true posterior. This is exactly the idea behind mean field approximation.&lt;/p&gt;
+
+&lt;p&gt;In the mean field method, we add a constraint to the domain of the optimization: instead of allowing $q(Z)$ to be in arbitrary form, we only look at cases when it can be factorized into a product form with disjoint latent variables in each multiplicative factor. More specifically, we divide the dimension of latent variables into $K$ groups $Z=[Z_1, Z_2, \ldots, Z_K]$ and enforce $q$ to have the form of $q(Z)=q_1(Z_1)q_2(Z_2)\ldots q_K(Z_K)$. Put it in precise math, we have&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+q^* = \underset{q=q_1 q_2 \ldots q_K}{\arg\max}\mathcal{L}(q)
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;Referring back to the equation on the decomposition of observed data log-likelihood&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+\ln p(X) = \text{KL}(q || p(Z|X)) + \mathcal{L}(q),
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;we know that by maximizing $\mathcal{L}(q)$ with respect to functions with form $q(Z)=\prod_{k=1}^K q_k(Z_k)$, we are try to find one function in the confined function space (defined as the set of functions that can be factorized as such) that is closest to the true posterior $ p(Z|X)$ measured with KL divergence. It is worth emphasizing that we are merely constraining $q(Z)$ to have this factorization form, and do not make any assumption on what each individual factor would look like.&lt;/p&gt;
+
+&lt;p&gt;Let us plug in the factorized form of $q(Z) = \prod_{k=1}^K q_k(Z_k)$ in the expression of the variational lower bound, yielding&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\mathcal{L}(q) =&amp; \int q(Z)\ln\frac{p(X, Z)}{q(Z)}dZ\\
+=&amp; \int q(Z)\ln p(X, Z)dZ +  \int q(Z)\ln\frac{1}{q(Z)}dZ\\
+=&amp; \int \prod_{k=1}^K q_k(Z_k) \ln p(X, Z)dZ +  \sum_{k=1}^K\int q_k(Z_k)\ln\frac{1}{q_k(Z_k)}dZ_k.
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;The second term is just the entropy of $q$, which, given the assumption that it can be decomposed into independent factors, becomes the summation of the entropy for each individual $q_k$.&lt;/p&gt;
+
+&lt;p&gt;It may not be immediately apparent why this modified formulation is any easier to solve. Nevertheless, let us proceed by making the temporary assumption that among the $K$ factors, all are known except for one factor $q_j$. Then, we just need to maximize $\mathcal{L}$ with respect to $q_j$ with all the other factors $q_{k}, k\not=j$ as given. The variational lower bound can be rewritten as&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+&amp;\int q_j(Z_j) \mathbb{E}_{q_k, k\not=j}[\ln p(X,Z)]dZ_j + \int q_j(Z_j)\ln \frac{1}{q_j(Z_j)}dZ_j + \text{constant}\\
+=&amp;\int q_j(Z_j)\ln\frac{\exp\left( \mathbb{E}_{q_k, k\not=j}[\ln p(X,Z)]\right)}{q_j(Z_j)}dZ_j + \text{constant}
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;Since any term that does not involve $q_j$ would not affect the solution to $\arg\max_{q_j}\mathcal{L}(q)$, we just mark those as constant. Here it comes a key observation: notice how the non-constant term resembles the definition of a negative KL divergence between $q_j(Z_j)$ and $\mathbb{E}_{q_k, k\not=j}$ $\exp\left( \mathbb{E}_{q_k, k\not=j}[\ln p(X,Z)]\right)$. The only issue is that $\exp\left( \mathbb{E}_{q_k, k\not=j}[\ln p(X,Z)]\right)$ may not be a proper probability measure that sum/integrate to $1$. Luckily, since scaling $\exp\left( \mathbb{E}_{q_k, k\not=j}[\ln p(X,Z)]\right)$ only amounts to adding/subtracting a constant term, we know that $\mathcal{L}(q)$ is maximized when&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+q_j(Z_j)  \propto \exp\left( \mathbb{E}_{q_k, k\not=j}[\ln p(X,Z)]\right),
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;or more accurately,&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+q_j(Z_j)  = \frac{\exp\left( \mathbb{E}_{q_k, k\not=j}[\ln p(X,Z)]\right)}{\int \exp\left( \mathbb{E}_{q_k, k\not=j}[\ln p(X,Z)]\right) dZ_j}.
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;This result tells us that, among the $K$ factors, if we have all but one factor fixed, then the optimal solution of that left out function that maximize the variation lower bound (or equivalently, minimizes the KL divergence to the true posterior distribution) can be written in the above form as a function of all the other factors.&lt;/p&gt;
+
+&lt;p&gt;This leads to a nice iterative solution that iteratively visits each factor, and maximize the variational lower bound with respect to the target factor treating all the other factors as known. In special cases, the normalization constant term in the dominator of the above equation could be directly inferred if the numerator term already suggests certain type of known distribution.&lt;/p&gt;
+
+&lt;p&gt;It is interesting to note that, to apply this mean-field-approximation method, one only need to make the assumption on how to partition the latent variable dimensions into disjoint groups, one for each factor, without making any assumption on the detailed function form of any factor. The detail form of the factorized distribution would be obtained as a result of the iterative procedure.&lt;/p&gt;
+
+&lt;p&gt;There is one caveat that we should mention. Looking at the equation above, to find the optimal factor $q_j$, assuming all the other are know, we still need to make sure that the expectation $\mathbb{E}_{q_k, k\not=j}[\ln p(X,Z)]$ results in tractable form. Given that the expectation itself is a multi-dimensional integral/summation, in general it is hard to guarantee a closed form expression. The expectation is tractable with specific models and specific ways on which the latent variables are partitioned, which limits the cases where mean-field-approximation could be applied.&lt;/p&gt;
+
+&lt;p&gt;Here we introduced mean field approximation from the perspective of Bayesian inference. As a final remark, it is straightforward to show that it also provide a way to evaluate observed data likelihood and thus can be useful with model-selection as well. According to the identity involving the variational lower bound, we know that as we maximize $\mathcal{L}$, not only do we obtain a variational distribution that is close to the true posterior in the KL divergence sense, we also obtained a surrogate for the log-likelihood, as the lower bound $\mathcal{L}$ is a lower bound which gets tighter as it becomes larger.&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+\ln p(X) = \text{KL}(q || p(Z|X)) + \mathcal{L}(q),
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;If we are given $M$ models, then one can conduct mean field method on each of them, obtain the corresponding optimized variational lower-bound, and use it as the surrogate to rate the likelihood of each model. We can even combine the prior distribution of the $M$ models, if there is any, to obtain a maximum a posterior (MAP) selection of the model.&lt;/p&gt;</content><author><name>Yang Yang</name></author><category term="variational inference" /><summary type="html">We have learned that E-M algorithm tries to find a ML or MAP solution to the parameters of a generative model. It is build on top of two major premises:</summary></entry><entry><title type="html">A step-by-step guide to variational inference (2): expectation maximization</title><link href="https://yyang768osu.github.io/posts/2012/08/varitional_inference_2/" rel="alternate" type="text/html" title="A step-by-step guide to variational inference (2): expectation maximization" /><published>2018-08-05T00:00:00-07:00</published><updated>2018-08-05T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2012/08/variational-inference-II-expectation-maximization</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2012/08/varitional_inference_2/">&lt;p&gt;In the previous post/section we went through the derivation of variational lower-bound, and showed how it helps convert the Bayesian inference and density estimation problem to an optimization problem. Let’s briefly recap the problem setup and restate some key points.&lt;/p&gt;
+
+&lt;p&gt;Consider a very general generative graphic model where each data point $x^{(n)}$ is generated from a latent variable $z^{(n)}$ conforming to a given distribution $p(X|Z;\theta)$, with $z^{(n)}$ itself drawn from a given prior distribution $p(Z; \theta)$. $\theta$ captures the set of variables that the two probabilities are parameterized with. Two fundamental problems are to (1) estimate the density of existing dataset $X$, i.e. $p(X;\theta)$ and (2) derive the posterior probability of the latent variable $Z$ given the observed data $X$, i.e., $p(Z|X;\theta)$. The exact solution of both problems requires the evaluation of the often intractable integral $\int P(X| Z;\theta)P(Z;\theta)dZ$.&lt;/p&gt;
+
+&lt;p&gt;With the introduction of a variational/free distribution function $q(Z)$, we have the following identity:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+\ln p(X;\theta) = \text{KL}{\big(}q||p(Z|X;\theta){\big)} + \mathcal{L}(q,\theta),
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;which says that the marginalized probability of dataset $X$ can be decomposed into a sum of two terms with the first one being the KL divergence between $q(Z)$ and the true posterior distribution $p(Z|X;\theta)$ and the second one expressed below.&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+\mathcal{L}(q,\theta)=\int q(Z) \ln \frac{P(Z,X;\theta)}{q(Z)}dZ,
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;which is referred to as the variational lower bound: it is called a lower-bound as it is always less than $\ln p(X;\theta)$ as a result of the non-negativity of KL divergence, and it is called variational as it is itself a functional that maps a variational/free distribution function $q$ to a scalar value. This identity is quite exquisite in that it turns both the density estimation problem and the latent variable inference problem into an optimization problem, evident from the two equations below&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\ln p(X;\theta) &amp;= \max_{q}\mathcal{L}(q,\theta)\\
+p(Z|X;\theta) &amp;= \arg\max_{q}\mathcal{L}(q,\theta).
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;The problem that Expectation Maximization algorithm designs to solve is the maximum likelihood estimate of the parameter $\theta$. Remind you that $\theta$ is the parameter of the graphic model, and the task is to find a $\theta$ such that the model best explain the existing data. In precise term, the problem is&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+\max_{\theta}\ln p(X;\theta).
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;Now, resorting to the variational lower bound, equivalently we can also focus on the following maximization-maximization problem&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+\max_{\theta}\ln p(X;\theta) = \max_{\theta}\max_{q}\mathcal{L}(q,\theta),
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;A natural question is: why would this be easier to evaluate compared with maximizing $\ln p(X;\theta)$ head on? did we increase our burden by considering a double-maximization optimization problem rather than a single-maximization one?&lt;/p&gt;
+
+&lt;p&gt;To answer we need to have the objective function under scrutiny. First thing we should keep in mind is that the two probability distributions $p(Z;\theta)$ and $p(X|Z;\theta)$ are given as part of the model assumption, and they usually come in the form of well-known distributions, e.g., Gaussian, multinomial, exponential, etc. Thus, the joint likelihood of observed and hidden variable $p(Z,X;\theta)=p(Z;\theta)p(X|Z;\theta)$ is in an amenable form. Also, quite often, taking logarithm on it would break up all the multiplicative terms as summation, resulting in quite tractable from. Better yet, the parameters $\theta$ that we need to compute gradient with, may naturally be decomposed into different terms in the summation, making the calculation of derivative easy with respect to individual parameters. Looking at the detailed expression of $\mathcal{L}(q,\theta)$, indeed, we have the log-likelihood of the joint observed-latent variable.&lt;/p&gt;
+
+&lt;p&gt;On the other hand, to compute the marginalized likelihood of the observed data only, i.e., $P(X;\theta)$, one need to sum or integrate out the effect of $Z$ from $p(Z,X;\theta)$, which may lead to complicated expression. While the evaluation of $P(X;\theta)$ may still be fine when, e.g., the marginalization only requires the summation of a finite number of terms (which is the case for the Gaussian mixture model), the real deal breaker is the difficulty in taking derivative of the log-likelihood with respective to the parameters: taking  logarithm on $P(X;\theta)$ almost surely won’t result in nice decomposition, as the logarithm is gated by the integral or summation, and the log-sum expression is a lot harder to break when we compute the derivative with respect to the parameters $\theta$.&lt;/p&gt;
+
+&lt;p&gt;Coming back to the maximization-maximization problem, it is natural to devise an iterative algorithm that maximize the objective function $\mathcal{L}(q,\theta)$ with alternating axis:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\text{E step: }&amp;q^{(t)} = \arg\max_{q}\mathcal{L}(q,\theta^{(t)})\\
+\text{M step: }&amp;\theta^{(t+1)} = \arg\max_{\theta}\mathcal{L}(q^{(t)}, \theta) 
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;It is worth mentioning that the first optimization problem is in general a very difficult one, as it requires searching through the whole function space. According to the derivation of the variational lower bound derivation we know that the optimal solution is the posterior distribution $p(Z|X;\theta^{(t)})$, which is hard to obtain. Actually finding an approximated posterior by maximizing the variational lower bound is the main theme in variational inference. Techniques of mean-field-approximation, and variational auto-encoder, which we will cover in detail later, targets at this problem alone.&lt;/p&gt;
+
+&lt;p&gt;To proceed, we make a very strong assumption that $p(Z|X;\theta^{(t)})$ can be easily obtained. As we will see later that with certain simple model (e.g., Gaussian mixture model), it is indeed a valid assumption, nevertheless it is the key assumption that significantly limits the application of the expectation maximization algorithm.&lt;/p&gt;
+
+&lt;p&gt;Anyway, for now let us live with this strong assumption, then the first problem is solved as&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+\text{E step: }q^{(t)} = p(Z|X;\theta^{(t)}).
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;Coming back to the second maximization problem, with $q^{(t)}$ fixed, we can decompose the variational lower bound as&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+\mathcal{L}(q^{(t)}, \theta) = \int q^{(t)}(Z)\ln p(X,Z;\theta)dZ + \int q^{(t)}(Z) \ln\frac{1}{q^{(t)}(Z)}dZ.
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;The second term above is just a constant term reflecting the entropy of $q^{(t)}$, so let us ignore it, and then the second maximization problem reduces to&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\text{M step: }\theta^{(t+1)} =&amp;\max_{\theta} \int p(Z|X;\theta^{(t)}) \ln P(Z,X;\theta)dZ. 
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;The maximization target above can be viewed as finding the expectation of complete data (combining observed variable and latent variable) log likelihood, where the expectation is with respect to a fixed distribution on the latent variable $Z$.&lt;/p&gt;
+
+&lt;p&gt;Let’s put the two steps together and review the whole iterative process. We are given a model with a set of parameters captured in $\theta$. The task is find the values of the parameters $\theta$ such that the model best explain the existing observed data at hand. At the beginning, we take a random guess on the value of the parameters. With that initial parameters, we find the posterior probability of the latent variable for each data point $x$ in the training data set $X$. Then, using that posterior probability, we calculate the expected complete-data log-likelihood, and try to find parameters $\theta$ so that the complete-data log-likelihood is maximized. With $\theta$ updated, we refresh our calculation of the posterior probability and iterative the process.&lt;/p&gt;
+
+&lt;p&gt;In fact, K-means clustering algorithm is one instance of expectation-maximization procedure with certain specific model assumption. It is helpful to think of the iterative process from the perspective of K-means clustering: for K-means clustering, we can imagine that a one-dimensional latent variable with value from $1$ to $K$, implying the registration to one of the $K$ clusters. The parameter of the model is the center of the clusters, denoted as $\theta={c_1, \ldots, c_K}$. In the initial setup, we randomly set these $K$ cluster centers. For each data, we assign it to the nearest cluster, which is effectively assigning its latent variable. This step corresponds to finding the posterior distribution (E-step), with one of the clustering having probability $1$. After each data is assigned to its cluster with the initial values of the cluster centers, which gives us complete data in the form of (observed data, latent variable) pair, the next step is to adjust the center based on its constituent. This step corresponds to the maximizing of the expected complete-data log-likelihood (M-step), although this expectation is taken in degenerate form as the posterior probability for the latent variable is in the form of $0/1$.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;The E-M iterative algorithm is guaranteed to reach a local maximum on the log-likelihood of the observed data $p(X;\theta)$, as both steps increases it.&lt;/li&gt;
+  &lt;li&gt;It is not necessary to find the maximum in the M-step. So long as the updated $\theta$ increase the complete-data log-likelihood, we are still in the right direction.&lt;/li&gt;
+  &lt;li&gt;So far we focused on finding the maximum-likelihood (ML) solution to $\theta$ (local maximum). In the case when there is prior distribution $p_\text{prior}(\theta)$ on $\theta$, we can use the same process to find a maximum-a-posterior (MAP) solution (local maximum), utilizing the fact that $p(\theta|X) \propto p(X|\theta)p_\text{prior}(\theta)$. The problem is modified as&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+\max_{\theta}\ln p(\theta|X) = \max_{\theta}\left(\max_{q}\mathcal{L}(q,\theta) {\color{red} + \ln p_\text{prior}(\theta)}\right),
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;with slightly modified procedure below&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\text{E step: }&amp;q^{(t)} = p(Z|X,\theta^{(t)})\\
+\text{M step: }&amp;\theta^{(t+1)} =\max_{\theta} \int p(Z|X,\theta^{(t)}) \ln P(Z,X|\theta)dZ {\color{red} + \ln p_\text{prior}(\theta)}. 
+\end{align*} %]]&gt;&lt;/script&gt;</content><author><name>Yang Yang</name></author><category term="variational inference" /><summary type="html">In the previous post/section we went through the derivation of variational lower-bound, and showed how it helps convert the Bayesian inference and density estimation problem to an optimization problem. Let’s briefly recap the problem setup and restate some key points.</summary></entry><entry><title type="html">A step-by-step guide to variational inference (1): variational lower bound</title><link href="https://yyang768osu.github.io/posts/2012/08/variational_inference_1/" rel="alternate" type="text/html" title="A step-by-step guide to variational inference (1): variational lower bound" /><published>2018-08-05T00:00:00-07:00</published><updated>2018-08-05T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2012/08/variational-inference-I-varitional-lower-bound</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2012/08/variational_inference_1/">&lt;p&gt;In machine learning, graphic models are often used to describe the factorization of probability distributions. The detailed form of the graphic model encodes one’s belief/hypothesis regarding the underlying hidden structure of the data. In this article, we confine the discussion to a general form of generative graphic model that we illustrate below.&lt;/p&gt;
+
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/dgm.png&quot; alt=&quot;generative model&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Let $X=\{x^{(1)}, x^{(2)}, \ldots, x^{(n)}\}$ denotes the dataset of interest, be it a set of images, a set of sound clips, or a set of document, depending on the problem at hand. The model describes a way for which the data is generated (and hence the name): we first sample a hidden/latent variable $z$ from the distribution $P(Z;\theta)$, and then sampled a data point $x$ from the distribution $P(X|Z;\theta)$ given the latent variable. The two probabilities are defined as we like and are given as part of the graphic models. Here we assume that the two probabilities are parameterized by a set of variables $\theta$, although in general we could merge it as part of latent variable $Z$ as well (as a global latent variable, the value of which is shared among all data samples), if there is a prior distribution for it. It is worth noting that the $P(Z;\theta)$ and $P(X|Z;\theta)$ could be further factorized, whichever way we design them to be, however, in this article we will just focus on the general setting.&lt;/p&gt;
+
+&lt;p&gt;There are two intertwined problems associated with this form of generative models: density estimation, and Bayesian inference. For the problem of density estimation, we want to estimate the probability that the model assigns to all the data $X$ we are given in training, or more precisely $p(X; \theta)$. The value of $p(X; \theta)$ explains how likely it is for the model to generate the given training data. Thus, the larger the $p(X; \theta)$, the better our model explains the existing data. For models that are parameterized by $\theta$, fitting the model to best match the training data amounts to finding a value of $\theta$ that maximize the density $p(X; \theta)$.&lt;/p&gt;
+
+&lt;p&gt;For the problem of Bayesian inference, we want to infer the posterior probability of the unobserved hidden/latent variable given the observed data, or more precisely $p(Z|X;\theta)$. It is easy to see that these two problems are naturally intertwined from Bayes rule: $p(Z|X) = \frac{p(X|Z)p(Z)}{P(X)}$: since $p(X|Z)$ and $p(Z)$ are already given as part of the model assumption, if we solve one of the two problems, then the other one can be solved as well. Conceptually, the solution to the problems can be viewed as trying to find a reverse graph in the generative model shown above.&lt;/p&gt;
+
+&lt;p&gt;Let’s now take a step back and ask the question: why do we even bother with the introduction of latent/hidden variable? Can we just propose models that capture $p(X;\theta)$ directly, and save the trouble of Bayesian inference for the latent variable all together?  Anyway, even with the direct characterization of  $p(X;\theta)$, the discussion above should still hold: the larger the  $p(X;\theta)$, the better our model explains the given data, and with a good model we can apply sampling to generate artificial data.&lt;/p&gt;
+
+&lt;p&gt;The significance of the hidden/latent variables are two-fold:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;The adoption of hidden/latent variables allows one to construct complex marginal data distributions $p(X)$ from simple and easy to evaluate distribution functions. For example, with $p(Z;\theta)$ being the multinomial distribution and $p(X|Z;\theta)$ being the normal distribution, we arrive at the Gaussian mixture model $p(X;\theta)=\int P(X|Z;\theta)P(Z;\theta)dZ$, which can characterize a wide range of complex distribution and has significantly more expressiveness power compared with just Gaussian or multinomial distribution alone. It is evident that a model that characterizes more complex distributions can better fit the data, especially with the high-dimensional complicated data we are usually focusing on.&lt;/li&gt;
+  &lt;li&gt;The hidden/latent variables can be viewed as general features extracted from the data, which can be utilized for any downstream tasks. The hidden/latent variables normally has much lower dimension compared with the data itself, and they represent low-dimensional message that conveys condensed information regarding the corresponding data. If a model can fit the data well, meaning that the likelihood is high for the model to generate the training data by sampling $X$ conditioned on a sampling of $Z$, then one can argue that $Z$ should capture the essence of the data. It is interesting to note how the above two points echo the previous discussion regarding the inter-connection between density estimation and Bayesian inference.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;In the Bayesian inference problem, as stated before, the task is to find the posterior distribution of the unobserved variable $Z$ given then observed variable $X$. Instead of tackling this problem head on by deriving $p(Z|X;\theta)=\frac{p(X|Z;\theta)p(Z;\theta)}{\int p(X|Z;\theta)p(Z;\theta)dZ}$, which is often intractable, let us introduce another distribution $q(Z)$ with the goal of mimicking $p(Z|X;\theta)$, and look at what the KL divergence between the two could decompose into:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+&amp;\text{KL}{\big(}q||p(Z|X;\theta){\big)}\\
+=&amp;\int q(Z) \ln \frac{q(Z)}{p(Z|X;\theta)}dZ\\
+=&amp;\int q(Z) \ln \frac{q(Z)}{P(Z|X;\theta)}\frac{p(X;\theta)}{p(X;\theta)}dZ\\
+=&amp;\int q(Z) \ln \frac{q(Z)p(X;\theta)}{P(Z,X;\theta)}dZ\\
+=&amp;\int q(Z) \ln p(X;\theta)dZ-\int q(Z) \ln \frac{P(Z,X;\theta)}{q(Z)}dZ\\
+=&amp;\ln p(X;\theta)-\int q(Z) \ln \frac{P(Z,X;\theta)}{q(Z)}dZ.
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;Making the short-hand notation of&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+\mathcal{L}(q,\theta)=\int q(Z) \ln \frac{P(Z,X;\theta)}{q(Z)}dZ,
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;we can simplify the above equation as&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+\ln p(X;\theta) = \text{KL}{\big(}q||p(Z|X;\theta){\big)} + \mathcal{L}(q,\theta).
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;It turns out, the above equation is the cornerstone for a broad range of variational methods. Let’s stare at it for a while, observe it from different angles, and learn to appreciate its elegancy.&lt;/p&gt;
+
+&lt;p&gt;We should first observe that the three terms have fixed polarity: KL divergence is always nonnegative, whereas the log-likelihood term on the LHS of the equation, as well as the expression $\mathcal{L}(q,\theta)$ is always non-positive. At first glance into the definition of $\mathcal{L}$, it may look like it can be written in the form of negative KL divergence. However, one should note that $P(Z,X;\theta)$ is not a proper probability on $Z$ as $\int p(X,Z;\theta)dZ = p(X;\theta)&amp;lt;1$.&lt;/p&gt;
+
+&lt;p&gt;Given that the KL divergence term is always nonnegative, $\mathcal{L}(q,\theta)$ yield a lower bound on the log-likelihood of the data. In precise term, we have $\ln p(X;\theta) \geq \mathcal{L}(q,\theta)$.&lt;/p&gt;
+
+&lt;p&gt;The term $\mathcal{L}(q,\theta)$ can be viewed as a functional that maps a probability distribution function into a value. 
+Since the analysis and optimization of functional falls into the realm of calculus of variations, the distribution function $q$ itself is often called the variational distribution, and the lower bound $\mathcal{L}(q,\theta)$ is referred to as the variational lower-bound.&lt;/p&gt;
+
+&lt;p&gt;It is important to realize that the above equation is another manifestation of the inter-connection between the data likelihood $p(X;\theta)$ and the posterior distribution of latent variable $p(Z|X;\theta)$, this time linked through the variational distribution function $q$. For a fixed parameter $\theta$, if we increase the variational lower bound $\mathcal{L}(q,\theta)$ by adjusting $q$, then the updated lower-bound is closer to the log-likelihood of the data. At the same time, since an increment in $\mathcal{L}(q,\theta)$ would infer a decrement of $\text{KL}(q||p(Z|X;\theta))$, we know that the updated variational distribution $q$ is closer to the true posterior distribution measured in KL divergence. To precisely capture these observations, we arrive at the following two equations&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\ln p(X;\theta) &amp;= \max_{q}\mathcal{L}(q,\theta)\\
+p(Z|X;\theta) &amp;= \arg\max_{q}\mathcal{L}(q,\theta).
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;Now we reached the core of variational inference: with an introduction of a variational distribution $q$, we can turn both the log-likelihood calculation (i.e., density estimation) problem and the Bayesian inference problem into an optimization problem, and attack it with different optimization algorithms. This inference-optimization duality provides a very powerful tool. It is the backbone of many of the variational inference related methods such as expectation-maximization, mean-field approximation, and variational auto-encoder, which we will discuss in details in the subsequent posts/subsections.&lt;/p&gt;
+
+&lt;p&gt;As an appendix, below we list two alternative proofs for the variational lower-bound.&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+&amp;\ln p(X;\theta)\\
+=&amp;\ln\frac{p(X,Z;\theta)}{p(Z|X;\theta)}\\
+=&amp;\int q(Z)\ln\frac{p(X,Z;\theta)}{p(Z|X;\theta)}dZ\\
+=&amp;\int q(Z)\ln\frac{p(X,Z;\theta) q(Z)}{p(Z|X;\theta) q(Z)}dZ\\
+=&amp;\int q(Z)\ln\frac{p(X,Z;\theta)}{q(Z)}dZ+\int q(Z)\ln\frac{q(Z)}{p(Z|X;\theta)}dZ.\\
+=&amp;\mathcal{L}(q,\theta) + \text{KL}{\big(}q||p(Z|X;\theta){\big)}.
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+&amp;\ln p(X;\theta)\\
+=&amp;\ln \int p(X,Z;\theta)dZ\\
+=&amp;\ln \int q(Z)\frac{p(X,Z;\theta)}{q(Z)}dZ \\
+\geq &amp; \int q(Z)\ln\frac{p(X,Z;\theta)}{q(Z)}dZ.
+\end{align*} %]]&gt;&lt;/script&gt;</content><author><name>Yang Yang</name></author><category term="variational inference" /><summary type="html">In machine learning, graphic models are often used to describe the factorization of probability distributions. The detailed form of the graphic model encodes one’s belief/hypothesis regarding the underlying hidden structure of the data. In this article, we confine the discussion to a general form of generative graphic model that we illustrate below.</summary></entry></feed>
