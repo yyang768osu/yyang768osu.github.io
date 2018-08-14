@@ -37,7 +37,7 @@
 
 
 
-  <meta property="og:description" content="We have learned that E-M algorithm tries to find a ML or MAP solution to the parameters of a generative model. It is build on top of two major premises:">
+  <meta property="og:description" content="We have learned in the previous post that E-M algorithm tries to find a ML or MAP solution to the parameters of a generative model. It is build on top of two major premises:">
 
 
 
@@ -237,7 +237,7 @@
 
   <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
     <meta itemprop="headline" content="A step-by-step guide to variational inference (3): mean field approximation">
-    <meta itemprop="description" content="We have learned that E-M algorithm tries to find a ML or MAP solution to the parameters of a generative model. It is build on top of two major premises:">
+    <meta itemprop="description" content="We have learned in the previous post that E-M algorithm tries to find a ML or MAP solution to the parameters of a generative model. It is build on top of two major premises:">
     <meta itemprop="datePublished" content="August 05, 2018">
     
 
@@ -268,16 +268,18 @@
       
 
       <section class="page__content" itemprop="text">
-        <p>We have learned that E-M algorithm tries to find a ML or MAP solution to the parameters of a generative model. It is build on top of two major premises:</p>
+        <p>We have learned in the previous post that E-M algorithm tries to find a ML or MAP solution to the parameters of a generative model. It is build on top of two major premises:</p>
 
 <ol>
   <li>$\ln p(X,Z;\theta)$ is in a much simpler form than $\ln P(X;\theta)$,</li>
   <li>$\ln p(Z|X;\theta)$ is easy to obtain.</li>
 </ol>
 
-<p>While the first one is often true in that both $p(X|Z;\theta)$ and $p(Z;\theta)$ given as part of the model and are usually designed to be simple, the second one is a very strong assumption and does not hold in most cases. In what follows, we modify notation slightly by assuming that there is prior distribution on any parameters of interest, and conceptually merge $\theta$ as part of the latent variable $Z$ that are common across different data samples and remove $\theta$ from the notation.</p>
+<p>While the first one is often true in that both $p(X|Z;\theta)$ and $p(Z;\theta)$ given as part of the model and are usually designed to be simple, the second one is a very strong assumption and does not hold in most cases. In this post, we remove the second premise, and introduce a way to obtain an approximation of $p(Z|X;\theta)$.</p>
 
-<p>As we discussed in the previous post/section, the Bayesian inference problem is to find the posterior probability $p(Z|X)$, which is in general very hard due to the integral/summation (in most cases multi-dimensional integral/summation) in the denominator below</p>
+<p>In what follows, we modify notation slightly by assuming that there is prior distribution on any parameters of interest, and conceptually merge $\theta$ as part of the latent variable $Z$ (which is common across different data samples) and remove $\theta$ from the notation.</p>
+
+<p>As we discussed in the previous posts, the Bayesian inference problem is to find the posterior probability $p(Z|X)$, which is in general very hard due to the integral/summation (in most cases multi-dimensional integral/summation) in the denominator below</p>
 
 <script type="math/tex; mode=display">\begin{align*}
 p(Z|X) = \frac{p(X|Z)p(Z)}{\int p(X|Z)p(Z) dZ}.
@@ -290,7 +292,7 @@ p(Z|X) = \frac{p(X|Z)p(Z)}{\int p(X|Z)p(Z) dZ}.
 p(Z|X) &= \arg\max_{q}\mathcal{L}(q).
 \end{align*} %]]></script>
 
-<p>However, this optimization problem above is still very hard and it does not lend itself to any easy solution. Here, the objective $\mathcal{L}(q)$, called the variational lower-bound, is a functional as it maps a function into a scalar value, and the domain is the space of all functions.</p>
+<p>However, this optimization problem above is still very hard and it does not lend itself to any easy solution. Here, the objective $\mathcal{L}(q)$, called the variational lower-bound, is a functional as it maps a function into a scalar value, whose domain is the space of all functions.</p>
 
 <p>Since it is hard to optimize the variational lower bound as is, one may wonder, how about constraining the search space of $q$ from all potential functions to within a limited function space? Could that make the problem simpler? Even though we may not find the optimal solution after restricting the set of functions we could search from, the hope is that by doing so we can device practical algorithms with solutions that are reasonably close to the true posterior. This is exactly the idea behind mean field approximation.</p>
 
@@ -306,7 +308,7 @@ q^* = \underset{q=q_1 q_2 \ldots q_K}{\arg\max}\mathcal{L}(q)
 \ln p(X) = \text{KL}(q || p(Z|X)) + \mathcal{L}(q),
 \end{align*}</script>
 
-<p>we know that by maximizing $\mathcal{L}(q)$ with respect to functions with form $q(Z)=\prod_{k=1}^K q_k(Z_k)$, we are try to find one function in the confined function space (defined as the set of functions that can be factorized as such) that is closest to the true posterior $ p(Z|X)$ measured with KL divergence. It is worth emphasizing that we are merely constraining $q(Z)$ to have this factorization form, and do not make any assumption on what each individual factor would look like.</p>
+<p>we know that by maximizing $\mathcal{L}(q)$ with respect to functions with form $q(Z)=\prod_{k=1}^K q_k(Z_k)$, we are trying to find one function in the confined function space (defined as the set of functions that can be factorized as such) that is closest to the true posterior $ p(Z|X)$ measured in KL divergence. It is worth emphasizing that we are merely constraining $q(Z)$ to have this factorization form, and do not make any assumption on what each individual factor would look like.</p>
 
 <p>Let us plug in the factorized form of $q(Z) = \prod_{k=1}^K q_k(Z_k)$ in the expression of the variational lower bound, yielding</p>
 
@@ -345,9 +347,9 @@ q_j(Z_j)  = \frac{\exp\left( \mathbb{E}_{q_k, k\not=j}[\ln p(X,Z)]\right)}{\int 
 
 <p>It is interesting to note that, to apply this mean-field-approximation method, one only need to make the assumption on how to partition the latent variable dimensions into disjoint groups, one for each factor, without making any assumption on the detailed function form of any factor. The detail form of the factorized distribution would be obtained as a result of the iterative procedure.</p>
 
-<p>There is one caveat that we should mention. Looking at the equation above, to find the optimal factor $q_j$, assuming all the other are know, we still need to make sure that the expectation $\mathbb{E}_{q_k, k\not=j}[\ln p(X,Z)]$ results in tractable form. Given that the expectation itself is a multi-dimensional integral/summation, in general it is hard to guarantee a closed form expression. The expectation is tractable with specific models and specific ways on which the latent variables are partitioned, which limits the cases where mean-field-approximation could be applied.</p>
+<p>There is one caveat that we should mention. Looking at the equation above, to find the optimal factor $q_j$, assuming all the other are know, we still need to make sure that the expectation $\mathbb{E}_{q_k, k\not=j}[\ln p(X,Z)]$ results in tractable form. Given that the expectation itself is a multi-dimensional integral/summation, in general it is hard to guarantee a closed form expression. The expectation may be tractable with specific models and specific ways on which the latent variables are partitioned, which limits the domain where mean-field-approximation could be applied.</p>
 
-<p>Here we introduced mean field approximation from the perspective of Bayesian inference. As a final remark, it is straightforward to show that it also provide a way to evaluate observed data likelihood and thus can be useful with model-selection as well. According to the identity involving the variational lower bound, we know that as we maximize $\mathcal{L}$, not only do we obtain a variational distribution that is close to the true posterior in the KL divergence sense, we also obtained a surrogate for the log-likelihood, as the lower bound $\mathcal{L}$ is a lower bound which gets tighter as it becomes larger.</p>
+<p>Here we introduced mean field approximation from the perspective of Bayesian inference. As a final remark, it is straightforward to show that it also provide a way to evaluate observed data likelihood and thus can be useful with model-selection as well. According to the identity below, we know that as we maximize $\mathcal{L}$, not only do we obtain a variational distribution that is close to the true posterior in the KL divergence sense, we also obtained a surrogate for the log-likelihood, as the lower bound $\mathcal{L}$ is a lower bound which gets tighter as it becomes larger.</p>
 
 <script type="math/tex; mode=display">\begin{align*}
 \ln p(X) = \text{KL}(q || p(Z|X)) + \mathcal{L}(q),
