@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="https://yyang768osu.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://yyang768osu.github.io/" rel="alternate" type="text/html" /><updated>2018-08-20T23:28:11-07:00</updated><id>https://yyang768osu.github.io/</id><title type="html">Yang Yang</title><subtitle>Engineer at Qualcomm</subtitle><author><name>Yang Yang</name></author><entry><title type="html">An introduction to Kalman filter and particle filter</title><link href="https://yyang768osu.github.io/posts/2012/08/kalman_filter_particle_filter/" rel="alternate" type="text/html" title="An introduction to Kalman filter and particle filter" /><published>2018-08-20T00:00:00-07:00</published><updated>2018-08-20T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2012/08/kalman-filter-and-particle-filter</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2012/08/kalman_filter_particle_filter/">&lt;p&gt;Kalman filter and particle filter are concepts that are intimidating for new learners due to its involved mathmatical discription, and are straightforward once you grasp the main idea and get used to Gaussian distributions. The goal of this post is to take a journey to Kalman filter by dissecting its idea and operation into pieces that are easy to absorb, and then assemble them together to give the whole picture. In the last step, we will see that particle filter achieves the same goal for non-Gaussian system resorting to Monte Carlo sampling.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="https://yyang768osu.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://yyang768osu.github.io/" rel="alternate" type="text/html" /><updated>2018-08-27T23:42:01-07:00</updated><id>https://yyang768osu.github.io/</id><title type="html">Yang Yang</title><subtitle>Engineer at Qualcomm</subtitle><author><name>Yang Yang</name></author><entry><title type="html">An introduction to Kalman filter and particle filter</title><link href="https://yyang768osu.github.io/posts/2012/08/kalman_filter_particle_filter/" rel="alternate" type="text/html" title="An introduction to Kalman filter and particle filter" /><published>2018-08-20T00:00:00-07:00</published><updated>2018-08-20T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2012/08/kalman-filter-and-particle-filter</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2012/08/kalman_filter_particle_filter/">&lt;p&gt;Kalman filter and particle filter are concepts that are intimidating for new learners due to its involved mathmatical discription, and are straightforward once you grasp the main idea and get used to Gaussian distributions. The goal of this post is to take a journey to Kalman filter by dissecting its idea and operation into pieces that are easy to absorb, and then assemble them together to give the whole picture. As a last step, we will see that particle filter achieves the same goal for non-Gaussian system resorting to Monte Carlo sampling.&lt;/p&gt;
 
 &lt;p&gt;Below let’s walk through three simple problems and their solutions stemming from Gaussian distributions, and then stitching them together to form the problem that Kalman filter tries to solve and present its solution.&lt;/p&gt;
 
@@ -62,27 +62,27 @@ x-\mu_x
 \right]\notag.
 \end{align*} %]]&gt;&lt;/script&gt;
 
-&lt;p&gt;The off-diagonal term represents the cross covariance between the two random variables $x$ and $z$, which, by checking the definition above, satisfies $\Sigma_{xz}=\Sigma^T_{zx}$. The larger the cross covariance, the more correlated the two random variables are. For correlated random variables, knowing the value of one would help us in guessing the value of the other. Let us take a look at the figure below for a concrete example&lt;/p&gt;
+&lt;p&gt;The off-diagonal term represents the cross covariance between the two random variables $x$ and $z$, which, by checking the definition above, satisfies $\Sigma_{xz}=\Sigma^T_{zx}$. The larger the cross covariance, the more correlated the two random variables are. For correlated random variables, knowing the value of one would help us in guessing the value of the other. Let us take a look at the figure below for a concrete example.&lt;/p&gt;
 
 &lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/bivariant_normal.png&quot; alt=&quot;Bivariant Gaussian&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;The figure above illustrates the joint distribution of a bivariant Gaussian distribution with $\mu_z=\mu_x=0$, $\Sigma_z=\Sigma_x=1$, and $\Sigma_{zx}=\Sigma_{xz}=0.8$. The marginal distributions of both $x$ and $z$ are $\mathcal{N}(0,1)$. The contour of the distribution forms a thin ellipse, reflecting the strong covariance $\Sigma_{zx}=\Sigma_{xz}=0.8$ between the two random variables $x$ and $z$. To testify the claim that knowing one variable would help us estimating the other,  let us take a look at the the conditional distribution of $z$ given $x=1$, and compare it with the marginal distribution of $z$. As can be seen from the figure above, the distribution of $z|x=1$ has much narrow span than $z$ with a shift in the mean. The reduction of variance of $z$ after observing $x=1$ is an evident that the observation of $x$ narrows down the potential values of $z$.&lt;/p&gt;
 
-&lt;p&gt;An important fact here is that the conditional distribution of a joint-Gaussian distribution is also a Gaussian&lt;/p&gt;
+&lt;p&gt;An important fact here is that the conditional distribution of a joint-Gaussian distribution is also Gaussian&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
 p(z|x) = p(x,z)/p(x)\sim\mathcal{N}\left(\mu_{z|x}, \Sigma_{z|x}\right)\notag.
 \end{align*}&lt;/script&gt;
 
-&lt;p&gt;Below are two identities on the general expressions of the conditional distribution, let’s accept them as they are without bothering with any proof.&lt;/p&gt;
+&lt;p&gt;Below are two identities on the general expressions of the conditional distribution, here let us accept them as they are without bothering with any proof.&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{align*}
-\mu_{z|x} &amp;= \mu_z + \Sigma_{zx}\Sigma_{xx}^{-1}(x-\mu_x)\notag\\
-\Sigma_{z|x} &amp;= \Sigma_{z} - \Sigma_{zx}\Sigma_x^{-1}\Sigma_{xz}\notag
+\mu_{z|x} &amp;= \mu_z + \Sigma_{zx}\Sigma_{xx}^{-1}(x-\mu_x)\notag\\ 
+\Sigma_{z|x} &amp;= \Sigma_{z} - \Sigma_{zx}\Sigma_x^{-1}\Sigma_{xz} \text{ } \left(\preccurlyeq \Sigma_{z}\right)  \notag
 \end{align*} %]]&gt;&lt;/script&gt;
 
-&lt;p&gt;The above two equations are very important, and lies in the core of many concepts such as MMSE estimator, Wiener filter and of course, Kalman filter. To see that knowing $x$ would reduce the uncertainty in $z$, here let’s just point out that the entropy (measure of uncertainty) of a Gaussian random vector is an increasing function of the determinant of the covariance-matrix, and that $\Sigma_{z|x}$ always has a smaller determinant than $\Sigma_z$ for any non-zero cross covariance $\Sigma_{zx}$, followed from the second equation with the fact that $\Sigma_{z}-\Sigma_{z|x}$ $=\Sigma_{zx}\Sigma_x^{-1}\Sigma_{xz}\succcurlyeq 0$ is a semi-positive-definite matrix.&lt;/p&gt;
+&lt;p&gt;The above two equations are very important, and lies in the core of many concepts such as MMSE estimator, Wiener filter and of course, Kalman filter. To see that knowing $x$ would reduce the uncertainty in $z$, here let’s just point out that the entropy (measure of uncertainty) of a Gaussian random vector is an increasing function of the determinant of the covariance-matrix, and that $\Sigma_{z|x}$ always &lt;a href=&quot;https://math.stackexchange.com/questions/466158/on-the-difference-of-two-positive-semi-definite-matrices&quot;&gt;has a smaller determinant&lt;/a&gt; than $\Sigma_z$ for any non-zero cross covariance $\Sigma_{zx}$, followed from the second equation with the fact that $\Sigma_{z}-\Sigma_{z|x}$ $=\Sigma_{zx}\Sigma_x^{-1}\Sigma_{xz}\succcurlyeq 0$ is a semi-positive-definite matrix.&lt;/p&gt;
 
 &lt;p&gt;These two equations will become useful when we visit part C, and we will come back to them.&lt;/p&gt;
 
@@ -96,7 +96,7 @@ z_{n-1}&amp;\sim\mathbb{N}(\mu_{n-1}, V_{n-1})\notag\\
 z_n |z_{n-1}&amp;\sim A z_{n-1}+a+\mathcal{N}(0,\Gamma)= \mathbb{N}(Az_{n-1}+a, \Gamma)\notag
 \end{align*} %]]&gt;&lt;/script&gt;
 
-&lt;p&gt;One typical example for the above problem setup is the following: consider the problem of tracking the location and velocity of an object traveling in a strict line. Let us label $z_n=[\text{loc}_n, \text{vel}_n]^T$ as the location-velocity state of the object in time-step $n$. To model the estimation inaccuracy, assume that $z_n$ is a random variable with mean $\mu_{n-1}$ and variance $V_{n-1}$. Here the mean value reflect the estimated value and the variance can be viewed as capturing the amount/structure of the uncertainty in the estimate. The location-velocity estimate in the time-step $n+1$ can be modeled by&lt;/p&gt;
+&lt;p&gt;One typical example for the above problem setup is the following: consider the problem of tracking the location and velocity of an object traveling in a strict line. Let us label $z_n=[\text{loc}_n, \text{vel}_n]^T$ as the location-velocity state of the object in time-step $n$. To model the estimation inaccuracy, assume that $z_n$ is a random variable with mean $\mu_{n-1}$ and variance $V_{n-1}$. Here the mean value reflect the estimated value and the variance can be viewed as capturing the amount of and the structure of the uncertainty in the estimate. The location-velocity estimate in the time-step $n$ can be modeled by&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{align*}
@@ -146,40 +146,53 @@ a_\text{vel}\notag
 }
 \end{align*} %]]&gt;&lt;/script&gt;
 
-&lt;p&gt;with a one-to-one correspondence to the conditional probability restated below&lt;/p&gt;
+&lt;p&gt;with a one-to-one correspondence to the conditional probability $z_n|z_{n-1}$ restated above.&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-\begin{align*}
-z_n |z_{n-1}&amp;\sim A z_{n-1}+a+\mathcal{N}(0,\Gamma)= \mathbb{N}(Az_{n-1}+a, \Gamma).\notag
-\end{align*} %]]&gt;&lt;/script&gt;
-
-&lt;p&gt;The problem of interest here is to characterize the distribution of $z_n$, given that it is obtained from a linear transformation of a previous estimate with an additional Gaussian noise. Precisely, what we want to solve is&lt;/p&gt;
+&lt;p&gt;The problem of interest here is to characterize the distribution of $z_n$, given that it is obtained from a linear transformation of a previous estimate with additional Gaussian noise. Precisely, what we want to solve is&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{align*}
 p(z_n) =&amp; \int p(z_{n}|z_{n-1})p(z_{n-1})dz_{n-1}\notag.
 \end{align*} %]]&gt;&lt;/script&gt;
 
-&lt;p&gt;Here it comes another important property of Gaussian distribution: any linear transformation of Gaussian variable is still Gaussian. With this property given to us, we can calculate the mean and variance of the updated state $z_n$, as shown below, which fully captures its distribution.&lt;/p&gt;
+&lt;p&gt;Here is another important property of Gaussian distribution: any linear transformation of Gaussian variable is still Gaussian. With this property given, we can calculate the mean and variance of the updated state $z_n$, as shown below, which fully captures its distribution.&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{align*}
 \mu_{z_n} =&amp;\mathbb{E}[Az_{n-1}+a]= A\mu_{n-1}+a\notag\\
 \Sigma_{z_n} =&amp;\mathbb{E}[(Az_{n-1}-A\mu_{n-1})(Az_{n-1}-A\mu_{n-1})^T]+\Gamma\notag\\
-=&amp; AV_{n-1}A^T + \Gamma\notag
+=&amp; AV_{n-1}A^T + \Gamma\notag,
 \end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;which leads to the following solution&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+z_n \sim \mathcal{N}\left(A\mu_{n-1}+a, AV_{n-1}A^T + \Gamma\right).
+\end{align*}&lt;/script&gt;
 
 &lt;h2 id=&quot;c-bayes-theorem-for-gaussian&quot;&gt;C. Bayes’ theorem for Gaussian&lt;/h2&gt;
 
+&lt;p&gt;In part A, we provide the equation for calculating the conditional distribution from a joint Gaussian distribution, i.e., for a given joint-Gaussian probability $p(x,z)$, the conditional distribution of $p(z|x)$ is also Gaussian and it can be expressed in closed-form.&lt;/p&gt;
+
+&lt;p&gt;In this part, we consider a slightly more complex problem, whereby we are given Gaussian distributions $p(x|z)$ and $p(z)$,&lt;/p&gt;
+
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{align*}
-z&amp;\sim \mathcal{N}(\nu, P)\notag\\
-x|z&amp;\sim \mathcal{N}(Cz+c,\Sigma) = Cz+c+\mathcal{N}(0, \Pi)\notag
+z&amp;\sim \mathcal{N}(\nu, P),\notag\\
+x|z&amp;\sim \mathcal{N}(Cz+c,\Sigma) = Cz+c+\mathcal{N}(0, \Pi),\notag
 \end{align*} %]]&gt;&lt;/script&gt;
 
+&lt;p&gt;and the problem is find the posterior distribution $p(z|x)$, which can be expressed using $p(x|z)$ and $p(z)$ by Bayes’ rule:&lt;/p&gt;
+
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
-p(z|x) = \frac{p(z)p(x|z)}{p(x)}  \propto p(z)p(x|z) \notag
+p(z|x) = \frac{p(z)p(x|z)}{p(x)}  \propto p(z)p(x|z).\notag
 \end{align*}&lt;/script&gt;
+
+&lt;p&gt;Here’s a typical application for this problem: let us consider the task of estimating the temperature and humidity of a room (denoted as vector $z$). We are given two sources of information: (1) prior knowledge on the distribution from history data and, e.g., $p(z)$ (2) the reading from a thermometer with some known accuracy $p(x|z)$. Intuitively, a good estimate should be obtained by fusing these two informations. Indeed, this is evident from the Bayes’ rule, where the posterior probability of $z$ given $x$ is proportional to the product of the two distributions $p(z)p(x|z)$.&lt;/p&gt;
+
+&lt;p&gt;Since part A taught us how to obtain a conditional distribution from a joint distribution. We can solve this problem by obtaining the joint distribution $p(z,x)=p(z)p(x|z)$ first and then plugin the solution presented in part A.&lt;/p&gt;
+
+&lt;p&gt;For Gaussian, the multivariant joint distribution is fully captured by the marginalized mean/variance together with the cross-variance among all factors, which, in our case, can be expressed as&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{align*}
@@ -187,6 +200,8 @@ p(z|x) = \frac{p(z)p(x|z)}{p(x)}  \propto p(z)p(x|z) \notag
 \Sigma_{x} &amp;= \mathbb{E}[xx^T] = \mathbb{E}[(Cz-C\nu)(Cz-C\nu)^T]+\Sigma=C P C^T + \Pi\notag\\
 \Sigma_{zx} &amp;= \mathbb{E}[z(Cz-C\mu)^T]=P C^T  \notag
 \end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;Accordingly, the joint distribution of $z$ and $x$ can be written as&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{align*}
@@ -209,8 +224,10 @@ C\nu+c
 P &amp;P C^T \\
 CP &amp; C P C^T + \Pi
 \end{array}\right]
-\right)\notag
+\right)\notag.
 \end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;Now, by plugging in the solution in part A, we can obtain below the expression of the mean and variance of the posterior probability $p(z|x)$.&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{align*}
@@ -218,22 +235,41 @@ CP &amp; C P C^T + \Pi
 \Sigma_{z|x} &amp;= P - PC^T (CPC^T+\Pi)^{-1}CP\notag 
 \end{align*} %]]&gt;&lt;/script&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
-K\triangleq PC^T(CPC^T+\Pi)^{-1}\notag
-\end{align*}&lt;/script&gt;
+&lt;p&gt;To simplify the expression as well as to gain some insights into the expression, it is necessary to group some of the terms in $K$ below and substitute the corresponding terms.&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
-\mu_{z|x} = \nu + K(x-C\nu-c)\notag\\
-\Sigma_{z|x} = (I-KC)P\notag
+K\triangleq PC^T(CPC^T+\Pi)^{-1},\notag
 \end{align*}&lt;/script&gt;
+
+&lt;p&gt;resulting in the rewritten form below:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\mu_{z|x} &amp;= {\color{red}\nu} + K(x-C\nu-c)\notag\\
+\Sigma_{z|x} &amp;= {\color{red}P}-KCP =(I-KC)P.\notag
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;It is interesting to observe that the highlighted term in the expression above is the mean and the variance of the prior distribution $p(z)$ without taking $p(x|z)$ into account. The effect of the $p(x|z)$ can be thought of as a correction to the prior distribution: the mean is shifted by $K(x-Cv-c)$ and the covariance matrix is reduced by $KCP$ (or shrunk by $(I-KC)$), leading to a refined posterior distribution $p(z|x)$. Here $K$ can be considered as a &lt;em&gt;gain&lt;/em&gt; factor, as it shifts the mean towards that dictated by $x$ and it shrinks the covariance matrix, leading to a more concentrated distributed with less amount of uncertainty.&lt;/p&gt;
+
+&lt;p&gt;Next we will see that Kalman filter is just a repeated (or sequential) application of this Bayes’ rule on Gaussian distribution.&lt;/p&gt;
 
 &lt;h2 id=&quot;kalman-filter&quot;&gt;Kalman filter&lt;/h2&gt;
+
+&lt;p&gt;It’s time assemble what we learnt from the previous parts. Let’s consider following an evolving system, where the system state $z_n$ follows linear evolving over time, whose true value is hidden from us. Every time instance, we obtain a noisy observation $x_n$ of the system state. The noisy observation $x_n$ may not be directly the state itself, but is in general an linear function of the state of interest, with added Gaussian noise. The task is to keep updating the belief on the system state, based on all the noisy observations, and the knowledge on the system evolution itself. In the degenerated case where the system does not evolve, then the problem amount to the sequential application of Bayes’ rule on the same hidden variable to fuse all the instances of noisy observations.&lt;/p&gt;
+
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/linear_dynamic_system.png&quot; alt=&quot;Bivariant Gaussian&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;To devise a sequence update rule on the brief of the system state based on all observations $p(z_n| x_1^n)$, let us look at the atomic case when $p(z_{n-1}|x_1^{n-1})$ — the prior belief of the previous state, and $p(x_n|z_n)$ — the noisy observation based on the current state, are given, and the task is to find $p(z_n|x_1^{n})$ — the posterior belief of the current state.&lt;/p&gt;
+
+&lt;p&gt;Here we assume that the noisy observations $x$ are independent given the underlying system state $z$ (this assumption is actually encoded in the graphic model above), then $p(z_{n-1}|x_1^{n-1})$  captures all the information regarding $x_1^{n-1}$, and we can simply drop them from the expression.&lt;/p&gt;
+
+&lt;p&gt;Then the problem simplifies to the following:&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{align*}
 z_{n-1}&amp;\sim\mathcal{N}(\mu_{n-1}, V_{n-1})\notag\\
 z_n|z_{n-1} &amp;\sim \mathcal{N}(Az_{n-1}+a, \Gamma)= \mathcal{N}(A\mu_{n-1}+a,AV_{n-1}A^T + \Gamma)\notag\\
-&amp;\sim \mathcal{N}(\nu_{n-1}, P_{n-1})\notag
+z_n&amp;\sim \mathcal{N}(\nu_{n-1}, P_{n-1})\notag
 \end{align*} %]]&gt;&lt;/script&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
@@ -266,7 +302,7 @@ p(z_{n+1}|x_1^n) =&amp; \int p(z_n| x_1^n) p(z_{n+1}|z_n) dz_n\notag\\
 =&amp;\int \notag p(z_n| x_1^{n-1}) \frac{p(z_n| x_1^n)}{p(z_n| x_1^{n-1})}  p(z_{n+1}|z_n) dz_n\notag\\
 =&amp;\int \notag p(z_n| x_1^{n-1}) \frac{p(z_n| x_1^n)}{p(z_n| x_1^{n-1})}  p(z_{n+1}|z_n) dz_n\notag\\
 =&amp;\sum_{\substack{s=1\\ z_n^{(s)}\sim p(z_n|x_{1}^{n-1})}}^S \frac{p(x_n|z_n^{(s)})}{\sum_{l=1}^S p(x_n|z_n^{(l)})}p(z_{n+1}|z_n^{(s)})\notag
-\end{align*} %]]&gt;&lt;/script&gt;</content><author><name>Yang Yang</name></author><category term="kalman filter" /><summary type="html">Kalman filter and particle filter are concepts that are intimidating for new learners due to its involved mathmatical discription, and are straightforward once you grasp the main idea and get used to Gaussian distributions. The goal of this post is to take a journey to Kalman filter by dissecting its idea and operation into pieces that are easy to absorb, and then assemble them together to give the whole picture. In the last step, we will see that particle filter achieves the same goal for non-Gaussian system resorting to Monte Carlo sampling.</summary></entry><entry><title type="html">Griffin-Lim algorithm for waveform reconstruction</title><link href="https://yyang768osu.github.io/posts/2012/08/griffin-lim/" rel="alternate" type="text/html" title="Griffin-Lim algorithm for waveform reconstruction" /><published>2018-08-12T00:00:00-07:00</published><updated>2018-08-12T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2012/08/griffin-lim-algorithm-for-waveform-reconstruction</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2012/08/griffin-lim/">&lt;p&gt;The problem that Griffin-Lim algorithm tries to solve is the following. We are given some modified short-time-fourier transform (STFT) or modified spectrogram (only magnitude, no phase information). The STFT/Spectrogram is called ``modified’’ to stress the fact that it in general does not corresponds to any valid time-domain signal: it may be obtained by modifying a STFT/Spectrogram from some real signal, or they may simply be generated by a neural network. The task here is to synthesis a time-domain signal from this target STFT/Spectrogram, such that the STFT/Spectrogram of the synthesized signal is as close to the target as possible.&lt;/p&gt;
+\end{align*} %]]&gt;&lt;/script&gt;</content><author><name>Yang Yang</name></author><category term="kalman filter" /><summary type="html">Kalman filter and particle filter are concepts that are intimidating for new learners due to its involved mathmatical discription, and are straightforward once you grasp the main idea and get used to Gaussian distributions. The goal of this post is to take a journey to Kalman filter by dissecting its idea and operation into pieces that are easy to absorb, and then assemble them together to give the whole picture. As a last step, we will see that particle filter achieves the same goal for non-Gaussian system resorting to Monte Carlo sampling.</summary></entry><entry><title type="html">Griffin-Lim algorithm for waveform reconstruction</title><link href="https://yyang768osu.github.io/posts/2012/08/griffin-lim/" rel="alternate" type="text/html" title="Griffin-Lim algorithm for waveform reconstruction" /><published>2018-08-12T00:00:00-07:00</published><updated>2018-08-12T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2012/08/griffin-lim-algorithm-for-waveform-reconstruction</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2012/08/griffin-lim/">&lt;p&gt;The problem that Griffin-Lim algorithm tries to solve is the following. We are given some modified short-time-fourier transform (STFT) or modified spectrogram (only magnitude, no phase information). The STFT/Spectrogram is called ``modified’’ to stress the fact that it in general does not corresponds to any valid time-domain signal: it may be obtained by modifying a STFT/Spectrogram from some real signal, or they may simply be generated by a neural network. The task here is to synthesis a time-domain signal from this target STFT/Spectrogram, such that the STFT/Spectrogram of the synthesized signal is as close to the target as possible.&lt;/p&gt;
 
 &lt;p&gt;Let us denote the target STFT as $Y_w[mS,k]$, where $m$ is the index of the time-window, and $k$ represents the frequency axis. Here $S$ denote the step size of the time-domain window, and $mS$ can be viewed as the center of the sliding time windows. Correspondingly, if we are talking about spectrogram, then the target can be denoted as  $|Y_w(mS,\omega)|$, to emphasis that there is no phase information.&lt;/p&gt;
 
