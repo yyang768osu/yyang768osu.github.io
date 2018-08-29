@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="https://yyang768osu.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://yyang768osu.github.io/" rel="alternate" type="text/html" /><updated>2018-08-27T23:42:01-07:00</updated><id>https://yyang768osu.github.io/</id><title type="html">Yang Yang</title><subtitle>Engineer at Qualcomm</subtitle><author><name>Yang Yang</name></author><entry><title type="html">An introduction to Kalman filter and particle filter</title><link href="https://yyang768osu.github.io/posts/2012/08/kalman_filter_particle_filter/" rel="alternate" type="text/html" title="An introduction to Kalman filter and particle filter" /><published>2018-08-20T00:00:00-07:00</published><updated>2018-08-20T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2012/08/kalman-filter-and-particle-filter</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2012/08/kalman_filter_particle_filter/">&lt;p&gt;Kalman filter and particle filter are concepts that are intimidating for new learners due to its involved mathmatical discription, and are straightforward once you grasp the main idea and get used to Gaussian distributions. The goal of this post is to take a journey to Kalman filter by dissecting its idea and operation into pieces that are easy to absorb, and then assemble them together to give the whole picture. As a last step, we will see that particle filter achieves the same goal for non-Gaussian system resorting to Monte Carlo sampling.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="https://yyang768osu.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://yyang768osu.github.io/" rel="alternate" type="text/html" /><updated>2018-08-28T23:32:12-07:00</updated><id>https://yyang768osu.github.io/</id><title type="html">Yang Yang</title><subtitle>Engineer at Qualcomm</subtitle><author><name>Yang Yang</name></author><entry><title type="html">An introduction to Kalman filter and particle filter</title><link href="https://yyang768osu.github.io/posts/2012/08/kalman_filter_particle_filter/" rel="alternate" type="text/html" title="An introduction to Kalman filter and particle filter" /><published>2018-08-20T00:00:00-07:00</published><updated>2018-08-20T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2012/08/kalman-filter-and-particle-filter</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2012/08/kalman_filter_particle_filter/">&lt;p&gt;Kalman filter and particle filter are concepts that are intimidating for new learners due to its involved mathmatical discription, and are straightforward once you grasp the main idea and get used to Gaussian distributions. The goal of this post is to take a journey to Kalman filter by dissecting its idea and operation into pieces that are easy to absorb, and then assemble them together to give the whole picture. As a last step, we will see that particle filter achieves the same goal for non-Gaussian system resorting to Monte Carlo sampling.&lt;/p&gt;
 
 &lt;p&gt;Below let’s walk through three simple problems and their solutions stemming from Gaussian distributions, and then stitching them together to form the problem that Kalman filter tries to solve and present its solution.&lt;/p&gt;
 
@@ -179,7 +179,7 @@ z_n \sim \mathcal{N}\left(A\mu_{n-1}+a, AV_{n-1}A^T + \Gamma\right).
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{align*}
 z&amp;\sim \mathcal{N}(\nu, P),\notag\\
-x|z&amp;\sim \mathcal{N}(Cz+c,\Sigma) = Cz+c+\mathcal{N}(0, \Pi),\notag
+x|z&amp;\sim \mathcal{N}(Cz+c,\Pi) = Cz+c+\mathcal{N}(0, \Pi),\notag
 \end{align*} %]]&gt;&lt;/script&gt;
 
 &lt;p&gt;and the problem is find the posterior distribution $p(z|x)$, which can be expressed using $p(x|z)$ and $p(z)$ by Bayes’ rule:&lt;/p&gt;
@@ -192,7 +192,7 @@ p(z|x) = \frac{p(z)p(x|z)}{p(x)}  \propto p(z)p(x|z).\notag
 
 &lt;p&gt;Since part A taught us how to obtain a conditional distribution from a joint distribution. We can solve this problem by obtaining the joint distribution $p(z,x)=p(z)p(x|z)$ first and then plugin the solution presented in part A.&lt;/p&gt;
 
-&lt;p&gt;For Gaussian, the multivariant joint distribution is fully captured by the marginalized mean/variance together with the cross-variance among all factors, which, in our case, can be expressed as&lt;/p&gt;
+&lt;p&gt;For Gaussian, the multi-variant joint distribution is fully captured by the marginalized mean/variance together with the cross-variance among all factors, which, in our case, can be expressed as&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{align*}
@@ -255,40 +255,81 @@ K\triangleq PC^T(CPC^T+\Pi)^{-1},\notag
 
 &lt;h2 id=&quot;kalman-filter&quot;&gt;Kalman filter&lt;/h2&gt;
 
-&lt;p&gt;It’s time assemble what we learnt from the previous parts. Let’s consider following an evolving system, where the system state $z_n$ follows linear evolving over time, whose true value is hidden from us. Every time instance, we obtain a noisy observation $x_n$ of the system state. The noisy observation $x_n$ may not be directly the state itself, but is in general an linear function of the state of interest, with added Gaussian noise. The task is to keep updating the belief on the system state, based on all the noisy observations, and the knowledge on the system evolution itself. In the degenerated case where the system does not evolve, then the problem amount to the sequential application of Bayes’ rule on the same hidden variable to fuse all the instances of noisy observations.&lt;/p&gt;
+&lt;p&gt;It’s time to assemble what we learnt from the previous parts. Let’s consider following an evolving system, where the system state $z_n$ follows linear evolving over time, whose true value is hidden from us. Every time instance, we obtain a noisy observation $x_n$ of the system state. The noisy observation $x_n$ may not be directly the state itself, but is in general an linear function of the state of interest, with added Gaussian noise. The task is to keep updating the belief on the system state, based on all the noisy observations, and the knowledge on the system evolution itself. In the degenerated case where the system does not evolve, then the problem amount to the sequential application of Bayes’ rule on the same hidden variable to fuse all the instances of noisy observations.&lt;/p&gt;
 
 &lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/linear_dynamic_system.png&quot; alt=&quot;Bivariant Gaussian&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;To devise a sequence update rule on the brief of the system state based on all observations $p(z_n| x_1^n)$, let us look at the atomic case when $p(z_{n-1}|x_1^{n-1})$ — the prior belief of the previous state, and $p(x_n|z_n)$ — the noisy observation based on the current state, are given, and the task is to find $p(z_n|x_1^{n})$ — the posterior belief of the current state.&lt;/p&gt;
 
-&lt;p&gt;Here we assume that the noisy observations $x$ are independent given the underlying system state $z$ (this assumption is actually encoded in the graphic model above), then $p(z_{n-1}|x_1^{n-1})$  captures all the information regarding $x_1^{n-1}$, and we can simply drop them from the expression.&lt;/p&gt;
+&lt;p&gt;In other words, we want to find an iterative procedure that update the belief on the system state, based on linear system evolution and noisy state observation. Precisely, we need to solve the following problem&lt;/p&gt;
 
-&lt;p&gt;Then the problem simplifies to the following:&lt;/p&gt;
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+\underset{\substack{\\\mathcal{N}(\mu_{n-1}, V_{n-1})}}{p(z_{n-1}|x_1^{n-1})}
+\underset{\text{ }}{\xrightarrow{\substack{\text{system evolution }\\p(z_n|z_{n-1})}}}  
+\underset{\substack{\\\mathcal{N}(\nu_{n-1}, P_{n-1})}}{p(z_n|x_1^{n-1}) }
+\underset{\text{ }}{\xrightarrow{\substack{\text{noisy observation }\\p(x_n|z_{n})}}}  
+\underset{\substack{\\\mathcal{N}(\mu_{n}, V_{n})}}{p(z_{n}|x_1^{n})}
+\end{align*}&lt;/script&gt;
+
+&lt;!---
+Here we assume that the noisy observations $x$ are independent given the underlying system state $z$ (this assumption is actually encoded in the graphic model above), then $p(z_{n-1}\|x_1^{n-1})$  captures all the information regarding $x_1^{n-1}$, and we can simply drop them from the expression. 
+--&gt;
+
+&lt;p&gt;The decomposed two sub-problem above correspond to part B and part C respectively, for which we can get the following solution&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;$p(z_n|x_1^{n-1}) = \int p(z_n|z_{n-1}) p(z_{n-1}|x_1^{n-1})dz_{n-1}$&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{align*}
-z_{n-1}&amp;\sim\mathcal{N}(\mu_{n-1}, V_{n-1})\notag\\
-z_n|z_{n-1} &amp;\sim \mathcal{N}(Az_{n-1}+a, \Gamma)= \mathcal{N}(A\mu_{n-1}+a,AV_{n-1}A^T + \Gamma)\notag\\
-z_n&amp;\sim \mathcal{N}(\nu_{n-1}, P_{n-1})\notag
+\text{Input: }&amp;\notag\\
+z_{n-1}|x_1^{n-1}\sim&amp;\mathcal{N}(\mu_{n-1}, V_{n-1})\notag\\
+z_n|z_{n-1} \sim&amp; \mathcal{N}(Az_{n-1}+a, \Gamma)\notag
 \end{align*} %]]&gt;&lt;/script&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{align*}
-\nu_{n-1}\triangleq&amp;  A\mu_{n-1}+a\notag\\
-P_{n-1}\triangleq&amp; AV_{n-1}A^T+\Gamma\notag
+\text{Solution: }&amp;\notag\\
+z_n|x_1^{n-1}\sim&amp; \mathcal{N}(\nu_{n-1}, P_{n-1})\notag\\
+\nu_{n-1}=&amp;  A\mu_{n-1}+a\notag\\
+P_{n-1}=&amp; AV_{n-1}A^T+\Gamma\notag
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;$p(z_n|x_1^n)\propto p(x_n|z_n)p(z_n|x_1^{n-1})$&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\text{Input: }&amp;\notag\\
+z_n|x_1^{n-1}\sim&amp; \mathcal{N}(\nu_{n-1},P_{n-1})\notag\\
+x_n|z_n\sim&amp; \mathcal{N}(Cz_n+c,\Pi)\notag
 \end{align*} %]]&gt;&lt;/script&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{align*}
-\mu_{z_n|x_n} =&amp; \nu_{n-1} + K_n(x_n-C\nu_{n-1}-c)\notag\\
-\Sigma_{z_n|x_n} =&amp; (I-K_nC)P_{n-1}\notag
+\text{Solution: }&amp;\notag\\
+z_n|x_1^n \sim&amp;\mathcal{N}(\mu_n, V_n)\notag\\ 
+\mu_n =&amp; \nu_{n-1} + K_n(x_n-C\nu_{n-1}-c)\notag\\
+V_n =&amp; (I-K_nC)P_{n-1}\notag
 \end{align*} %]]&gt;&lt;/script&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
 K_n\triangleq P_{n-1}C^T(CP_{n-1}C^T+\Pi)^{-1}\notag
 \end{align*}&lt;/script&gt;
 
+&lt;p&gt;The final solution above is the Kalman filter equation.&lt;/p&gt;
+
 &lt;h2 id=&quot;particle-filter&quot;&gt;Particle filter&lt;/h2&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+\underset{\substack{\\\text{weighted samples}}}{p(z_{n-1}|x_1^{n-1})}
+\underset{\text{sampling}}{\xrightarrow{\substack{\text{system evolution }\\p(z_n|z_{n-1})}}}  
+\underset{\substack{\\\text{samples}}}{p(z_n|x_1^{n-1}) }
+\underset{\text{importance weighting}}{\xrightarrow{\substack{\text{noisy observation }\\p(x_n|z_{n})}}}  
+\underset{\substack{\\\text{weighted samples}}}{p(z_{n}|x_1^{n})}
+\end{align*}&lt;/script&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{align*}
