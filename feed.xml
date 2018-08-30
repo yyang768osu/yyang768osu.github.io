@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="https://yyang768osu.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://yyang768osu.github.io/" rel="alternate" type="text/html" /><updated>2018-08-28T23:32:12-07:00</updated><id>https://yyang768osu.github.io/</id><title type="html">Yang Yang</title><subtitle>Engineer at Qualcomm</subtitle><author><name>Yang Yang</name></author><entry><title type="html">An introduction to Kalman filter and particle filter</title><link href="https://yyang768osu.github.io/posts/2012/08/kalman_filter_particle_filter/" rel="alternate" type="text/html" title="An introduction to Kalman filter and particle filter" /><published>2018-08-20T00:00:00-07:00</published><updated>2018-08-20T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2012/08/kalman-filter-and-particle-filter</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2012/08/kalman_filter_particle_filter/">&lt;p&gt;Kalman filter and particle filter are concepts that are intimidating for new learners due to its involved mathmatical discription, and are straightforward once you grasp the main idea and get used to Gaussian distributions. The goal of this post is to take a journey to Kalman filter by dissecting its idea and operation into pieces that are easy to absorb, and then assemble them together to give the whole picture. As a last step, we will see that particle filter achieves the same goal for non-Gaussian system resorting to Monte Carlo sampling.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="https://yyang768osu.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://yyang768osu.github.io/" rel="alternate" type="text/html" /><updated>2018-08-29T23:19:51-07:00</updated><id>https://yyang768osu.github.io/</id><title type="html">Yang Yang</title><subtitle>Engineer at Qualcomm</subtitle><author><name>Yang Yang</name></author><entry><title type="html">An introduction to Kalman filter and particle filter</title><link href="https://yyang768osu.github.io/posts/2012/08/kalman_filter_particle_filter/" rel="alternate" type="text/html" title="An introduction to Kalman filter and particle filter" /><published>2018-08-20T00:00:00-07:00</published><updated>2018-08-20T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2012/08/kalman-filter-and-particle-filter</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2012/08/kalman_filter_particle_filter/">&lt;p&gt;Kalman filter and particle filter are concepts that are intimidating for new learners due to its involved mathmatical discription, and are straightforward once you grasp the main idea and get used to Gaussian distributions. The goal of this post is to take a journey to Kalman filter by dissecting its idea and operation into pieces that are easy to absorb, and then assemble them together to give the whole picture. As a last step, we will see that particle filter achieves the same goal for non-Gaussian system resorting to Monte Carlo sampling.&lt;/p&gt;
 
 &lt;p&gt;Below let’s walk through three simple problems and their solutions stemming from Gaussian distributions, and then stitching them together to form the problem that Kalman filter tries to solve and present its solution.&lt;/p&gt;
 
@@ -319,9 +319,19 @@ V_n =&amp; (I-K_nC)P_{n-1}\notag
 K_n\triangleq P_{n-1}C^T(CP_{n-1}C^T+\Pi)^{-1}\notag
 \end{align*}&lt;/script&gt;
 
-&lt;p&gt;The final solution above is the Kalman filter equation.&lt;/p&gt;
+&lt;p&gt;The final solution above is the Kalman filter equation, and $K_n$ is referred to as the Kalman gain.&lt;/p&gt;
 
 &lt;h2 id=&quot;particle-filter&quot;&gt;Particle filter&lt;/h2&gt;
+
+&lt;p&gt;One biggest constraint for the application of Kalman filter is that it assumes a linear dynamic system where the state transition and noisy observations are linear processes, which is evident from the probabilistic-graphic-model diagram shown before. The linear assumption is necessary to make sure that all the distributions involved in the system are Gaussian, which is easy to characterize and analytically tractable.&lt;/p&gt;
+
+&lt;p&gt;In general cases, seldom do we have a system being linear. Even with a linear system, the distribution may not be Gaussian. The most cited example for the explanation of particle filter is localization. We can fit in the problem of localization as a dynamic system with hidden variables and heterogeneous system evolutions. Here the location of the system at time-step $n$ is modeled by the hidden variable $z_n$, and any observations made by accelerometer, GPS, and various other type of sensors are captured in $x_n$. Since $z_n$ represent the belief of the system’s location in a map, it can hardly be described by a Gaussian distribution and may not even have a tractable form. On top of that, the observations made by the sensors may not be a linear function of the system location.&lt;/p&gt;
+
+&lt;p&gt;In this type of systems, instead of trying to deriving the exact distributions of hidden variables, it is more practical to characterize them using sets of samples. The sample update are achieved by a scheme often referred to as sequential Monte Carlo sampling, which we will introduce next.&lt;/p&gt;
+
+&lt;p&gt;Again we emphasis that the problem at hand is the inference of hidden variables in a non-linear dynamic system. The goal is to characterize the posterior probability of the system state $z_n$ given all previous observations $x_1^n\triangleq x_1,x_2,\ldots x_n$. Specifically, we want to have an iterative procedure that update the system belief at time-slot $n$: $p(z_n|x_1^n)$ from the belief in the previous time instance $n-1$ ($p(z_{n-1}|x_1^{n-1}$) by considering both the system evolution $p(z_n|z_{n-1)}$ and the updated noisy observations $p(x_n|z_n)$.&lt;/p&gt;
+
+&lt;p&gt;Drawing similarity to Kalman filter, we can represent the problem as the following:&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
 \underset{\substack{\\\text{weighted samples}}}{p(z_{n-1}|x_1^{n-1})}
@@ -331,19 +341,52 @@ K_n\triangleq P_{n-1}C^T(CP_{n-1}C^T+\Pi)^{-1}\notag
 \underset{\substack{\\\text{weighted samples}}}{p(z_{n}|x_1^{n})}
 \end{align*}&lt;/script&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-\begin{align*}
-p(z_n| x_1^n) \propto&amp;\text{ }  p(x_n | z_n) p(z_n | x_1^{n-1})\notag\\
-p(z_{n+1}|x_1^n) =&amp; \int p(z_n| x_1^n) p(z_{n+1}|z_n) dz_n\notag
-\end{align*} %]]&gt;&lt;/script&gt;
+&lt;p&gt;The plan of attack, as suggested by the annotations in the above equation, is to get samples from the potentially intractable probabilities. Let’s start by assuming that we have a set of samples $\{\color{red}{z_n^{(s)}}, s=1,\ldots, S\}$ that represent the distribution of $p(z_n|x_1^{n-1})$, and the task is to generate a new set of sample $\{\color{blue}{z_{n+1}^{(s)}}, s=1,\ldots, S\}$ representing the distribution of $p(z_{n+1}|x_1^n)$.&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{align*}
-p(z_{n+1}|x_1^n) =&amp; \int p(z_n| x_1^n) p(z_{n+1}|z_n) dz_n\notag\\
-=&amp;\int \notag p(z_n| x_1^{n-1}) \frac{p(z_n| x_1^n)}{p(z_n| x_1^{n-1})}  p(z_{n+1}|z_n) dz_n\notag\\
-=&amp;\int \notag p(z_n| x_1^{n-1}) \frac{p(z_n| x_1^n)}{p(z_n| x_1^{n-1})}  p(z_{n+1}|z_n) dz_n\notag\\
-=&amp;\sum_{\substack{s=1\\ z_n^{(s)}\sim p(z_n|x_{1}^{n-1})}}^S \frac{p(x_n|z_n^{(s)})}{\sum_{l=1}^S p(x_n|z_n^{(l)})}p(z_{n+1}|z_n^{(s)})\notag
-\end{align*} %]]&gt;&lt;/script&gt;</content><author><name>Yang Yang</name></author><category term="kalman filter" /><summary type="html">Kalman filter and particle filter are concepts that are intimidating for new learners due to its involved mathmatical discription, and are straightforward once you grasp the main idea and get used to Gaussian distributions. The goal of this post is to take a journey to Kalman filter by dissecting its idea and operation into pieces that are easy to absorb, and then assemble them together to give the whole picture. As a last step, we will see that particle filter achieves the same goal for non-Gaussian system resorting to Monte Carlo sampling.</summary></entry><entry><title type="html">Griffin-Lim algorithm for waveform reconstruction</title><link href="https://yyang768osu.github.io/posts/2012/08/griffin-lim/" rel="alternate" type="text/html" title="Griffin-Lim algorithm for waveform reconstruction" /><published>2018-08-12T00:00:00-07:00</published><updated>2018-08-12T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2012/08/griffin-lim-algorithm-for-waveform-reconstruction</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2012/08/griffin-lim/">&lt;p&gt;The problem that Griffin-Lim algorithm tries to solve is the following. We are given some modified short-time-fourier transform (STFT) or modified spectrogram (only magnitude, no phase information). The STFT/Spectrogram is called ``modified’’ to stress the fact that it in general does not corresponds to any valid time-domain signal: it may be obtained by modifying a STFT/Spectrogram from some real signal, or they may simply be generated by a neural network. The task here is to synthesis a time-domain signal from this target STFT/Spectrogram, such that the STFT/Spectrogram of the synthesized signal is as close to the target as possible.&lt;/p&gt;
+p(z_n| x_1^n) \propto&amp;\text{ }  p(x_n | z_n) \color{red}{p(z_n | x_1^{n-1})}\notag\\
+\color{blue}{p(z_{n+1}|x_1^n)} =&amp; \int p(z_n| x_1^n) p(z_{n+1}|z_n) dz_n\notag
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;Since the evaluation of $\color{blue}{p(z_{n+1}|x_1^n)}$ involves taking the expectation, a corresponding sampling approach would be to approximate it using sampling from  $\color{red}{p(z_n | x_1^{n-1})}$ together with the technique of importance sampling to bridge the gap between the $p(z_n| x_1^n)$ and $\color{red}{p(z_n | x_1^{n-1})}$, resulting in the derivation below&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\color{blue}{p(z_{n+1}|x_1^n)} =&amp; \int p(z_n| x_1^n) p(z_{n+1}|z_n) dz_n\notag\\
+=&amp;\int  \color{red}{p(z_n| x_1^{n-1})} \frac{p(z_n| x_1^n)}{\color{red}{p(z_n| x_1^{n-1})}}  p(z_{n+1}|z_n) dz_n\notag\\
+=&amp; \frac{ \int \color{red}{p(z_n| x_1^{n-1})}   p(x_n|z_n)  p(z_{n+1}|z_n) dz_n}{
+\int \color{red}{p(z_n| x_1^{n-1})}   p(x_n|z_n)   dz_n
+},
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;which leads to the following Monte Carlo approximation&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\color{blue}{p(z_{n+1}|x_1^n)} \approx&amp;\sum_{s=1}^S \frac{p(x_n|z_n^{(s)})}{\sum_{l=1}^S p(x_n|z_n^{(l)})}p(z_{n+1}|z_n^{(s)})\notag\\
+&amp;\sum_{s=1}^S w_n^{(s)}p(z_{n+1}|z_n^{(s)})\notag
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;Comparing the above equation with the one before, one can realize that the probability $p(z_n|x_1^n)$ is basically represented by a set of weighted samples, where the samples $z_n^{(s)}$ are drawn from $\color{red}{p(z_n|x_1^{n-1})}$ and the weights are defined as $w_n^{(s)}\triangleq \frac{p(x_n|z_n^{(s)})}{\sum_{l=1}^S p(x_n|z_n^{(l)})}$.&lt;/p&gt;
+
+&lt;p&gt;Eventually, according to the above equation, to obtain samples $\color{blue}{\{x_{n+1}^{(s)}, s=1,\ldots, S\}}$ from $\color{blue}{p(z_{n+1}|x_1^n)}$, one can equivalently draw samples from $\sum_{s=1}^S w_n^{(s)}p(z_{n+1}|z_n^{(s)})$, which is itself a weighted sum of $p(z_{n+1}|z_n^{(s)})$ for each sample in $\color{red}{\{x_{n}^{(s)}, s=1,\ldots, S\}}$.&lt;/p&gt;
+
+&lt;p&gt;With this we complete the derivation of the particle filter. In essence, it can be viewed as the sampling counterpart of Kalman filter, that generalizes to non-linear systems. The sequential Monte Carlo method is also referred to as sampling-importance-resampling in the literature.&lt;/p&gt;
+
+&lt;p&gt;To link the math with a specific example, i recommend &lt;a href=&quot;https://www.youtube.com/watch?v=aUkBa1zMKv4&quot;&gt;this video&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;bigger-picture&quot;&gt;Bigger picture&lt;/h2&gt;
+
+&lt;p&gt;Looking from a wider angle, both Kalman filter and Particle filter are inference algorithms in hidden Markov models with continuous random variables. Specifically, the formulation we went through corresponds to the forward procedure in HMM inference, and one can generalize it for the backward procedure as well.&lt;/p&gt;
+
+&lt;p&gt;The forward-backward algorithm itself is a special realization of belief-propagation or message-passing-algorithm applied in a HMM system, whose probabilistic graphic model is a tree.&lt;/p&gt;
+
+&lt;p&gt;The HMM model and the forward-backward procedure has manifestation in different areas:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;BCJR algorithm in the decoding of convolutional/Turbo code in communication systems&lt;/li&gt;
+  &lt;li&gt;Baum-Welch algorithm, commonly used in speech recognition systems with discrete HMM models&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>Yang Yang</name></author><category term="kalman filter" /><summary type="html">Kalman filter and particle filter are concepts that are intimidating for new learners due to its involved mathmatical discription, and are straightforward once you grasp the main idea and get used to Gaussian distributions. The goal of this post is to take a journey to Kalman filter by dissecting its idea and operation into pieces that are easy to absorb, and then assemble them together to give the whole picture. As a last step, we will see that particle filter achieves the same goal for non-Gaussian system resorting to Monte Carlo sampling.</summary></entry><entry><title type="html">Griffin-Lim algorithm for waveform reconstruction</title><link href="https://yyang768osu.github.io/posts/2012/08/griffin-lim/" rel="alternate" type="text/html" title="Griffin-Lim algorithm for waveform reconstruction" /><published>2018-08-12T00:00:00-07:00</published><updated>2018-08-12T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2012/08/griffin-lim-algorithm-for-waveform-reconstruction</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2012/08/griffin-lim/">&lt;p&gt;The problem that Griffin-Lim algorithm tries to solve is the following. We are given some modified short-time-fourier transform (STFT) or modified spectrogram (only magnitude, no phase information). The STFT/Spectrogram is called ``modified’’ to stress the fact that it in general does not corresponds to any valid time-domain signal: it may be obtained by modifying a STFT/Spectrogram from some real signal, or they may simply be generated by a neural network. The task here is to synthesis a time-domain signal from this target STFT/Spectrogram, such that the STFT/Spectrogram of the synthesized signal is as close to the target as possible.&lt;/p&gt;
 
 &lt;p&gt;Let us denote the target STFT as $Y_w[mS,k]$, where $m$ is the index of the time-window, and $k$ represents the frequency axis. Here $S$ denote the step size of the time-domain window, and $mS$ can be viewed as the center of the sliding time windows. Correspondingly, if we are talking about spectrogram, then the target can be denoted as  $|Y_w(mS,\omega)|$, to emphasis that there is no phase information.&lt;/p&gt;
 

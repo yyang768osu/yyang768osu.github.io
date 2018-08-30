@@ -251,7 +251,7 @@
 
 
   
-	  9 minute read
+	  13 minute read
 	
 </p>
           
@@ -589,9 +589,19 @@ V_n =& (I-K_nC)P_{n-1}\notag
 K_n\triangleq P_{n-1}C^T(CP_{n-1}C^T+\Pi)^{-1}\notag
 \end{align*}</script>
 
-<p>The final solution above is the Kalman filter equation.</p>
+<p>The final solution above is the Kalman filter equation, and $K_n$ is referred to as the Kalman gain.</p>
 
 <h2 id="particle-filter">Particle filter</h2>
+
+<p>One biggest constraint for the application of Kalman filter is that it assumes a linear dynamic system where the state transition and noisy observations are linear processes, which is evident from the probabilistic-graphic-model diagram shown before. The linear assumption is necessary to make sure that all the distributions involved in the system are Gaussian, which is easy to characterize and analytically tractable.</p>
+
+<p>In general cases, seldom do we have a system being linear. Even with a linear system, the distribution may not be Gaussian. The most cited example for the explanation of particle filter is localization. We can fit in the problem of localization as a dynamic system with hidden variables and heterogeneous system evolutions. Here the location of the system at time-step $n$ is modeled by the hidden variable $z_n$, and any observations made by accelerometer, GPS, and various other type of sensors are captured in $x_n$. Since $z_n$ represent the belief of the system’s location in a map, it can hardly be described by a Gaussian distribution and may not even have a tractable form. On top of that, the observations made by the sensors may not be a linear function of the system location.</p>
+
+<p>In this type of systems, instead of trying to deriving the exact distributions of hidden variables, it is more practical to characterize them using sets of samples. The sample update are achieved by a scheme often referred to as sequential Monte Carlo sampling, which we will introduce next.</p>
+
+<p>Again we emphasis that the problem at hand is the inference of hidden variables in a non-linear dynamic system. The goal is to characterize the posterior probability of the system state $z_n$ given all previous observations $x_1^n\triangleq x_1,x_2,\ldots x_n$. Specifically, we want to have an iterative procedure that update the system belief at time-slot $n$: $p(z_n|x_1^n)$ from the belief in the previous time instance $n-1$ ($p(z_{n-1}|x_1^{n-1}$) by considering both the system evolution $p(z_n|z_{n-1)}$ and the updated noisy observations $p(x_n|z_n)$.</p>
+
+<p>Drawing similarity to Kalman filter, we can represent the problem as the following:</p>
 
 <script type="math/tex; mode=display">\begin{align*}
 \underset{\substack{\\\text{weighted samples}}}{p(z_{n-1}|x_1^{n-1})}
@@ -601,19 +611,52 @@ K_n\triangleq P_{n-1}C^T(CP_{n-1}C^T+\Pi)^{-1}\notag
 \underset{\substack{\\\text{weighted samples}}}{p(z_{n}|x_1^{n})}
 \end{align*}</script>
 
-<script type="math/tex; mode=display">% <![CDATA[
-\begin{align*}
-p(z_n| x_1^n) \propto&\text{ }  p(x_n | z_n) p(z_n | x_1^{n-1})\notag\\
-p(z_{n+1}|x_1^n) =& \int p(z_n| x_1^n) p(z_{n+1}|z_n) dz_n\notag
-\end{align*} %]]></script>
+<p>The plan of attack, as suggested by the annotations in the above equation, is to get samples from the potentially intractable probabilities. Let’s start by assuming that we have a set of samples $\{\color{red}{z_n^{(s)}}, s=1,\ldots, S\}$ that represent the distribution of $p(z_n|x_1^{n-1})$, and the task is to generate a new set of sample $\{\color{blue}{z_{n+1}^{(s)}}, s=1,\ldots, S\}$ representing the distribution of $p(z_{n+1}|x_1^n)$.</p>
 
 <script type="math/tex; mode=display">% <![CDATA[
 \begin{align*}
-p(z_{n+1}|x_1^n) =& \int p(z_n| x_1^n) p(z_{n+1}|z_n) dz_n\notag\\
-=&\int \notag p(z_n| x_1^{n-1}) \frac{p(z_n| x_1^n)}{p(z_n| x_1^{n-1})}  p(z_{n+1}|z_n) dz_n\notag\\
-=&\int \notag p(z_n| x_1^{n-1}) \frac{p(z_n| x_1^n)}{p(z_n| x_1^{n-1})}  p(z_{n+1}|z_n) dz_n\notag\\
-=&\sum_{\substack{s=1\\ z_n^{(s)}\sim p(z_n|x_{1}^{n-1})}}^S \frac{p(x_n|z_n^{(s)})}{\sum_{l=1}^S p(x_n|z_n^{(l)})}p(z_{n+1}|z_n^{(s)})\notag
+p(z_n| x_1^n) \propto&\text{ }  p(x_n | z_n) \color{red}{p(z_n | x_1^{n-1})}\notag\\
+\color{blue}{p(z_{n+1}|x_1^n)} =& \int p(z_n| x_1^n) p(z_{n+1}|z_n) dz_n\notag
 \end{align*} %]]></script>
+
+<p>Since the evaluation of $\color{blue}{p(z_{n+1}|x_1^n)}$ involves taking the expectation, a corresponding sampling approach would be to approximate it using sampling from  $\color{red}{p(z_n | x_1^{n-1})}$ together with the technique of importance sampling to bridge the gap between the $p(z_n| x_1^n)$ and $\color{red}{p(z_n | x_1^{n-1})}$, resulting in the derivation below</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+\color{blue}{p(z_{n+1}|x_1^n)} =& \int p(z_n| x_1^n) p(z_{n+1}|z_n) dz_n\notag\\
+=&\int  \color{red}{p(z_n| x_1^{n-1})} \frac{p(z_n| x_1^n)}{\color{red}{p(z_n| x_1^{n-1})}}  p(z_{n+1}|z_n) dz_n\notag\\
+=& \frac{ \int \color{red}{p(z_n| x_1^{n-1})}   p(x_n|z_n)  p(z_{n+1}|z_n) dz_n}{
+\int \color{red}{p(z_n| x_1^{n-1})}   p(x_n|z_n)   dz_n
+},
+\end{align*} %]]></script>
+
+<p>which leads to the following Monte Carlo approximation</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+\color{blue}{p(z_{n+1}|x_1^n)} \approx&\sum_{s=1}^S \frac{p(x_n|z_n^{(s)})}{\sum_{l=1}^S p(x_n|z_n^{(l)})}p(z_{n+1}|z_n^{(s)})\notag\\
+&\sum_{s=1}^S w_n^{(s)}p(z_{n+1}|z_n^{(s)})\notag
+\end{align*} %]]></script>
+
+<p>Comparing the above equation with the one before, one can realize that the probability $p(z_n|x_1^n)$ is basically represented by a set of weighted samples, where the samples $z_n^{(s)}$ are drawn from $\color{red}{p(z_n|x_1^{n-1})}$ and the weights are defined as $w_n^{(s)}\triangleq \frac{p(x_n|z_n^{(s)})}{\sum_{l=1}^S p(x_n|z_n^{(l)})}$.</p>
+
+<p>Eventually, according to the above equation, to obtain samples $\color{blue}{\{x_{n+1}^{(s)}, s=1,\ldots, S\}}$ from $\color{blue}{p(z_{n+1}|x_1^n)}$, one can equivalently draw samples from $\sum_{s=1}^S w_n^{(s)}p(z_{n+1}|z_n^{(s)})$, which is itself a weighted sum of $p(z_{n+1}|z_n^{(s)})$ for each sample in $\color{red}{\{x_{n}^{(s)}, s=1,\ldots, S\}}$.</p>
+
+<p>With this we complete the derivation of the particle filter. In essence, it can be viewed as the sampling counterpart of Kalman filter, that generalizes to non-linear systems. The sequential Monte Carlo method is also referred to as sampling-importance-resampling in the literature.</p>
+
+<p>To link the math with a specific example, i recommend <a href="https://www.youtube.com/watch?v=aUkBa1zMKv4">this video</a>.</p>
+
+<h2 id="bigger-picture">Bigger picture</h2>
+
+<p>Looking from a wider angle, both Kalman filter and Particle filter are inference algorithms in hidden Markov models with continuous random variables. Specifically, the formulation we went through corresponds to the forward procedure in HMM inference, and one can generalize it for the backward procedure as well.</p>
+
+<p>The forward-backward algorithm itself is a special realization of belief-propagation or message-passing-algorithm applied in a HMM system, whose probabilistic graphic model is a tree.</p>
+
+<p>The HMM model and the forward-backward procedure has manifestation in different areas:</p>
+<ul>
+  <li>BCJR algorithm in the decoding of convolutional/Turbo code in communication systems</li>
+  <li>Baum-Welch algorithm, commonly used in speech recognition systems with discrete HMM models</li>
+</ul>
 
 
         
