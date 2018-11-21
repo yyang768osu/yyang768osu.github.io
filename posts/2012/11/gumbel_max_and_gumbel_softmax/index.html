@@ -19,7 +19,7 @@
 
 
 
-<title>Gumbel max trick - Yang Yang</title>
+<title>Gumbel max and Gumbel softmax - Yang Yang</title>
 
 
 
@@ -29,15 +29,15 @@
 
 <meta property="og:locale" content="en-US">
 <meta property="og:site_name" content="Yang Yang">
-<meta property="og:title" content="Gumbel max trick">
+<meta property="og:title" content="Gumbel max and Gumbel softmax">
 
 
-  <link rel="canonical" href="https://yyang768osu.github.io/posts/2012/11/gumbel_max_trick/">
-  <meta property="og:url" content="https://yyang768osu.github.io/posts/2012/11/gumbel_max_trick/">
+  <link rel="canonical" href="https://yyang768osu.github.io/posts/2012/11/gumbel_max_and_gumbel_softmax/">
+  <meta property="og:url" content="https://yyang768osu.github.io/posts/2012/11/gumbel_max_and_gumbel_softmax/">
 
 
 
-  <meta property="og:description" content="Consider $n$ I.I.D. exponential random variables  $X_i\sim \text{Exp}(\lambda_i)$ with $i=1,2,\ldots, n$. It is well-known that the exponential distribution is min-stable – the min of $X_i, i=1,2,\ldots, n$ is also exponentially distributed with decay rate $\sum_{1\leq i\leq n} \lambda_i$, as can be derived from below.">
+  <meta property="og:description" content="Before we talk about Gumbel distribution, let’s refresh our knowledge on exponential distribution. It is well-known that the exponential distribution is min-stable: the min of $n$ I.I.D. exponential random variables is also exponentially distributed. To formalize, for $n$ I.I.D. exponential random variables  $X_i\sim \text{Exp}(\lambda_i), i=1,2,\ldots, n$, their min is exponentially distributed with decay rate $\sum_{1\leq i\leq n} \lambda_i$, as can be seen from the equation below.">
 
 
 
@@ -236,15 +236,15 @@
 
 
   <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
-    <meta itemprop="headline" content="Gumbel max trick">
-    <meta itemprop="description" content="Consider $n$ I.I.D. exponential random variables  $X_i\sim \text{Exp}(\lambda_i)$ with $i=1,2,\ldots, n$. It is well-known that the exponential distribution is min-stable – the min of $X_i, i=1,2,\ldots, n$ is also exponentially distributed with decay rate $\sum_{1\leq i\leq n} \lambda_i$, as can be derived from below.">
+    <meta itemprop="headline" content="Gumbel max and Gumbel softmax">
+    <meta itemprop="description" content="Before we talk about Gumbel distribution, let’s refresh our knowledge on exponential distribution. It is well-known that the exponential distribution is min-stable: the min of $n$ I.I.D. exponential random variables is also exponentially distributed. To formalize, for $n$ I.I.D. exponential random variables  $X_i\sim \text{Exp}(\lambda_i), i=1,2,\ldots, n$, their min is exponentially distributed with decay rate $\sum_{1\leq i\leq n} \lambda_i$, as can be seen from the equation below.">
     <meta itemprop="datePublished" content="November 05, 2018">
     
 
     <div class="page__inner-wrap">
       
         <header>
-          <h1 class="page__title" itemprop="headline">Gumbel max trick
+          <h1 class="page__title" itemprop="headline">Gumbel max and Gumbel softmax
 </h1>
           
             <p class="page__meta"><i class="fa fa-clock-o" aria-hidden="true"></i> 
@@ -268,24 +268,33 @@
       
 
       <section class="page__content" itemprop="text">
-        <p>Consider $n$ I.I.D. exponential random variables  $X_i\sim \text{Exp}(\lambda_i)$ with $i=1,2,\ldots, n$. It is well-known that the exponential distribution is min-stable – the min of $X_i, i=1,2,\ldots, n$ is also exponentially distributed with decay rate $\sum_{1\leq i\leq n} \lambda_i$, as can be derived from below.</p>
+        <p>Before we talk about Gumbel distribution, let’s refresh our knowledge on exponential distribution. It is well-known that the exponential distribution is min-stable: the min of $n$ I.I.D. exponential random variables is also exponentially distributed. To formalize, for $n$ I.I.D. exponential random variables  $X_i\sim \text{Exp}(\lambda_i), i=1,2,\ldots, n$, their min is exponentially distributed with decay rate $\sum_{1\leq i\leq n} \lambda_i$, as can be seen from the equation below.</p>
 
 <script type="math/tex; mode=display">% <![CDATA[
 \begin{align*}
 P(\min_{1\leq i \leq n} X_i > x) &= \prod_{1\leq i\leq n} P(X_i>x) = e^{-\sum_{1\leq i\leq n}\lambda_i x}
 \end{align*} %]]></script>
 
-<p>A more relevant property here is that the arg-min of exponential variables is a multinomial distribution with even probabilities $\left(\frac{\lambda_1}{\sum_{i}\lambda_i}, \ldots, \frac{\lambda_n}{\sum_{i}\lambda_i}\right)$.</p>
+<p>A lesser known property is that the arg-min of exponential variables is a multinomial distribution with event probabilities $\left(\frac{\lambda_1}{\sum_{i}\lambda_i}, \ldots, \frac{\lambda_n}{\sum_{i}\lambda_i}\right)$:</p>
 
 <script type="math/tex; mode=display">% <![CDATA[
 \begin{align*}
 &P(\arg\min_{1\leq i\leq n}X_i =k)\\
 =&\int_0^\infty P(\arg\min_{1\leq i\leq n} X_i = x | X_k=x)f(X_k = x)dx\\
 =&\int_0^\infty \prod_{i=1\to n, i\not=k} e^{-\lambda_i x} \lambda_k e^{-\lambda_k x} dx\\
-=&\frac{\lambda_k}{\sum_{i=1\to n} \lambda_i}
+=&\frac{\lambda_k}{\sum_{i=1\to n} \lambda_i}.
 \end{align*} %]]></script>
 
-<p>The above property is useful from a sampling perspective. Assume that we are given a set of unnormalized probabilities $\lambda_i, i=1\to n$, then one way to sample from the unnormalized multinomial distribution is to get a stream of standard exponential distributions with decay rate of $1$. For each group of $n$ samples, we scale them with $1/\lambda_i, i=1\to n$ respectively. Then, the index of the sample with the minimal value follows the normalized probabilities. In other words, we can get $1$ sample from a unnormalized multinomial distribution with $n$ samples from a standard exponential distribution. To formalize,</p>
+<h2 id="gumbel-max-trick">Gumbel max trick</h2>
+
+<p>Assume that we are given a multinomial (a.k.a. categorical) distribution with unnormalized event probabilities $\lambda_i, i=1\to n$ (i.e., $\sum_{i=1}^n\lambda_i\not=1$), then the above property provides us a way to sample from the distribution without the need for normalization:</p>
+<ol>
+  <li>draw $n$ samples from an exponential distributions with decay rate of $1$</li>
+  <li>scale the value of these $n$ samples with $1/\lambda_i$ for $i=1\to n$.</li>
+  <li>take the index of the minimum of the scaled samples</li>
+</ol>
+
+<p>To be more precise,</p>
 
 <script type="math/tex; mode=display">% <![CDATA[
 \begin{align*}
@@ -293,23 +302,30 @@ P(\min_{1\leq i \leq n} X_i > x) &= \prod_{1\leq i\leq n} P(X_i>x) = e^{-\sum_{1
 &\text{where } s_i\sim \text{Exp}(1), \forall i.
 \end{align*} %]]></script>
 
-<p>Consider the case of soft-max: we have direct access to the log of the unnormalized probabilities $\beta_i=\log \lambda_i$ (multinomial logit), instead of the unnormalized probabilities itself. In this case, we can modify the above equation as below</p>
+<p>For the case of soft-max operation, we have direct access to the log of the unnormalized probabilities $\alpha_i=\log \lambda_i$ (multinomial logit), instead of the unnormalized probabilities itself. In this case, we can modify the above equation as below</p>
 
 <script type="math/tex; mode=display">% <![CDATA[
 \begin{align*}
-&\arg\min_{1\leq i\leq n} \left(\frac{1}{e^{\beta_i}}s_i\right) \sim \text{Multinomial}\left(\frac{e^{\beta_1}}{\sum_{i}e^{\beta_i}}, \ldots, \frac{e^{\beta_n}}{\sum_{i}e^{\beta_i}}\right)\\
+&\arg\min_{1\leq i\leq n} \left(\frac{1}{e^{\alpha_i}}s_i\right) \sim \text{Multinomial}\left(\frac{e^{\alpha_1}}{\sum_{i}e^{\alpha_i}}, \ldots, \frac{e^{\alpha_n}}{\sum_{i}e^{\alpha_i}}\right)\\
 &\text{where } s_i\sim \text{Exp}(1), \forall i.
 \end{align*} %]]></script>
 
-<p>Another observation is that the left hand side of the above equation is invariant to any linear transform. The Gumbel-max trick is obtained by taking $-\log(\cdot)$ operation to the right-hand-side, in which case $-\log(\text{Exp}(1))$ is a standard Gumbel distribution, leading to the equation below</p>
+<p>One observation is that the left hand side of the above equation is invariant to any linear transform. The Gumbel-max trick is obtained by taking $-\log(\cdot)$ operation to the right-hand-side, in which case $-\log(\text{Exp}(1))$ is a standard Gumbel distribution, leading to the equation below</p>
 
 <script type="math/tex; mode=display">% <![CDATA[
 \begin{align*}
-&\arg\max_{1\leq i\leq n} \left(\beta_i+g_i\right) \sim \text{Multinomial}\left(\frac{e^{\beta_1}}{\sum_{i}e^{\beta_i}}, \ldots, \frac{e^{\beta_n}}{\sum_{i}e^{\beta_i}}\right)\\
+&\arg\max_{1\leq i\leq n} \left(\alpha_i+g_i\right) \sim \text{Multinomial}\left(\frac{e^{\alpha_1}}{\sum_{i}e^{\alpha_i}}, \ldots, \frac{e^{\alpha_n}}{\sum_{i}e^{\alpha_i}}\right)\\
 &\text{where } g_i\sim \text{Gumbel}(\text{location}=0, \text{scale}=1), \forall i.
 \end{align*} %]]></script>
 
-<p>Here’s how one interpret the above equation: to sample from a multinomial distribution with logit $\beta_i, i=1,\ldots, n$, equivalently, one can get $n$ samples from a standard Gumbel distribution, add the $n$ logits, and then pick the index of the one with the maximal value. With all the Gumbel distribution samples pre-computed, one can significantly speed up the sampling process of the multinomial distribution from its logits.</p>
+<p>Here’s how one interprets the above equation: to sample from a multinomial distribution with logit $\alpha_i, i=1,\ldots, n$, one can get $n$ samples from a standard Gumbel distribution, add them to the $n$ logits, and then pick the index of the one with the maximal value.</p>
+
+<p>Essentially, the Gumbel max trick provides us a way to convert the sampling problem into an argmax operation. Also, the sampling processing can be further expedited if we pre-calculate and store a stream of Gumbel samples</p>
+
+<h2 id="gumbel-softmax">Gumbel softmax</h2>
+
+<p style="text-align: center;"><img src="/images/gumbel.png" alt="Gumbel softmax" /></p>
+
 
         
       </section>
@@ -351,13 +367,13 @@ P(\min_{1\leq i \leq n} X_i > x) &= \prod_{1\leq i\leq n} P(X_i>x) = e^{-\sum_{1
     <h4 class="page__share-title">Share on</h4>
   
 
-  <a href="https://twitter.com/intent/tweet?text=https://yyang768osu.github.io/posts/2012/11/gumbel_max_trick/" class="btn btn--twitter" title="Share on Twitter"><i class="fa fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+  <a href="https://twitter.com/intent/tweet?text=https://yyang768osu.github.io/posts/2012/11/gumbel_max_and_gumbel_softmax/" class="btn btn--twitter" title="Share on Twitter"><i class="fa fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
 
-  <a href="https://www.facebook.com/sharer/sharer.php?u=https://yyang768osu.github.io/posts/2012/11/gumbel_max_trick/" class="btn btn--facebook" title="Share on Facebook"><i class="fa fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https://yyang768osu.github.io/posts/2012/11/gumbel_max_and_gumbel_softmax/" class="btn btn--facebook" title="Share on Facebook"><i class="fa fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
 
-  <a href="https://plus.google.com/share?url=https://yyang768osu.github.io/posts/2012/11/gumbel_max_trick/" class="btn btn--google-plus" title="Share on Google Plus"><i class="fa fa-fw fa-google-plus" aria-hidden="true"></i><span> Google+</span></a>
+  <a href="https://plus.google.com/share?url=https://yyang768osu.github.io/posts/2012/11/gumbel_max_and_gumbel_softmax/" class="btn btn--google-plus" title="Share on Google Plus"><i class="fa fa-fw fa-google-plus" aria-hidden="true"></i><span> Google+</span></a>
 
-  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https://yyang768osu.github.io/posts/2012/11/gumbel_max_trick/" class="btn btn--linkedin" title="Share on LinkedIn"><i class="fa fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https://yyang768osu.github.io/posts/2012/11/gumbel_max_and_gumbel_softmax/" class="btn btn--linkedin" title="Share on LinkedIn"><i class="fa fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
 </section>
       
 <div id="disqus_thread"></div>
