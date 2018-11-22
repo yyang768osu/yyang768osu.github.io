@@ -37,7 +37,7 @@
 
 
 
-  <meta property="og:description" content="Before we talk about Gumbel distribution, let’s refresh our knowledge on exponential distribution. It is well-known that the exponential distribution is min-stable: the min of $n$ I.I.D. exponential random variables is also exponentially distributed. To formalize, for $n$ I.I.D. exponential random variables  $X_i\sim \text{Exp}(\lambda_i), i=1,2,\ldots, n$, their min is exponentially distributed with decay rate $\sum_{1\leq i\leq n} \lambda_i$, as can be seen from the equation below.">
+  <meta property="og:description" content="Before we talk about Gumbel distribution, let’s refresh our knowledge on exponential distribution. It is well-known that the exponential distribution is min-stable: the min of $n$ I.I.D. exponential random variables  $X_i\sim \text{Exp}(\lambda_i), i=1,2,\ldots, n$ is also exponentially distributed with decay rate $\sum_{1\leq i\leq n} \lambda_i$, as can be seen from the equation below.">
 
 
 
@@ -237,7 +237,7 @@
 
   <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
     <meta itemprop="headline" content="Gumbel max and Gumbel softmax">
-    <meta itemprop="description" content="Before we talk about Gumbel distribution, let’s refresh our knowledge on exponential distribution. It is well-known that the exponential distribution is min-stable: the min of $n$ I.I.D. exponential random variables is also exponentially distributed. To formalize, for $n$ I.I.D. exponential random variables  $X_i\sim \text{Exp}(\lambda_i), i=1,2,\ldots, n$, their min is exponentially distributed with decay rate $\sum_{1\leq i\leq n} \lambda_i$, as can be seen from the equation below.">
+    <meta itemprop="description" content="Before we talk about Gumbel distribution, let’s refresh our knowledge on exponential distribution. It is well-known that the exponential distribution is min-stable: the min of $n$ I.I.D. exponential random variables  $X_i\sim \text{Exp}(\lambda_i), i=1,2,\ldots, n$ is also exponentially distributed with decay rate $\sum_{1\leq i\leq n} \lambda_i$, as can be seen from the equation below.">
     <meta itemprop="datePublished" content="November 05, 2018">
     
 
@@ -268,7 +268,7 @@
       
 
       <section class="page__content" itemprop="text">
-        <p>Before we talk about Gumbel distribution, let’s refresh our knowledge on exponential distribution. It is well-known that the exponential distribution is min-stable: the min of $n$ I.I.D. exponential random variables is also exponentially distributed. To formalize, for $n$ I.I.D. exponential random variables  $X_i\sim \text{Exp}(\lambda_i), i=1,2,\ldots, n$, their min is exponentially distributed with decay rate $\sum_{1\leq i\leq n} \lambda_i$, as can be seen from the equation below.</p>
+        <p>Before we talk about Gumbel distribution, let’s refresh our knowledge on exponential distribution. It is well-known that the exponential distribution is min-stable: the min of $n$ I.I.D. exponential random variables  $X_i\sim \text{Exp}(\lambda_i), i=1,2,\ldots, n$ is also exponentially distributed with decay rate $\sum_{1\leq i\leq n} \lambda_i$, as can be seen from the equation below.</p>
 
 <script type="math/tex; mode=display">% <![CDATA[
 \begin{align*}
@@ -285,16 +285,18 @@ P(\min_{1\leq i \leq n} X_i > x) &= \prod_{1\leq i\leq n} P(X_i>x) = e^{-\sum_{1
 =&\frac{\lambda_k}{\sum_{i=1\to n} \lambda_i}.
 \end{align*} %]]></script>
 
+<p>As we will see shortly, this property directly leads to the Gumbel max trick.</p>
+
 <h2 id="gumbel-max-trick">Gumbel max trick</h2>
 
-<p>Assume that we are given a multinomial (a.k.a. categorical) distribution with unnormalized event probabilities $\lambda_i, i=1\to n$ (i.e., $\sum_{i=1}^n\lambda_i\not=1$), then the above property provides us a way to sample from the distribution without the need for normalization:</p>
+<p>Assume that we are given a multinomial (a.k.a. categorical) distribution with unnormalized event probabilities $\lambda_i, i=1\to n$ (i.e., $\sum_{i=1}^n\lambda_i\not=1$), the above property provides us a way to sample from the distribution without the need for normalization:</p>
 <ol>
   <li>draw $n$ samples from an exponential distributions with decay rate of $1$</li>
   <li>scale the value of these $n$ samples with $1/\lambda_i$ for $i=1\to n$.</li>
   <li>take the index of the minimum of the scaled samples</li>
 </ol>
 
-<p>To be more precise,</p>
+<p>To be more precise, we are utilizing the fact that</p>
 
 <script type="math/tex; mode=display">% <![CDATA[
 \begin{align*}
@@ -318,9 +320,15 @@ P(\min_{1\leq i \leq n} X_i > x) &= \prod_{1\leq i\leq n} P(X_i>x) = e^{-\sum_{1
 &\text{where } g_i\sim \text{Gumbel}(\text{location}=0, \text{scale}=1), \forall i.
 \end{align*} %]]></script>
 
-<p>Here’s how one interprets the above equation: to sample from a multinomial distribution with logit $\alpha_i, i=1,\ldots, n$, one can get $n$ samples from a standard Gumbel distribution, add them to the $n$ logits, and then pick the index of the one with the maximal value.</p>
+<p>This provides us a way to obtain samples directly from the logits without going through the exponentiate-and-normalization step</p>
 
-<p>Essentially, the Gumbel max trick provides us a way to convert the sampling problem into an argmax operation. Also, the sampling processing can be further expedited if we pre-calculate and store a stream of Gumbel samples</p>
+<ol>
+  <li>draw $n$ samples from a standard Gumbel distributions with location of $0$ and scale of $1$.</li>
+  <li>add the values of the $n$ samples to the logits.</li>
+  <li>take the index of the minimum of the $n$ summations.</li>
+</ol>
+
+<p>Essentially, <em>the Gumbel max trick converts the sampling operation from a categorical/multinomial distribution into an argmax operation</em>. The sampling process can be expedited if we pre-calculate and store a stream of Gumbel samples.</p>
 
 <h2 id="gumbel-softmax">Gumbel softmax</h2>
 

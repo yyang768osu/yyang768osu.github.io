@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="https://yyang768osu.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://yyang768osu.github.io/" rel="alternate" type="text/html" /><updated>2018-11-20T22:59:13-08:00</updated><id>https://yyang768osu.github.io/</id><title type="html">Yang Yang</title><subtitle>Engineer at Qualcomm</subtitle><author><name>Yang Yang</name></author><entry><title type="html">Understanding conventional HMM-based ASR training</title><link href="https://yyang768osu.github.io/posts/2012/11/conventional-hmm-asr-training/" rel="alternate" type="text/html" title="Understanding conventional HMM-based ASR training" /><published>2018-11-17T00:00:00-08:00</published><updated>2018-11-17T00:00:00-08:00</updated><id>https://yyang768osu.github.io/posts/2012/11/understanding-conventional-hmm-based-asr-training</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2012/11/conventional-hmm-asr-training/">&lt;p&gt;Conventional HMM-based ASR system assumes a generative model comprised of a language model, a lexicon (e.g., pronunciation dictionary), and an acoustic model, as illustrated below.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="https://yyang768osu.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://yyang768osu.github.io/" rel="alternate" type="text/html" /><updated>2018-11-21T22:57:18-08:00</updated><id>https://yyang768osu.github.io/</id><title type="html">Yang Yang</title><subtitle>Engineer at Qualcomm</subtitle><author><name>Yang Yang</name></author><entry><title type="html">Understanding conventional HMM-based ASR training</title><link href="https://yyang768osu.github.io/posts/2012/11/conventional-hmm-asr-training/" rel="alternate" type="text/html" title="Understanding conventional HMM-based ASR training" /><published>2018-11-17T00:00:00-08:00</published><updated>2018-11-17T00:00:00-08:00</updated><id>https://yyang768osu.github.io/posts/2012/11/understanding-conventional-hmm-based-asr-training</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2012/11/conventional-hmm-asr-training/">&lt;p&gt;Conventional HMM-based ASR system assumes a generative model comprised of a language model, a lexicon (e.g., pronunciation dictionary), and an acoustic model, as illustrated below.&lt;/p&gt;
 
 &lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/HMM.png&quot; alt=&quot;conventional HMM based ASR probabilistic assumption&quot; /&gt;&lt;/p&gt;
 
@@ -8,11 +8,11 @@
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{align*}
-&amp;\arg\max_\theta \prod_{n=1}^N \mathbb{P}\left({\bf x}^{(n)};\theta\right)\\
-=&amp;\arg\max_\theta \sum_{n=1}^N \log \mathbb{P}\left({\bf x}^{(n)};\theta\right).
+&amp;\arg\max_\theta \prod_{n=1}^N \mathbb{P}\left({\bf x}^{(n)}|{\bf y}^{(n)};\theta\right)\\
+=&amp;\arg\max_\theta \sum_{n=1}^N \log \mathbb{P}\left({\bf x}^{(n)}|{\bf y}^{(n)};\theta\right).
 \end{align*} %]]&gt;&lt;/script&gt;
 
-&lt;p&gt;In the above expression we ignored the conditioning on ${\bf y}^{(n)}$ (or ${\bf p}^{(n)}$) for cleaner notation. Note that the above formulation falls right into the discussion of the previous two posts:  &lt;a href=&quot;/posts/2012/08/variational_inference_1/&quot;&gt;variational lower bound&lt;/a&gt; and &lt;a href=&quot;/posts/2012/08/variational_inference_1/&quot;&gt;expectation maximization&lt;/a&gt;, which provide an iterative algorithm to approach the solution&lt;/p&gt;
+&lt;p&gt;For ease of notation, for the rest of this section, let’s ignore the conditioning on ${\bf y}^{(n)}$ (or ${\bf p}^{(n)}$). Note that the above formulation falls right into the discussion of the previous two posts:  &lt;a href=&quot;/posts/2012/08/variational_inference_1/&quot;&gt;variational lower bound&lt;/a&gt; and &lt;a href=&quot;/posts/2012/08/variational_inference_1/&quot;&gt;expectation maximization&lt;/a&gt;, which provide an iterative algorithm to approach the solution&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
 \theta^{[i+1]} = \arg\max_{\theta} \sum_{n=1}^N \int \mathbb{P}\left({\bf z}^{(n)}| {\bf x}^{(n)};\theta^{[i]} \right)\log \mathbb{P}\left({\bf x}^{(n)}, {\bf z}^{(n)};\theta\right)d z^{(n)}.
@@ -22,7 +22,7 @@
 
 &lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/HMM2.png&quot; alt=&quot;conventional HMM based acoustic model&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;Very similar to BCJR algorithm in convolutional code bit-level MAP decoding and Kalman filter in linear dynamic system, the inference problem (finding the posterior of the latent given the observed) in a hidden Markov chain can be solved by a forward-backward algorithm.&lt;/p&gt;
+&lt;p&gt;Very similar to BCJR algorithm in convolutional code bit-level MAP decoding and &lt;a href=&quot;/posts/2012/08/kalman_filter_particle_filter/&quot;&gt;Kalman filter&lt;/a&gt; in linear dynamic system, the inference problem (finding the posterior of the latent given the observed) in a hidden Markov chain can be solved by a forward-backward algorithm.&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{align*}
@@ -35,25 +35,58 @@
 \end{align*} %]]&gt;&lt;/script&gt;
 
 &lt;h2 id=&quot;decoding&quot;&gt;Decoding&lt;/h2&gt;
-&lt;p&gt;In the decoding stage, one tries to find the word/sentence with the maximum posterior probability given the observed data&lt;/p&gt;
+&lt;p&gt;In the decoding stage, one tries to find the word/sentence with the maximum a posterior (MAP) probability given the observed data&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{align*}
 &amp;\arg\max_{\bf y} \mathbb{P}({\bf y}|{\bf x};\theta) \\
 =&amp;\arg\max_{\bf y} \mathbb{P}({\bf x},{\bf y};\theta) / \mathbb{P}({\bf x};\theta)\\
-=&amp;\arg\max_{\bf y} \mathbb{P}({\bf x},{\bf y};\theta) \\
+\color{red}{=}&amp;\arg\max_{\bf y} \mathbb{P}({\bf x},{\bf y};\theta) \\
 =&amp;\arg\max_{\bf y} \underbrace{\mathbb{P}({\bf x}|{\bf p};\theta)}_{\text{acoustic model}}\times\underbrace{\mathbb{P}({\bf p}|{\bf y})}_{\text{lexion}}\times\underbrace{\mathbb{P}({\bf y})}_{\text{language model}}
 \end{align*} %]]&gt;&lt;/script&gt;
 
-&lt;p&gt;MAP decoding&lt;/p&gt;
+&lt;p&gt;The lexicon and language model together construct a state transition diagram, which we unrolled in time to form a decoding trellis. For each transcription hypothesis, a proper MAP decoder would sum across all the paths in the trellis that corresponds to the transcription, which is computationally prohibitive.&lt;/p&gt;
 
-&lt;p&gt;Viterbi decoding&lt;/p&gt;
+&lt;p&gt;One simplification one can make is to find the most probable path by running the Viterbi algorithm. However, even for Viterbi algorithm, the complexity is still too high for practical deployment due to the large state space and potentially large number of time steps.&lt;/p&gt;
 
-&lt;p&gt;Beam-search decoding&lt;/p&gt;
+&lt;p&gt;To further reduce the computation complexity, the conventional way is to resort to beam-search – a breath-first-search algorithm on the trellis that maintain only a limited number of candidates. The beam-search algorithm is often run on a weighted finite state transducer that captures the concatenation of language model and lexicon.&lt;/p&gt;
 
-&lt;h2 id=&quot;discrepancy-between-mle-training-and-decoding&quot;&gt;Discrepancy between MLE training and decoding&lt;/h2&gt;
+&lt;h2 id=&quot;discrepancy-between-mle-training-and-map-decoding&quot;&gt;Discrepancy between MLE training and MAP decoding&lt;/h2&gt;
 
-&lt;h2 id=&quot;sequence-discriminative-training&quot;&gt;Sequence discriminative training&lt;/h2&gt;</content><author><name>Yang Yang</name></author><category term="ASR" /><category term="HMM" /><summary type="html">Conventional HMM-based ASR system assumes a generative model comprised of a language model, a lexicon (e.g., pronunciation dictionary), and an acoustic model, as illustrated below.</summary></entry><entry><title type="html">Comparison of end-to-end ASR models</title><link href="https://yyang768osu.github.io/posts/2012/11/end_to_end_asr_models/" rel="alternate" type="text/html" title="Comparison of end-to-end ASR models" /><published>2018-11-13T00:00:00-08:00</published><updated>2018-11-13T00:00:00-08:00</updated><id>https://yyang768osu.github.io/posts/2012/11/comparison-of-end-2-end-asr-models</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2012/11/end_to_end_asr_models/">&lt;p&gt;&lt;img src=&quot;/images/end2end.png&quot; alt=&quot;End-to-end ASR model derivation&quot; /&gt;&lt;/p&gt;</content><author><name>Yang Yang</name></author><category term="ASR" /><summary type="html"></summary></entry><entry><title type="html">Gumbel max and Gumbel softmax</title><link href="https://yyang768osu.github.io/posts/2012/11/gumbel_max_and_gumbel_softmax/" rel="alternate" type="text/html" title="Gumbel max and Gumbel softmax" /><published>2018-11-05T00:00:00-08:00</published><updated>2018-11-05T00:00:00-08:00</updated><id>https://yyang768osu.github.io/posts/2012/11/gumbel-max-and-gumbel-softmax</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2012/11/gumbel_max_and_gumbel_softmax/">&lt;p&gt;Before we talk about Gumbel distribution, let’s refresh our knowledge on exponential distribution. It is well-known that the exponential distribution is min-stable: the min of $n$ I.I.D. exponential random variables is also exponentially distributed. To formalize, for $n$ I.I.D. exponential random variables  $X_i\sim \text{Exp}(\lambda_i), i=1,2,\ldots, n$, their min is exponentially distributed with decay rate $\sum_{1\leq i\leq n} \lambda_i$, as can be seen from the equation below.&lt;/p&gt;
+&lt;p&gt;At first glance into the MAP decoding equation, it may appear that the MLE based training is well-aligned with the decoding process: maximizing the posterior probability of the transcription ${\bf y}$ given the acoustic feature ${\bf x}$ is equivalent to maximizing the likelihood of the observation ${\bf x}$. The argument being that the probability of the observation $\mathbb{P}(x;\theta)$ is anyway a constant dictated by the natural of people’s speech, not something we can control. But is it true?&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+&amp;\text{inference time:}\\
+&amp;\arg\max_{\bf y} \mathbb{P}({\bf y}|{\bf x};\theta) \\
+=&amp;\arg\max_{\bf y} \mathbb{P}({\bf x},{\bf y};\theta) / \mathbb{P}({\bf x};\theta)\\
+=&amp;\arg\max_{\bf y} \mathbb{P}({\bf x}|{\bf y};\theta)\mathbb{P}({\bf y})
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;It turns out there is a subtle difference between inference time (MAP decoding) and training time (MLE parameter update) that render the above statement wrong.&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+&amp;\text{training time:}\\
+&amp;\arg\max_{\color{red}{\theta}} \mathbb{P}({\bf y}|{\bf x};\theta) \\
+=&amp;\arg\max_{\color{red}{\theta}} \mathbb{P}({\bf x},{\bf y};\theta) / \mathbb{P}({\bf x};\theta)\\
+\color{red}{\not=}&amp;\arg\max_{\color{red}{\theta}} \mathbb{P}({\bf x}|{\bf y};\theta)\mathbb{P}({\bf y})
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;As is evident by comparison the above two equations, when we try to maximize directly the posterior probability of the transcription ${\bf y}$ given the acoustic feature ${\bf x}$, we can no longer ignore the term $\mathbb{P}({\bf x};\theta)$. It is key to realize that we model the speech as a generative model, where &lt;strong&gt;the probability of observing a certain acoustic features ${\bf x}$ is not dictated by the nature, but rather the generative model that we assume&lt;/strong&gt;. By updating the parameter $\theta$ that best increase the likelihood, we inevitably change $\mathbb{P}({\bf x};\theta)$ too, and thus there is no guarantee that the posterior probability is increased. $\mathbb{P}({\bf x};\theta)$ is calculated by marginalizing over all potential transcriptions: $\mathbb{P}({\bf x};\theta)=\sum_{\bf y}\mathbb{P}({\bf x}|{\bf y};\theta)$.&lt;/p&gt;
+
+&lt;p&gt;To elaborate, in MLE, we try to maximize $\color{red}{\mathbb{P}({\bf y}|{\bf x};\theta)}$ with respect to $\theta$, we may very well also increased the likelihood for competing transcription sequences $\color{blue}{\mathbb{P}({\bf x}|{\bf \tilde{y}};\theta)}$, potentially resulting in decreased posterior probability $\mathbb{P}({\bf y}|{\bf x};\theta)$.&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+&amp;\mathbb{P}({\bf y}|{\bf x};\theta) \\
+=&amp; \mathbb{P}({\bf x},{\bf y};\theta) / \mathbb{P}({\bf x};\theta)\\
+=&amp; \frac{\color{red}{\mathbb{P}({\bf x}|{\bf y};\theta)}\mathbb{P}({\bf y})}{\sum_{\bf \tilde{y}}\color{blue}{\mathbb{P}({\bf x}|{\bf \tilde{y}};\theta)}\mathbb{P}({\bf \tilde{y}})}
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;Fundamentally, &lt;strong&gt;the misalignment is rooted from the fact that we are using a generative model for discriminative tasks&lt;/strong&gt;. In the next section, we discuss several ways to train the generative model for better discrimination.&lt;/p&gt;
+
+&lt;h2 id=&quot;sequence-discriminative-training&quot;&gt;Sequence discriminative training&lt;/h2&gt;</content><author><name>Yang Yang</name></author><category term="ASR" /><category term="HMM" /><summary type="html">Conventional HMM-based ASR system assumes a generative model comprised of a language model, a lexicon (e.g., pronunciation dictionary), and an acoustic model, as illustrated below.</summary></entry><entry><title type="html">Comparison of end-to-end ASR models</title><link href="https://yyang768osu.github.io/posts/2012/11/end_to_end_asr_models/" rel="alternate" type="text/html" title="Comparison of end-to-end ASR models" /><published>2018-11-13T00:00:00-08:00</published><updated>2018-11-13T00:00:00-08:00</updated><id>https://yyang768osu.github.io/posts/2012/11/comparison-of-end-2-end-asr-models</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2012/11/end_to_end_asr_models/">&lt;p&gt;&lt;img src=&quot;/images/end2end.png&quot; alt=&quot;End-to-end ASR model derivation&quot; /&gt;&lt;/p&gt;</content><author><name>Yang Yang</name></author><category term="ASR" /><summary type="html"></summary></entry><entry><title type="html">Gumbel max and Gumbel softmax</title><link href="https://yyang768osu.github.io/posts/2012/11/gumbel_max_and_gumbel_softmax/" rel="alternate" type="text/html" title="Gumbel max and Gumbel softmax" /><published>2018-11-05T00:00:00-08:00</published><updated>2018-11-05T00:00:00-08:00</updated><id>https://yyang768osu.github.io/posts/2012/11/gumbel-max-and-gumbel-softmax</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2012/11/gumbel_max_and_gumbel_softmax/">&lt;p&gt;Before we talk about Gumbel distribution, let’s refresh our knowledge on exponential distribution. It is well-known that the exponential distribution is min-stable: the min of $n$ I.I.D. exponential random variables  $X_i\sim \text{Exp}(\lambda_i), i=1,2,\ldots, n$ is also exponentially distributed with decay rate $\sum_{1\leq i\leq n} \lambda_i$, as can be seen from the equation below.&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{align*}
@@ -70,16 +103,18 @@ P(\min_{1\leq i \leq n} X_i &gt; x) &amp;= \prod_{1\leq i\leq n} P(X_i&gt;x) = e
 =&amp;\frac{\lambda_k}{\sum_{i=1\to n} \lambda_i}.
 \end{align*} %]]&gt;&lt;/script&gt;
 
+&lt;p&gt;As we will see shortly, this property directly leads to the Gumbel max trick.&lt;/p&gt;
+
 &lt;h2 id=&quot;gumbel-max-trick&quot;&gt;Gumbel max trick&lt;/h2&gt;
 
-&lt;p&gt;Assume that we are given a multinomial (a.k.a. categorical) distribution with unnormalized event probabilities $\lambda_i, i=1\to n$ (i.e., $\sum_{i=1}^n\lambda_i\not=1$), then the above property provides us a way to sample from the distribution without the need for normalization:&lt;/p&gt;
+&lt;p&gt;Assume that we are given a multinomial (a.k.a. categorical) distribution with unnormalized event probabilities $\lambda_i, i=1\to n$ (i.e., $\sum_{i=1}^n\lambda_i\not=1$), the above property provides us a way to sample from the distribution without the need for normalization:&lt;/p&gt;
 &lt;ol&gt;
   &lt;li&gt;draw $n$ samples from an exponential distributions with decay rate of $1$&lt;/li&gt;
   &lt;li&gt;scale the value of these $n$ samples with $1/\lambda_i$ for $i=1\to n$.&lt;/li&gt;
   &lt;li&gt;take the index of the minimum of the scaled samples&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;To be more precise,&lt;/p&gt;
+&lt;p&gt;To be more precise, we are utilizing the fact that&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{align*}
@@ -103,13 +138,19 @@ P(\min_{1\leq i \leq n} X_i &gt; x) &amp;= \prod_{1\leq i\leq n} P(X_i&gt;x) = e
 &amp;\text{where } g_i\sim \text{Gumbel}(\text{location}=0, \text{scale}=1), \forall i.
 \end{align*} %]]&gt;&lt;/script&gt;
 
-&lt;p&gt;Here’s how one interprets the above equation: to sample from a multinomial distribution with logit $\alpha_i, i=1,\ldots, n$, one can get $n$ samples from a standard Gumbel distribution, add them to the $n$ logits, and then pick the index of the one with the maximal value.&lt;/p&gt;
+&lt;p&gt;This provides us a way to obtain samples directly from the logits without going through the exponentiate-and-normalization step&lt;/p&gt;
 
-&lt;p&gt;Essentially, the Gumbel max trick provides us a way to convert the sampling problem into an argmax operation. Also, the sampling processing can be further expedited if we pre-calculate and store a stream of Gumbel samples&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;draw $n$ samples from a standard Gumbel distributions with location of $0$ and scale of $1$.&lt;/li&gt;
+  &lt;li&gt;add the values of the $n$ samples to the logits.&lt;/li&gt;
+  &lt;li&gt;take the index of the minimum of the $n$ summations.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Essentially, &lt;em&gt;the Gumbel max trick converts the sampling operation from a categorical/multinomial distribution into an argmax operation&lt;/em&gt;. The sampling process can be expedited if we pre-calculate and store a stream of Gumbel samples.&lt;/p&gt;
 
 &lt;h2 id=&quot;gumbel-softmax&quot;&gt;Gumbel softmax&lt;/h2&gt;
 
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/gumbel.png&quot; alt=&quot;Gumbel softmax&quot; /&gt;&lt;/p&gt;</content><author><name>Yang Yang</name></author><category term="gumble" /><summary type="html">Before we talk about Gumbel distribution, let’s refresh our knowledge on exponential distribution. It is well-known that the exponential distribution is min-stable: the min of $n$ I.I.D. exponential random variables is also exponentially distributed. To formalize, for $n$ I.I.D. exponential random variables $X_i\sim \text{Exp}(\lambda_i), i=1,2,\ldots, n$, their min is exponentially distributed with decay rate $\sum_{1\leq i\leq n} \lambda_i$, as can be seen from the equation below.</summary></entry><entry><title type="html">An introduction to Kalman filter and particle filter</title><link href="https://yyang768osu.github.io/posts/2012/08/kalman_filter_particle_filter/" rel="alternate" type="text/html" title="An introduction to Kalman filter and particle filter" /><published>2018-08-20T00:00:00-07:00</published><updated>2018-08-20T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2012/08/kalman-filter-and-particle-filter</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2012/08/kalman_filter_particle_filter/">&lt;p&gt;Kalman filter and particle filter are concepts that are intimidating for new learners due to its involved mathmatical discription, and are straightforward once you grasp the main idea and get used to Gaussian distributions. The goal of this post is to take a journey to Kalman filter by dissecting its idea and operation into pieces that are easy to absorb, and then assemble them together to give the whole picture. As a last step, we will see that particle filter achieves the same goal for non-Gaussian system resorting to Monte Carlo sampling.&lt;/p&gt;
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/gumbel.png&quot; alt=&quot;Gumbel softmax&quot; /&gt;&lt;/p&gt;</content><author><name>Yang Yang</name></author><category term="gumble" /><summary type="html">Before we talk about Gumbel distribution, let’s refresh our knowledge on exponential distribution. It is well-known that the exponential distribution is min-stable: the min of $n$ I.I.D. exponential random variables $X_i\sim \text{Exp}(\lambda_i), i=1,2,\ldots, n$ is also exponentially distributed with decay rate $\sum_{1\leq i\leq n} \lambda_i$, as can be seen from the equation below.</summary></entry><entry><title type="html">An introduction to Kalman filter and particle filter</title><link href="https://yyang768osu.github.io/posts/2012/08/kalman_filter_particle_filter/" rel="alternate" type="text/html" title="An introduction to Kalman filter and particle filter" /><published>2018-08-20T00:00:00-07:00</published><updated>2018-08-20T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2012/08/kalman-filter-and-particle-filter</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2012/08/kalman_filter_particle_filter/">&lt;p&gt;Kalman filter and particle filter are concepts that are intimidating for new learners due to its involved mathmatical discription, and are straightforward once you grasp the main idea and get used to Gaussian distributions. The goal of this post is to take a journey to Kalman filter by dissecting its idea and operation into pieces that are easy to absorb, and then assemble them together to give the whole picture. As a last step, we will see that particle filter achieves the same goal for non-Gaussian system resorting to Monte Carlo sampling.&lt;/p&gt;
 
 &lt;p&gt;Below let’s walk through three simple problems and their solutions stemming from Gaussian distributions, and then stitching them together to form the problem that Kalman filter tries to solve and present its solution.&lt;/p&gt;
 

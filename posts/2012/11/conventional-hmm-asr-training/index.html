@@ -251,7 +251,7 @@
 
 
   
-	  1 minute read
+	  4 minute read
 	
 </p>
           
@@ -278,11 +278,11 @@
 
 <script type="math/tex; mode=display">% <![CDATA[
 \begin{align*}
-&\arg\max_\theta \prod_{n=1}^N \mathbb{P}\left({\bf x}^{(n)};\theta\right)\\
-=&\arg\max_\theta \sum_{n=1}^N \log \mathbb{P}\left({\bf x}^{(n)};\theta\right).
+&\arg\max_\theta \prod_{n=1}^N \mathbb{P}\left({\bf x}^{(n)}|{\bf y}^{(n)};\theta\right)\\
+=&\arg\max_\theta \sum_{n=1}^N \log \mathbb{P}\left({\bf x}^{(n)}|{\bf y}^{(n)};\theta\right).
 \end{align*} %]]></script>
 
-<p>In the above expression we ignored the conditioning on ${\bf y}^{(n)}$ (or ${\bf p}^{(n)}$) for cleaner notation. Note that the above formulation falls right into the discussion of the previous two posts:  <a href="/posts/2012/08/variational_inference_1/">variational lower bound</a> and <a href="/posts/2012/08/variational_inference_1/">expectation maximization</a>, which provide an iterative algorithm to approach the solution</p>
+<p>For ease of notation, for the rest of this section, let’s ignore the conditioning on ${\bf y}^{(n)}$ (or ${\bf p}^{(n)}$). Note that the above formulation falls right into the discussion of the previous two posts:  <a href="/posts/2012/08/variational_inference_1/">variational lower bound</a> and <a href="/posts/2012/08/variational_inference_1/">expectation maximization</a>, which provide an iterative algorithm to approach the solution</p>
 
 <script type="math/tex; mode=display">\begin{align*}
 \theta^{[i+1]} = \arg\max_{\theta} \sum_{n=1}^N \int \mathbb{P}\left({\bf z}^{(n)}| {\bf x}^{(n)};\theta^{[i]} \right)\log \mathbb{P}\left({\bf x}^{(n)}, {\bf z}^{(n)};\theta\right)d z^{(n)}.
@@ -292,7 +292,7 @@
 
 <p style="text-align: center;"><img src="/images/HMM2.png" alt="conventional HMM based acoustic model" /></p>
 
-<p>Very similar to BCJR algorithm in convolutional code bit-level MAP decoding and Kalman filter in linear dynamic system, the inference problem (finding the posterior of the latent given the observed) in a hidden Markov chain can be solved by a forward-backward algorithm.</p>
+<p>Very similar to BCJR algorithm in convolutional code bit-level MAP decoding and <a href="/posts/2012/08/kalman_filter_particle_filter/">Kalman filter</a> in linear dynamic system, the inference problem (finding the posterior of the latent given the observed) in a hidden Markov chain can be solved by a forward-backward algorithm.</p>
 
 <script type="math/tex; mode=display">% <![CDATA[
 \begin{align*}
@@ -305,23 +305,56 @@
 \end{align*} %]]></script>
 
 <h2 id="decoding">Decoding</h2>
-<p>In the decoding stage, one tries to find the word/sentence with the maximum posterior probability given the observed data</p>
+<p>In the decoding stage, one tries to find the word/sentence with the maximum a posterior (MAP) probability given the observed data</p>
 
 <script type="math/tex; mode=display">% <![CDATA[
 \begin{align*}
 &\arg\max_{\bf y} \mathbb{P}({\bf y}|{\bf x};\theta) \\
 =&\arg\max_{\bf y} \mathbb{P}({\bf x},{\bf y};\theta) / \mathbb{P}({\bf x};\theta)\\
-=&\arg\max_{\bf y} \mathbb{P}({\bf x},{\bf y};\theta) \\
+\color{red}{=}&\arg\max_{\bf y} \mathbb{P}({\bf x},{\bf y};\theta) \\
 =&\arg\max_{\bf y} \underbrace{\mathbb{P}({\bf x}|{\bf p};\theta)}_{\text{acoustic model}}\times\underbrace{\mathbb{P}({\bf p}|{\bf y})}_{\text{lexion}}\times\underbrace{\mathbb{P}({\bf y})}_{\text{language model}}
 \end{align*} %]]></script>
 
-<p>MAP decoding</p>
+<p>The lexicon and language model together construct a state transition diagram, which we unrolled in time to form a decoding trellis. For each transcription hypothesis, a proper MAP decoder would sum across all the paths in the trellis that corresponds to the transcription, which is computationally prohibitive.</p>
 
-<p>Viterbi decoding</p>
+<p>One simplification one can make is to find the most probable path by running the Viterbi algorithm. However, even for Viterbi algorithm, the complexity is still too high for practical deployment due to the large state space and potentially large number of time steps.</p>
 
-<p>Beam-search decoding</p>
+<p>To further reduce the computation complexity, the conventional way is to resort to beam-search – a breath-first-search algorithm on the trellis that maintain only a limited number of candidates. The beam-search algorithm is often run on a weighted finite state transducer that captures the concatenation of language model and lexicon.</p>
 
-<h2 id="discrepancy-between-mle-training-and-decoding">Discrepancy between MLE training and decoding</h2>
+<h2 id="discrepancy-between-mle-training-and-map-decoding">Discrepancy between MLE training and MAP decoding</h2>
+
+<p>At first glance into the MAP decoding equation, it may appear that the MLE based training is well-aligned with the decoding process: maximizing the posterior probability of the transcription ${\bf y}$ given the acoustic feature ${\bf x}$ is equivalent to maximizing the likelihood of the observation ${\bf x}$. The argument being that the probability of the observation $\mathbb{P}(x;\theta)$ is anyway a constant dictated by the natural of people’s speech, not something we can control. But is it true?</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+&\text{inference time:}\\
+&\arg\max_{\bf y} \mathbb{P}({\bf y}|{\bf x};\theta) \\
+=&\arg\max_{\bf y} \mathbb{P}({\bf x},{\bf y};\theta) / \mathbb{P}({\bf x};\theta)\\
+=&\arg\max_{\bf y} \mathbb{P}({\bf x}|{\bf y};\theta)\mathbb{P}({\bf y})
+\end{align*} %]]></script>
+
+<p>It turns out there is a subtle difference between inference time (MAP decoding) and training time (MLE parameter update) that render the above statement wrong.</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+&\text{training time:}\\
+&\arg\max_{\color{red}{\theta}} \mathbb{P}({\bf y}|{\bf x};\theta) \\
+=&\arg\max_{\color{red}{\theta}} \mathbb{P}({\bf x},{\bf y};\theta) / \mathbb{P}({\bf x};\theta)\\
+\color{red}{\not=}&\arg\max_{\color{red}{\theta}} \mathbb{P}({\bf x}|{\bf y};\theta)\mathbb{P}({\bf y})
+\end{align*} %]]></script>
+
+<p>As is evident by comparison the above two equations, when we try to maximize directly the posterior probability of the transcription ${\bf y}$ given the acoustic feature ${\bf x}$, we can no longer ignore the term $\mathbb{P}({\bf x};\theta)$. It is key to realize that we model the speech as a generative model, where <strong>the probability of observing a certain acoustic features ${\bf x}$ is not dictated by the nature, but rather the generative model that we assume</strong>. By updating the parameter $\theta$ that best increase the likelihood, we inevitably change $\mathbb{P}({\bf x};\theta)$ too, and thus there is no guarantee that the posterior probability is increased. $\mathbb{P}({\bf x};\theta)$ is calculated by marginalizing over all potential transcriptions: $\mathbb{P}({\bf x};\theta)=\sum_{\bf y}\mathbb{P}({\bf x}|{\bf y};\theta)$.</p>
+
+<p>To elaborate, in MLE, we try to maximize $\color{red}{\mathbb{P}({\bf y}|{\bf x};\theta)}$ with respect to $\theta$, we may very well also increased the likelihood for competing transcription sequences $\color{blue}{\mathbb{P}({\bf x}|{\bf \tilde{y}};\theta)}$, potentially resulting in decreased posterior probability $\mathbb{P}({\bf y}|{\bf x};\theta)$.</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+&\mathbb{P}({\bf y}|{\bf x};\theta) \\
+=& \mathbb{P}({\bf x},{\bf y};\theta) / \mathbb{P}({\bf x};\theta)\\
+=& \frac{\color{red}{\mathbb{P}({\bf x}|{\bf y};\theta)}\mathbb{P}({\bf y})}{\sum_{\bf \tilde{y}}\color{blue}{\mathbb{P}({\bf x}|{\bf \tilde{y}};\theta)}\mathbb{P}({\bf \tilde{y}})}
+\end{align*} %]]></script>
+
+<p>Fundamentally, <strong>the misalignment is rooted from the fact that we are using a generative model for discriminative tasks</strong>. In the next section, we discuss several ways to train the generative model for better discrimination.</p>
 
 <h2 id="sequence-discriminative-training">Sequence discriminative training</h2>
 
