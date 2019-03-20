@@ -32,8 +32,8 @@
 <meta property="og:title" content="Understanding conventional HMM-based ASR training">
 
 
-  <link rel="canonical" href="https://yyang768osu.github.io/posts/2012/11/conventional-hmm-asr-training/">
-  <meta property="og:url" content="https://yyang768osu.github.io/posts/2012/11/conventional-hmm-asr-training/">
+  <link rel="canonical" href="https://yyang768osu.github.io/posts/2018/11/conventional-hmm-asr-training/">
+  <meta property="og:url" content="https://yyang768osu.github.io/posts/2018/11/conventional-hmm-asr-training/">
 
 
 
@@ -282,7 +282,7 @@
 =&\arg\max_\theta \sum_{n=1}^N \log \mathbb{P}\left({\bf x}^{(n)}|{\bf y}^{(n)};\theta\right).
 \end{align*} %]]></script>
 
-<p>For ease of notation, for the rest of this section, let’s ignore the conditioning on ${\bf y}^{(n)}$ (or ${\bf p}^{(n)}$). The above formulation falls right into the discussion of the previous two posts:  <a href="/posts/2012/08/variational_inference_1/">variational lower bound</a> and <a href="/posts/2012/08/variational_inference_1/">expectation maximization</a>, which provide an iterative algorithm to approach the solution</p>
+<p>For ease of notation, for the rest of this section, let’s ignore the conditioning on ${\bf y}^{(n)}$ (or ${\bf p}^{(n)}$). The above formulation falls right into the discussion of the previous two posts:  <a href="/posts/2018/08/variational_inference_1/">variational lower bound</a> and <a href="/posts/2018/08/variational_inference_1/">expectation maximization</a>, which provide an iterative algorithm to approach the solution</p>
 
 <script type="math/tex; mode=display">\begin{align}
 \theta^{[i+1]} = \arg\max_{\theta} \sum_{n=1}^N \int \color{red}{\mathbb{P}\left({\bf z}^{(n)}| {\bf x}^{(n)};\theta^{[i]} \right)}\log \mathbb{P}\left({\bf x}^{(n)}, {\bf z}^{(n)};\theta\right)d z^{(n)}.
@@ -292,7 +292,7 @@
 
 <p style="text-align: center;"><img src="/images/HMM2.png" alt="conventional HMM based acoustic model" /></p>
 
-<p>The inference problem (finding the posterior of the latent given the observed) in a hidden Markov chain can be solved by a forward-backward algorithm. The algorithm manifests itself as BCJR algorithm in convolutional code bit-level MAP decoding and <a href="/posts/2012/08/kalman_filter_particle_filter/">Kalman filtering</a> in linear dynamic system.</p>
+<p>The inference problem (finding the posterior of the latent given the observed) in a hidden Markov chain can be solved by a forward-backward algorithm. The algorithm manifests itself as BCJR algorithm in convolutional code bit-level MAP decoding and <a href="/posts/2018/08/kalman_filter_particle_filter/">Kalman filtering</a> in linear dynamic system.</p>
 
 <script type="math/tex; mode=display">% <![CDATA[
 \begin{align}
@@ -425,13 +425,13 @@
     <h4 class="page__share-title">Share on</h4>
   
 
-  <a href="https://twitter.com/intent/tweet?text=https://yyang768osu.github.io/posts/2012/11/conventional-hmm-asr-training/" class="btn btn--twitter" title="Share on Twitter"><i class="fa fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+  <a href="https://twitter.com/intent/tweet?text=https://yyang768osu.github.io/posts/2018/11/conventional-hmm-asr-training/" class="btn btn--twitter" title="Share on Twitter"><i class="fa fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
 
-  <a href="https://www.facebook.com/sharer/sharer.php?u=https://yyang768osu.github.io/posts/2012/11/conventional-hmm-asr-training/" class="btn btn--facebook" title="Share on Facebook"><i class="fa fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https://yyang768osu.github.io/posts/2018/11/conventional-hmm-asr-training/" class="btn btn--facebook" title="Share on Facebook"><i class="fa fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
 
-  <a href="https://plus.google.com/share?url=https://yyang768osu.github.io/posts/2012/11/conventional-hmm-asr-training/" class="btn btn--google-plus" title="Share on Google Plus"><i class="fa fa-fw fa-google-plus" aria-hidden="true"></i><span> Google+</span></a>
+  <a href="https://plus.google.com/share?url=https://yyang768osu.github.io/posts/2018/11/conventional-hmm-asr-training/" class="btn btn--google-plus" title="Share on Google Plus"><i class="fa fa-fw fa-google-plus" aria-hidden="true"></i><span> Google+</span></a>
 
-  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https://yyang768osu.github.io/posts/2012/11/conventional-hmm-asr-training/" class="btn btn--linkedin" title="Share on LinkedIn"><i class="fa fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https://yyang768osu.github.io/posts/2018/11/conventional-hmm-asr-training/" class="btn btn--linkedin" title="Share on LinkedIn"><i class="fa fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
 </section>
       
 <div id="disqus_thread"></div>
@@ -461,11 +461,12 @@ s.setAttribute('data-timestamp', +new Date());
 
   <nav class="pagination">
     
-      <a href="https://yyang768osu.github.io/posts/2012/11/end_to_end_asr_models/" class="pagination--pager" title="Comparison of end-to-end ASR models
+      <a href="https://yyang768osu.github.io/posts/2018/11/end_to_end_asr_models/" class="pagination--pager" title="Comparison of end-to-end ASR models
 ">Previous</a>
     
     
-      <a href="#" class="pagination--pager disabled">Next</a>
+      <a href="https://yyang768osu.github.io/posts/2019/03/normalizing-flow-1/" class="pagination--pager" title="Normalizing Flow I: understanding the change of variable equation
+">Next</a>
     
   </nav>
 

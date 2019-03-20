@@ -1,0 +1,516 @@
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+
+<meta charset="utf-8">
+
+
+
+<!-- begin SEO -->
+
+
+
+
+
+
+
+
+
+<title>Normalizing Flow I: understanding the change of variable equation - Yang Yang</title>
+
+
+
+
+
+
+
+<meta property="og:locale" content="en-US">
+<meta property="og:site_name" content="Yang Yang">
+<meta property="og:title" content="Normalizing Flow I: understanding the change of variable equation">
+
+
+  <link rel="canonical" href="https://yyang768osu.github.io/posts/2019/03/normalizing-flow-1/">
+  <meta property="og:url" content="https://yyang768osu.github.io/posts/2019/03/normalizing-flow-1/">
+
+
+
+  <meta property="og:description" content="Normalizing flow is a technique for constructing complicated probability distributions through invertible transformations of a simple distribution. It has been studied and applied in generative models under two contexts: (1) characterizing approximation posterior distribution of latent variables in the case of variational inference (2) directly approximating the data distribution. When used in the second context, it has demonstrated its capability in generating high-fidelity audio, image, and video data.">
+
+
+
+
+
+  
+
+  
+
+
+
+
+
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2019-03-15T00:00:00-07:00">
+
+
+
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context" : "http://schema.org",
+      "@type" : "Person",
+      "name" : "Yang Yang",
+      "url" : "https://yyang768osu.github.io",
+      "sameAs" : null
+    }
+  </script>
+
+
+
+
+
+
+<!-- end SEO -->
+
+
+<link href="https://yyang768osu.github.io/feed.xml" type="application/atom+xml" rel="alternate" title="Yang Yang Feed">
+
+<!-- http://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="https://yyang768osu.github.io/assets/css/main.css">
+
+<meta http-equiv="cleartype" content="on">
+    
+
+<!-- start custom head snippets -->
+
+<link rel="apple-touch-icon" sizes="57x57" href="https://yyang768osu.github.io/images/apple-touch-icon-57x57.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="60x60" href="https://yyang768osu.github.io/images/apple-touch-icon-60x60.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="72x72" href="https://yyang768osu.github.io/images/apple-touch-icon-72x72.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="76x76" href="https://yyang768osu.github.io/images/apple-touch-icon-76x76.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="114x114" href="https://yyang768osu.github.io/images/apple-touch-icon-114x114.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="120x120" href="https://yyang768osu.github.io/images/apple-touch-icon-120x120.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="144x144" href="https://yyang768osu.github.io/images/apple-touch-icon-144x144.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="152x152" href="https://yyang768osu.github.io/images/apple-touch-icon-152x152.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="180x180" href="https://yyang768osu.github.io/images/apple-touch-icon-180x180.png?v=M44lzPylqQ">
+<link rel="icon" type="image/png" href="https://yyang768osu.github.io/images/favicon-32x32.png?v=M44lzPylqQ" sizes="32x32">
+<link rel="icon" type="image/png" href="https://yyang768osu.github.io/images/android-chrome-192x192.png?v=M44lzPylqQ" sizes="192x192">
+<link rel="icon" type="image/png" href="https://yyang768osu.github.io/images/favicon-96x96.png?v=M44lzPylqQ" sizes="96x96">
+<link rel="icon" type="image/png" href="https://yyang768osu.github.io/images/favicon-16x16.png?v=M44lzPylqQ" sizes="16x16">
+<link rel="manifest" href="https://yyang768osu.github.io/images/manifest.json?v=M44lzPylqQ">
+<link rel="mask-icon" href="https://yyang768osu.github.io/images/safari-pinned-tab.svg?v=M44lzPylqQ" color="#000000">
+<link rel="shortcut icon" href="/images/favicon.ico?v=M44lzPylqQ">
+<meta name="msapplication-TileColor" content="#000000">
+<meta name="msapplication-TileImage" content="https://yyang768osu.github.io/images/mstile-144x144.png?v=M44lzPylqQ">
+<meta name="msapplication-config" content="https://yyang768osu.github.io/images/browserconfig.xml?v=M44lzPylqQ">
+<meta name="theme-color" content="#ffffff">
+<link rel="stylesheet" href="https://yyang768osu.github.io/assets/css/academicons.css"/>
+
+<script type="text/x-mathjax-config"> MathJax.Hub.Config({ TeX: { equationNumbers: { autoNumber: "all" } } }); </script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      displayMath: [ ['$$', '$$'] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/latest.js?config=TeX-MML-AM_CHTML' async></script>
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        <button><div class="navicon"></div></button>
+        <ul class="visible-links">
+          <li class="masthead__menu-item masthead__menu-item--lg"><a href="https://yyang768osu.github.io/">Yang Yang</a></li>
+          
+            
+            <li class="masthead__menu-item"><a href="https://yyang768osu.github.io/year-archive/">Blog Posts</a></li>
+          
+        </ul>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+    
+
+
+
+
+
+<div id="main" role="main">
+  
+
+
+  <div class="sidebar sticky">
+  
+
+
+
+<div itemscope itemtype="http://schema.org/Person">
+
+  <div class="author__avatar">
+    
+    	<img src="https://yyang768osu.github.io/images/profile.png" class="author__avatar" alt="Yang Yang">
+    
+  </div>
+
+  <div class="author__content">
+    <h3 class="author__name">Yang Yang</h3>
+    <p class="author__bio">Qualcomm AI Research</p>
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li><i class="fa fa-fw fa-map-marker" aria-hidden="true"></i> San Diego, California</li>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+        <li><a href="https://github.com/yyang768osu"><i class="fa fa-fw fa-github" aria-hidden="true"></i> Github</a></li>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+        <li><a href="https://scholar.google.com/citations?user=mcncpioAAAAJ&hl=en"><i class="ai ai-google-scholar-square ai-fw"></i> Google Scholar</a></li>
+      
+      
+      
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Normalizing Flow I: understanding the change of variable equation">
+    <meta itemprop="description" content="Normalizing flow is a technique for constructing complicated probability distributions through invertible transformations of a simple distribution. It has been studied and applied in generative models under two contexts: (1) characterizing approximation posterior distribution of latent variables in the case of variational inference (2) directly approximating the data distribution. When used in the second context, it has demonstrated its capability in generating high-fidelity audio, image, and video data.">
+    <meta itemprop="datePublished" content="March 15, 2019">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 class="page__title" itemprop="headline">Normalizing Flow I: understanding the change of variable equation
+</h1>
+          
+            <p class="page__meta"><i class="fa fa-clock-o" aria-hidden="true"></i> 
+
+
+  
+	  6 minute read
+	
+</p>
+          
+        
+        
+        
+          <p class="page__date"><strong><i class="fa fa-fw fa-calendar" aria-hidden="true"></i> Published:</strong> <time datetime="2019-03-15T00:00:00-07:00">March 15, 2019</time></p>
+        
+        
+             
+        
+    
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        <p>Normalizing flow is a technique for constructing complicated probability distributions through invertible transformations of a simple distribution. It has been studied and applied in generative models under two contexts: (1) characterizing approximation posterior distribution of latent variables in the case of variational inference (2) directly approximating the data distribution. When used in the second context, it has demonstrated its capability in generating high-fidelity audio, image, and video data.</p>
+
+<p>The study of generative models is all about learning a distribution <script type="math/tex">\mathbb{P}_{\mathcal{X}}</script> that fits the data $\mathcal{X}$ well. With such distribution $\mathbb{P}(\mathcal{X})$ we can generate, by sampling from  $\mathbb{P}_{\mathcal{X}}$, artificial data point that resembles $\mathcal{X}$. Since the true data distribution lies in high-dimensional space and is potentially very complex, it is essential to have a parameterized distribution family that is flexible and expressive enough to approximate the true data distribution well.</p>
+
+<p>The idea of flow-based methods is to <em>explicitly</em> construct this parameterized family of distributions by transforming a known distribution <script type="math/tex">\mathbb{P}_{\mathcal{Z}}</script>, e.g., a standard multi-variant Gaussian, through a concatenation of function mappings. Let’s consider the elementary case of a single function mapping $g$. For each sampled value $z$ from $\mathbb{P}_{\mathcal{Z}}$, we map it to a new value $x=g(z)$.</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+z \xrightarrow{g(.)}  x
+\end{align*}</script>
+
+<p>Up until this point, we have not introduced anything new. This way of transforming a known distribution using a function mapping $g$ is also adopted by generative adversarial network (GAN). The question that flow-based method asks is: can we get a tractable probability density function (pdf) of $x=g(z)$? If so, we can <em>directly</em> optimize the probability density of dataset, i.e., the log likelihood of the data, rather than resorting to the duality approach adopted by GAN, or the lower-bound approach adopted by VAE.</p>
+
+<p>Unfortunately, for a general function $g$ that maps $z$ to $x$, the pdf of the new random variable $x=g(z)$ is quite complicated and usually intractable due to the need to calculate a multi-dimensional integral. However, if we restrict $g$ to be a bijective function (one-to-one correspondence) which is differentiable, then the general change-of-variable technique reduces to the following tractable form:</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+\mathbb{P}_\mathcal{X}(x) =  \mathbb{P}_{\mathcal{Z}}(z)\left|\det \frac{d g(z)}{d z}\right|^{-1}, x=g(z)
+\end{align*}</script>
+
+<p>An important consequence with the bijective assumption is that $z$ and $x$ must have the same dimension: if $z$ is a $d-$dimensional vector $z=[z_1, z_2, \ldots, z_d]$, the corresponds $x$ must also be a $d-$dimensional vector $x=[x_1, x_2, \ldots, x_d]$. It is worth emphasizing that the bijective assumption is essential to the tractability of the change-of-variable operation, and the resulting dimension invariance is a key restriction in flow-based methods.</p>
+
+<p>The above equation, albeit tractable, looks by no means familiar or friendly — what is with the absolute value? the determinant? the Jacobian? the inverse? The whole equation screams for an intuitive explanation. So here we go — let’s gain some insights into the meaning of such expression.</p>
+
+<p>One last thing before we move on: since $g$ is bijective and thus invertible, we can denote the inverse of $g$ as $f=g^{-1}$, which allows us to rewrite the equation as</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+\mathbb{P}_\mathcal{X}(x) =  \mathbb{P}_{\mathcal{Z}}(f(x))\left|\det \frac{d x}{d f(x)}\right|^{-1} =  \mathbb{P}_{\mathcal{Z}}(f(x))\left|\det \frac{d f(x)}{d x}\right|
+\end{align*}</script>
+
+<p>In the last equation, we get ride of the inverse by resorting to the identity that the determinant of an inverse is the inverse of the determinant, the intuition of which will become clear later.</p>
+
+<p>To understand the above equation, we start with a fundamental invariance in the change of probability random variables: the probability mass of the random variable $z$ in any subset of $\mathcal{Z}$ must be the same as the probability mass of $x$ in the corresponding region after the transformation, and vice versa.</p>
+
+<p>With this invariance in mind, let us consider the case when $x$ and $z$ have 2 dimensions, and focus on a small rectangular in $\mathcal{X}$ defined by two corner points $(a, b)$ and $(a+\Delta x_1, b + \Delta x_2)$. If $\Delta x_1$ and $\Delta x_2$ are small enough, we can approximate the probability mass on the rectangular as the density $\mathbb{P}_\mathcal{X}$ evaluated at point $(a,b)$ times the area of the rectangular. More precisely,</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+&P {\big(}  (x_1, x_2) \in [a, a+\Delta x_1]\times[b, b+\Delta x_2] {\big)}\\
+\approx& \mathbb{P}_\mathcal{X} ((a, b)) \times \text{area of }[a, a+\Delta x_1]\times[b, b+\Delta x_2]\\
+=&\mathbb{P}_\mathcal{X} ((a, b)) \Delta x_1 \Delta x_2
+\end{align*} %]]></script>
+
+<p>This approximation is basically assuming that the density on the rectangular stays constant, which holds asymptotically true as we shrink the width $\Delta x_1$ and height $\Delta x_2$ of the rectangular. The left figure below provides a visual illustration for this example.</p>
+
+<p style="text-align: center;"><img src="/images/flow.png" alt="change of variable equation" /></p>
+
+<p>Now resorting to the aforementioned invariance, the probability mass on the $\Delta x_1 \times \Delta x_2$ rectangular must remain unchanged after the transformation. So what does the rectangular look like after the transformation of $f$? Let us focus on the corner point $(a+\Delta x_1, b)$:</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+f((a+\Delta x_1, b))=&(f_1(a+\Delta x_1,b), f_2(a+\Delta x_1,b))  \\
+=& (f_1(a,b), f_2(a,b))  \\
++& \left(\frac{\partial f_1}{\partial x_1}(a, b)\Delta x_1 ,   \frac{\partial f_2}{\partial x_1}(a, b)\Delta x_1\right) \text{ }\text{ first order component} \\
++& \left(o(\Delta x_1), o(\Delta x_1)\right) \text{ }\text{ second and higher order residual}
+\end{align*} %]]></script>
+
+<p>As can be seen from the figure above, with $\Delta x_1$ and $\Delta x_2$ small enough, we can just ignore the higher order term and keep the linearized term, in which case the rectangular area is morphed into a parallelogram defined by the two vectors</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+&\left(\frac{\partial f_1}{\partial x_1}(a, b)\Delta x_1 ,   \frac{\partial f_2}{\partial x_1}(a, b)\Delta x_1\right)\\
+&\left(\frac{\partial f_1}{\partial x_2}(a, b)\Delta x_2 ,   \frac{\partial f_2}{\partial x_1}(a, b)\Delta x_2\right)
+\end{align*} %]]></script>
+
+<p>We have <a href="https://textbooks.math.gatech.edu/ila/determinants-volumes.html">geometry</a> to tell us that the area of a parallelogram is just the absolute determinant of the matrix composed of the edge vectors, which is expressed as below.</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+{\Bigg|} \det \underbrace{\left[
+\begin{array}{ll}
+\frac{\partial f_1}{\partial x_1} & \frac{\partial f_2}{\partial x_1}\\
+\frac{\partial f_1}{\partial x_2} & \frac{\partial f_2}{\partial x_2}
+\end{array}
+\right]_{(a,b)}}_{\substack{\text{Jacobian of $f$}\\\text{evaluated at $(a,b)$}}}
+{\Bigg |} 
+\Delta x_1 \Delta x_2
+\end{align*} %]]></script>
+
+<p>By plugging in the above into the invariance statement, we reached the following identity</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+\mathbb{P}_\mathcal{X} ((a, b)) \Delta x_1 \Delta x_2 = \mathbb{P}_\mathcal{Z} (f(a, b)) \left|\det {\bf J}_f(a,b)\right| \Delta x_1 \Delta x_2
+\end{align*}</script>
+
+<p>With $\Delta x_1\Delta x_2$ canceled out, we reached our target equation</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+\mathbb{P}_\mathcal{X} (x) = \mathbb{P}_\mathcal{Z} (f(x)) \left|\det {\bf J}_f(x)\right| = \mathbb{P}_\mathcal{Z} (f(x)) \left|\det \frac{\partial f(x)}{\partial x}\right|.
+\end{align*}</script>
+
+<p>For space with dimension larger than two, the above equation still holds, with the small distinctions that the parallelogram becomes a parallelepiped, and the concept of area becomes a more general notion of volume.</p>
+
+<p>If we follow to this point, it should be clear now what the physical interpretation is for the absolute-determinant-of-Jacobian — it represents the <strong>local, linearized rate of volume change</strong> (quoted from <a href="https://blog.evjang.com/2018/01/nf1.html">this excellent blog</a>) for the function transform. Why do we care about the rate of volume change? exactly because of the invariance of probability measure — in order to make sure each volume holds the same measure of probability before and after the transformation, we need to factor in the volume change induced by the transformation.</p>
+
+<p>With this interpretation that the absolute-determinant-of-Jacobian is just local linearized rate of volume change, it should not be surprising then that the determinant of a Jacobian of an inverse function is the inverse of the determinant Jacobian of the original function. In other words, if function $f$ expands a volume around $x$ by rate of $r$, then the inverse function $g=f^{-1}$ must shrink a volume around $f(x)$ by rate of $1/r$.</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+  
+
+
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fa fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="https://yyang768osu.github.io/tags/#generative-model" class="page__taxonomy-item" rel="tag">generative model</a>
+    
+    </span>
+  </p>
+
+
+
+
+      </footer>
+
+      
+
+<section class="page__share">
+  
+    <h4 class="page__share-title">Share on</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=https://yyang768osu.github.io/posts/2019/03/normalizing-flow-1/" class="btn btn--twitter" title="Share on Twitter"><i class="fa fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https://yyang768osu.github.io/posts/2019/03/normalizing-flow-1/" class="btn btn--facebook" title="Share on Facebook"><i class="fa fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://plus.google.com/share?url=https://yyang768osu.github.io/posts/2019/03/normalizing-flow-1/" class="btn btn--google-plus" title="Share on Google Plus"><i class="fa fa-fw fa-google-plus" aria-hidden="true"></i><span> Google+</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https://yyang768osu.github.io/posts/2019/03/normalizing-flow-1/" class="btn btn--linkedin" title="Share on LinkedIn"><i class="fa fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+      
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://yyang768osu-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+
+
+
+      
+
+
+  <nav class="pagination">
+    
+      <a href="https://yyang768osu.github.io/posts/2018/11/conventional-hmm-asr-training/" class="pagination--pager" title="Understanding conventional HMM-based ASR training
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+
+
+  
+  
+</div>
+
+
+    </script>
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<a href="/sitemap/">Sitemap</a>
+<!-- end custom footer snippets -->
+
+        
+
+<div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+    
+    
+    
+      <li><a href="http://github.com/yyang768osu"><i class="fa fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+    
+    
+    <li><a href="https://yyang768osu.github.io/feed.xml"><i class="fa fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2019 Yang Yang. Powered by <a href="http://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>, a fork of <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    <script src="https://yyang768osu.github.io/assets/js/main.min.js"></script>
+
+
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-123722738-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-123722738-1');
+</script>
+
+
+
+
+
+
+
+  </body>
+</html>
+

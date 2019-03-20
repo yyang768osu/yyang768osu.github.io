@@ -19,7 +19,7 @@
 
 
 
-<title>Comparison of end-to-end ASR models - Yang Yang</title>
+<title>Gumbel max and Gumbel softmax - Yang Yang</title>
 
 
 
@@ -29,15 +29,15 @@
 
 <meta property="og:locale" content="en-US">
 <meta property="og:site_name" content="Yang Yang">
-<meta property="og:title" content="Comparison of end-to-end ASR models">
+<meta property="og:title" content="Gumbel max and Gumbel softmax">
 
 
-  <link rel="canonical" href="https://yyang768osu.github.io/posts/2012/11/end_to_end_asr_models/">
-  <meta property="og:url" content="https://yyang768osu.github.io/posts/2012/11/end_to_end_asr_models/">
+  <link rel="canonical" href="https://yyang768osu.github.io/posts/2018/11/gumbel_max_and_gumbel_softmax/">
+  <meta property="og:url" content="https://yyang768osu.github.io/posts/2018/11/gumbel_max_and_gumbel_softmax/">
 
 
 
-  <meta property="og:description" content="">
+  <meta property="og:description" content="Before we talk about Gumbel distribution, let’s refresh our knowledge on exponential distribution. It is well-known that the exponential distribution is min-stable: the min of $n$ I.I.D. exponential random variables  $X_i\sim \text{Exp}(\lambda_i), i=1,2,\ldots, n$ is also exponentially distributed with decay rate $\sum_{1\leq i\leq n} \lambda_i$, as can be seen from the equation below.">
 
 
 
@@ -52,7 +52,7 @@
 
 
   <meta property="og:type" content="article">
-  <meta property="article:published_time" content="2018-11-13T00:00:00-08:00">
+  <meta property="article:published_time" content="2018-11-05T00:00:00-08:00">
 
 
 
@@ -236,29 +236,29 @@
 
 
   <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
-    <meta itemprop="headline" content="Comparison of end-to-end ASR models">
-    <meta itemprop="description" content="">
-    <meta itemprop="datePublished" content="November 13, 2018">
+    <meta itemprop="headline" content="Gumbel max and Gumbel softmax">
+    <meta itemprop="description" content="Before we talk about Gumbel distribution, let’s refresh our knowledge on exponential distribution. It is well-known that the exponential distribution is min-stable: the min of $n$ I.I.D. exponential random variables  $X_i\sim \text{Exp}(\lambda_i), i=1,2,\ldots, n$ is also exponentially distributed with decay rate $\sum_{1\leq i\leq n} \lambda_i$, as can be seen from the equation below.">
+    <meta itemprop="datePublished" content="November 05, 2018">
     
 
     <div class="page__inner-wrap">
       
         <header>
-          <h1 class="page__title" itemprop="headline">Comparison of end-to-end ASR models
+          <h1 class="page__title" itemprop="headline">Gumbel max and Gumbel softmax
 </h1>
           
             <p class="page__meta"><i class="fa fa-clock-o" aria-hidden="true"></i> 
 
 
   
-	  less than 1 minute read
+	  1 minute read
 	
 </p>
           
         
         
         
-          <p class="page__date"><strong><i class="fa fa-fw fa-calendar" aria-hidden="true"></i> Published:</strong> <time datetime="2018-11-13T00:00:00-08:00">November 13, 2018</time></p>
+          <p class="page__date"><strong><i class="fa fa-fw fa-calendar" aria-hidden="true"></i> Published:</strong> <time datetime="2018-11-05T00:00:00-08:00">November 05, 2018</time></p>
         
         
              
@@ -268,11 +268,71 @@
       
 
       <section class="page__content" itemprop="text">
-        <p style="text-align: center;"><img src="/images/end2end.png" alt="End-to-end ASR model derivation" /></p>
+        <p>Before we talk about Gumbel distribution, let’s refresh our knowledge on exponential distribution. It is well-known that the exponential distribution is min-stable: the min of $n$ I.I.D. exponential random variables  $X_i\sim \text{Exp}(\lambda_i), i=1,2,\ldots, n$ is also exponentially distributed with decay rate $\sum_{1\leq i\leq n} \lambda_i$, as can be seen from the equation below.</p>
 
-<p style="text-align: center;"><img src="/images/transcription_model.png" alt="Sentence model for CTC, RNN-T, and Attention" /></p>
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+P(\min_{1\leq i \leq n} X_i > x) &= \prod_{1\leq i\leq n} P(X_i>x) = e^{-\sum_{1\leq i\leq n}\lambda_i x}
+\end{align*} %]]></script>
 
-<h2 id="language-model-integration">Language model integration</h2>
+<p>A lesser known property is that the arg-min of exponential variables is a multinomial distribution with event probabilities $\left(\frac{\lambda_1}{\sum_{i}\lambda_i}, \ldots, \frac{\lambda_n}{\sum_{i}\lambda_i}\right)$:</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+&P(\arg\min_{1\leq i\leq n}X_i =k)\\
+=&\int_0^\infty P(\arg\min_{1\leq i\leq n} X_i = x | X_k=x)f(X_k = x)dx\\
+=&\int_0^\infty \prod_{i=1\to n, i\not=k} e^{-\lambda_i x} \lambda_k e^{-\lambda_k x} dx\\
+=&\frac{\lambda_k}{\sum_{i=1\to n} \lambda_i}.
+\end{align*} %]]></script>
+
+<p>As we will see shortly, this property directly leads to the Gumbel max trick.</p>
+
+<h2 id="gumbel-max-trick">Gumbel max trick</h2>
+
+<p>Assume that we are given a multinomial (a.k.a. categorical) distribution with unnormalized event probabilities $\lambda_i, i=1\to n$ (i.e., $\sum_{i=1}^n\lambda_i\not=1$), the above property provides us a way to sample from the distribution without the need for normalization:</p>
+<ol>
+  <li>draw $n$ samples from an exponential distributions with decay rate of $1$</li>
+  <li>scale the value of these $n$ samples with $1/\lambda_i$ for $i=1\to n$.</li>
+  <li>take the index of the minimum of the scaled samples</li>
+</ol>
+
+<p>To be more precise, we are utilizing the fact that</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+&\arg\min_{1\leq i\leq n} \left(\frac{1}{\lambda_i}s_i\right) \sim \text{Multinomial}\left(\frac{\lambda_1}{\sum_{i}\lambda_i}, \ldots, \frac{\lambda_n}{\sum_{i}\lambda_i}\right)\\
+&\text{where } s_i\sim \text{Exp}(1), \forall i.
+\end{align*} %]]></script>
+
+<p>For the case of soft-max operation, we have direct access to the log of the unnormalized probabilities $\alpha_i=\log \lambda_i$ (multinomial logit), instead of the unnormalized probabilities itself. In this case, we can modify the above equation as below</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+&\arg\min_{1\leq i\leq n} \left(\frac{1}{e^{\alpha_i}}s_i\right) \sim \text{Multinomial}\left(\frac{e^{\alpha_1}}{\sum_{i}e^{\alpha_i}}, \ldots, \frac{e^{\alpha_n}}{\sum_{i}e^{\alpha_i}}\right)\\
+&\text{where } s_i\sim \text{Exp}(1), \forall i.
+\end{align*} %]]></script>
+
+<p>One observation is that the left hand side of the above equation is invariant to any linear transform. The Gumbel-max trick is obtained by taking $-\log(\cdot)$ operation to the right-hand-side, in which case $-\log(\text{Exp}(1))$ is a standard Gumbel distribution, leading to the equation below</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+&\arg\max_{1\leq i\leq n} \left(\alpha_i+g_i\right) \sim \text{Multinomial}\left(\frac{e^{\alpha_1}}{\sum_{i}e^{\alpha_i}}, \ldots, \frac{e^{\alpha_n}}{\sum_{i}e^{\alpha_i}}\right)\\
+&\text{where } g_i\sim \text{Gumbel}(\text{location}=0, \text{scale}=1), \forall i.
+\end{align*} %]]></script>
+
+<p>This provides us a way to obtain samples directly from the logits without going through the exponentiate-and-normalization step</p>
+
+<ol>
+  <li>draw $n$ samples from a standard Gumbel distributions with location of $0$ and scale of $1$.</li>
+  <li>add the values of the $n$ samples to the logits.</li>
+  <li>take the index of the minimum of the $n$ summations.</li>
+</ol>
+
+<p>Essentially, <em>the Gumbel max trick converts the sampling operation from a categorical/multinomial distribution into an argmax operation</em>. The sampling process can be expedited if we pre-calculate and store a stream of Gumbel samples.</p>
+
+<h2 id="gumbel-softmax">Gumbel softmax</h2>
+
+<p style="text-align: center;"><img src="/images/gumbel.png" alt="Gumbel softmax" /></p>
 
 
         
@@ -298,7 +358,7 @@
     
       
       
-      <a href="https://yyang768osu.github.io/tags/#asr" class="page__taxonomy-item" rel="tag">ASR</a>
+      <a href="https://yyang768osu.github.io/tags/#gumble" class="page__taxonomy-item" rel="tag">gumble</a>
     
     </span>
   </p>
@@ -315,13 +375,13 @@
     <h4 class="page__share-title">Share on</h4>
   
 
-  <a href="https://twitter.com/intent/tweet?text=https://yyang768osu.github.io/posts/2012/11/end_to_end_asr_models/" class="btn btn--twitter" title="Share on Twitter"><i class="fa fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+  <a href="https://twitter.com/intent/tweet?text=https://yyang768osu.github.io/posts/2018/11/gumbel_max_and_gumbel_softmax/" class="btn btn--twitter" title="Share on Twitter"><i class="fa fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
 
-  <a href="https://www.facebook.com/sharer/sharer.php?u=https://yyang768osu.github.io/posts/2012/11/end_to_end_asr_models/" class="btn btn--facebook" title="Share on Facebook"><i class="fa fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https://yyang768osu.github.io/posts/2018/11/gumbel_max_and_gumbel_softmax/" class="btn btn--facebook" title="Share on Facebook"><i class="fa fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
 
-  <a href="https://plus.google.com/share?url=https://yyang768osu.github.io/posts/2012/11/end_to_end_asr_models/" class="btn btn--google-plus" title="Share on Google Plus"><i class="fa fa-fw fa-google-plus" aria-hidden="true"></i><span> Google+</span></a>
+  <a href="https://plus.google.com/share?url=https://yyang768osu.github.io/posts/2018/11/gumbel_max_and_gumbel_softmax/" class="btn btn--google-plus" title="Share on Google Plus"><i class="fa fa-fw fa-google-plus" aria-hidden="true"></i><span> Google+</span></a>
 
-  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https://yyang768osu.github.io/posts/2012/11/end_to_end_asr_models/" class="btn btn--linkedin" title="Share on LinkedIn"><i class="fa fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https://yyang768osu.github.io/posts/2018/11/gumbel_max_and_gumbel_softmax/" class="btn btn--linkedin" title="Share on LinkedIn"><i class="fa fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
 </section>
       
 <div id="disqus_thread"></div>
@@ -351,11 +411,11 @@ s.setAttribute('data-timestamp', +new Date());
 
   <nav class="pagination">
     
-      <a href="https://yyang768osu.github.io/posts/2012/11/gumbel_max_and_gumbel_softmax/" class="pagination--pager" title="Gumbel max and Gumbel softmax
+      <a href="https://yyang768osu.github.io/posts/2018/08/kalman_filter_particle_filter/" class="pagination--pager" title="An introduction to Kalman filter and particle filter
 ">Previous</a>
     
     
-      <a href="https://yyang768osu.github.io/posts/2012/11/conventional-hmm-asr-training/" class="pagination--pager" title="Understanding conventional HMM-based ASR training
+      <a href="https://yyang768osu.github.io/posts/2018/11/end_to_end_asr_models/" class="pagination--pager" title="Comparison of end-to-end ASR models
 ">Next</a>
     
   </nav>
