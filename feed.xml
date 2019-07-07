@@ -1,16 +1,150 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="https://yyang768osu.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://yyang768osu.github.io/" rel="alternate" type="text/html" /><updated>2019-03-19T23:07:43-07:00</updated><id>https://yyang768osu.github.io/</id><title type="html">Yang Yang</title><subtitle>Engineer at Qualcomm</subtitle><author><name>Yang Yang</name></author><entry><title type="html">Normalizing Flow I: understanding the change of variable equation</title><link href="https://yyang768osu.github.io/posts/2019/03/normalizing-flow-1/" rel="alternate" type="text/html" title="Normalizing Flow I: understanding the change of variable equation" /><published>2019-03-15T00:00:00-07:00</published><updated>2019-03-15T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2019/03/normalizing-flow-I-change-of-variable-equation</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2019/03/normalizing-flow-1/">&lt;p&gt;Normalizing flow is a technique for constructing complicated probability distributions through invertible transformations of a simple distribution. It has been studied and applied in generative models under two contexts: (1) characterizing approximation posterior distribution of latent variables in the case of variational inference (2) directly approximating the data distribution. When used in the second context, it has demonstrated its capability in generating high-fidelity audio, image, and video data.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="https://yyang768osu.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://yyang768osu.github.io/" rel="alternate" type="text/html" /><updated>2019-07-07T16:03:28-07:00</updated><id>https://yyang768osu.github.io/</id><title type="html">Yang Yang</title><subtitle>Engineer at Qualcomm</subtitle><author><name>Yang Yang</name></author><entry><title type="html">Markov Chain Monte Carlo: Gibbs, Metropolis-Hasting, and Hamiltonian</title><link href="https://yyang768osu.github.io/posts/2019/07/mcmc/" rel="alternate" type="text/html" title="Markov Chain Monte Carlo: Gibbs, Metropolis-Hasting, and Hamiltonian" /><published>2019-07-06T00:00:00-07:00</published><updated>2019-07-06T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2019/07/markov-chain-monte-carlo</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2019/07/mcmc/">&lt;p&gt;A fundamental problem in statistical learning is to compute the expectation with respect to some target probability distribution $\pi$&lt;/p&gt;
 
-&lt;p&gt;The study of generative models is all about learning a distribution &lt;script type=&quot;math/tex&quot;&gt;\mathbb{P}_{\mathcal{X}}&lt;/script&gt; that fits the data $\mathcal{X}$ well. With such distribution $\mathbb{P}(\mathcal{X})$ we can generate, by sampling from  $\mathbb{P}_{\mathcal{X}}$, artificial data point that resembles $\mathcal{X}$. Since the true data distribution lies in high-dimensional space and is potentially very complex, it is essential to have a parameterized distribution family that is flexible and expressive enough to approximate the true data distribution well.&lt;/p&gt;
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+\mathbb{E}_\pi\left[f\right] \triangleq \int \pi(x) f(x) dx.
+\end{align*}&lt;/script&gt;
 
-&lt;p&gt;The idea of flow-based methods is to &lt;em&gt;explicitly&lt;/em&gt; construct this parameterized family of distributions by transforming a known distribution &lt;script type=&quot;math/tex&quot;&gt;\mathbb{P}_{\mathcal{Z}}&lt;/script&gt;, e.g., a standard multi-variant Gaussian, through a concatenation of function mappings. Let’s consider the elementary case of a single function mapping $g$. For each sampled value $z$ from $\mathbb{P}_{\mathcal{Z}}$, we map it to a new value $x=g(z)$.&lt;/p&gt;
+&lt;p&gt;There are two difficulties in the evaluation of the above (1) often $\pi(\cdot)$ is available to us only as a form of unnormalized probability, i.e., it can be evaluated only up to a normalizing constant (2) even if $\pi(\cdot)$ can be evaluated exactly, it is often hard to directly generate samples from it (e.g., for high-dimensional space).&lt;/p&gt;
+
+&lt;p&gt;One example application is Bayesian inference, where the posterior probability of the latent $\pi(x|D)$ is available only in the form of prior $\pi(x)$ times likelihood $\pi(D|x)$ up to the unknown normalizing constant of $\pi(D)$, and we would like to either sample or obtain the expectation with respect to the posterior probability.&lt;/p&gt;
+
+&lt;p&gt;The idea of Markov Chain Monte Carlo (MCMC) is to construct a Markov chain whose stationary distribution is exactly the target distribution with easy-to-sample transition kernels. One could then start with a random initial state, and yield samples by simply running the transitions and use the generated samples after the chain reaches steady state for the Monte Carlo evaluation of the expectation.&lt;/p&gt;
+
+&lt;p&gt;For the design of such Markov chain, all methods that I encountered utilize the following theorem&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;An irreducible and aperiodic Markov chain with transition probability $P$ has stationary distribution of $\pi$ if it satisfies \begin{align} 
+\pi(x)P(x’|x) = \pi(x’)P(x|x’) \notag
+\end{align}&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The game, then, is to design $P$ for which the above equality holds. In this article, we will go through three MCMC methods with different ways in the design of $P$, namely &lt;strong&gt;Gibbs sampling&lt;/strong&gt;, &lt;strong&gt;Metropolis-Hastings&lt;/strong&gt;, and &lt;strong&gt;Hamiltonian Monte Carlo&lt;/strong&gt; (HMC).&lt;/p&gt;
+
+&lt;p&gt;As a side note, it is worth pointing out that the above equation, referred to as &lt;em&gt;detailed balance equation&lt;/em&gt;, is a sufficient but not necessary condition for a Markov chain to have stationary distribution $\pi$. It defines a special case of Markov chain called reversible Markov chain. The detailed balance equation should be contrasted with &lt;em&gt;global balance equation&lt;/em&gt; below, which all Markov chains with stationary distribution $\pi$ satisfy. Then it shouldn’t be surprising that global balance equation can be easily derived from detailed balance equation (by summing over $x’$ on both sides of Equation (1)) but not the other way around.&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+\pi(x) = \sum_{x'} \pi(x')P(x'|x).
+\end{align*}&lt;/script&gt;
+
+&lt;h2 id=&quot;gibbs-sampling&quot;&gt;Gibbs sampling&lt;/h2&gt;
+
+&lt;p&gt;In Gibbs sampling, the transition probability $P$ is defined as the following&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+P\left(x'|x\right)=\left\{
+\begin{array}{ll}
+\frac{1}{d}\pi\left(x'_j|x_1, \ldots, x_{j-1}, x_{j+1}, \ldots, x_d\right) &amp; \text{if there exits }j\text{ such that }x_i'=x_i\text{ for }i\not=j.\\
+0&amp;\text{otherwise.}
+\end{array}
+\right.
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;The state $x$ is a vector of dimension $d$, and the transition probability from state $x$ to state $x’$ is non-zero when they differ by only one dimension, say dimension $j$, and the transition probability is designed to be the conditional probability of $x’_j$, given all the other dimensions fixed, scaled by $1/d$. This corresponds to a transition scheme where we uniformly pick a dimension $j$, and then randomly sample a value in dimension $j$ following the conditional distribution. Detailed balance equation holds with such design&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+&amp;\pi(x)P(x'|x)\\
+=&amp;\frac{1}{d}\pi(x)\pi(x'_j|x_1, \ldots, x_{j-1}, x_{j+1}, \ldots, x_d)\\
+=&amp; \frac{1}{d}\pi(x)\pi(x')/\sum_{z}\pi(x_1, \ldots, x_{j-1}, z, x_{j+1}, \ldots, x_d)\\
+=&amp;\frac{1}{d}\pi(x)\pi(x')/\sum_{z}\pi(x'_1, \ldots, x'_{j-1}, z, x'_{j+1}, \ldots, x'_d)\\
+=&amp;\frac{1}{d}\pi(x')\pi(x_j|x'_1, \ldots, x'_{j-1}, x'_{j+1}, \ldots, x'_d)\\
+=&amp;\pi(x')P(x|x').
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;The premise of Gibbs sampling is that the conditional distribution of one dimension given the rest is much easier to normalize and sample from. It is quite limited though, in the sense that the transition can never go very far in each step – only one dimension can be changed at a time. As a consequence, the transition matrix is quite sparse and the Markov chain may suffer from very large mixing time (time to stationary distribution) and it may not scale well with large dimensional space.&lt;/p&gt;
+
+&lt;h2 id=&quot;metropolis-hastings&quot;&gt;Metropolis Hastings&lt;/h2&gt;
+
+&lt;p&gt;Metropolis Hastings algorithm is a much more general version of Gibbs; in fact it encompasses both Gibbs sampling and Hamiltonian MC as special realizations. The basic idea is to construct the transition distribution from a flexible form of proposal distribution $g(x’|x)$, corrected by a &lt;em&gt;acceptance ratio&lt;/em&gt; term $A(x’,x)$  to guarantee reversibility in time. Specifically, the acceptance ratio is chosen to enforce the detailed balance equation&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+\pi(x) g(x'|x) A(x', x) = \pi(x') g(x|x') A(x, x').
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;The actual transition probability is then $P(x’|x) \triangleq g(x’|x) A(x’, x)$, corresponding to a sampling scheme where we first sample from $g(x’|x)$ to have a candidate next state $x’$, and then accept this candidate with probability $A(x’, x)$. If the candidate state is rejected, the next state will remain the same as the current state. For an arbitrary proposal distribution $g$, from the above equation, we have&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+\frac{A(x', x)}{A(x, x')} = \frac{\pi(x')g(x|x')}{\pi(x)g(x'|x)}.
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;To reduce the mixing time of the Markov chain, it is desirable to maximize the acceptance ratio $A$. This means that we want to set either $A(x’,x)$ or $A(x, x’)$ to be $1$ for any pair of $x$ and $x’$, resulting in the expression below&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align}
+A(x', x) = \min\left\{1, \frac{\pi(x')g(x|x')}{\pi(x)g(x'|x)}\right\}.
+\end{align}&lt;/script&gt;
+
+&lt;p&gt;In the above equation, since $\pi$ appear in both numerator and denominator, we can easily work with unnormalized probability distribution, as long as it can be evaluated efficiently for each data point.&lt;/p&gt;
+
+&lt;p&gt;Metropolis-Hasting algorithm itself is just a MCMC framework; it still relies on a good choice of proposal distribution to perform well. The design of $g$ can be problem specific and is the &lt;em&gt;art&lt;/em&gt;. The clear optimal choice of is $g(x’|x)=\pi(x)$, which degenerates to the direct sampling of $\pi$ with acceptance ratio of $1$.&lt;/p&gt;
+
+&lt;h2 id=&quot;hamiltonian-monte-carlo&quot;&gt;Hamiltonian Monte Carlo&lt;/h2&gt;
+
+&lt;p&gt;Let’s now image a high dimensional surface for which the potential energy at each point $x$ is defined as $V(x)\triangleq -\log\pi(x)$. Here we introduce an auxiliary variable $p$ with the same dimension as $x$, and interpret the pair of variable $(x, p)$ as describing the position and momentum of an object on the high dimensional space.&lt;/p&gt;
+
+&lt;p&gt;The kinetic energy of the object with mass $m$ and momentum $p$ is known as $K(p)=\frac{p^2}{2m}$ (e.g., $\frac{1}{2}mv^2 = (mv)^2/2m$). We now construct a joint probability distribution of $(x,p)$ as&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+\pi(x, p) = \frac{1}{Z}e^{-V(x)-K(p)} = \frac{1}{Z} e^{\log\pi(x)}e^{p^2/2m} = \frac{1}{Z}\pi(x)\mathcal{N}\left(p|0, \sqrt{m}\right).
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;Two remarks here: (1) The joint probability defined above is a function of the total energy $V(x) + K(p)$ (potential energy plus kinetic energy) of the imaginary object. (2) Since the marginal distribution of $\pi(x, p)$ with respect to $x$ is $\pi(x)$, if we can construct an effective MCMC algorithm for $(x, p)$, we then obtain an MCMC algorithm for $x$ by discarding $p$.&lt;/p&gt;
+
+&lt;p&gt;The key in Hamiltonian MC is to use Hamiltonian mechanism as a way to obtain new candidate state (corresponding to proposal $g$ in Metropolis-Hastings).  Hamiltonian mechanics is an alternative reformation of the classic Newtonian mechanics describing Newton’s second law of motion. It characterizes the time evolution of the system in terms of location $x$ and momentum $p$, with the conservation of the sum of potential energy $V(x)$ and Kinetic energy of $K(p)$, a.k.a. Hamiltonian $\mathcal{H}(x, p) \triangleq V(x) + K(p)$, through the following differential equations&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\frac{d p}{dt} =&amp; -\frac{\partial \mathcal{H}}{\partial x} &amp;\text{force equals to negative gradient of potential energy}\\
+\frac{d x}{dt} =&amp; \frac{\partial \mathcal{H}}{\partial p} &amp;\text{velocity equals to derivative of kinetic energy w.r.t. momentum}
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;By solving the path of $(x, p)$ according to Hamiltonian mechanics, we are essentially traversing along the contour for which $\pi (x, p)$ is fixed. This provide a very nice way of coming up with a proposal function $g(x’, p’| x, p)$ without having to reject any candidate. In other words, if we start with the point $(x, p)$ and derive the system state $(x_\tau, p_\tau)$ after a period of time $\tau$ , we then know that $\pi(x, p) = \pi(x_\tau, p_\tau)$. If we further apply a negation in the momentum, then the proposal function is reversible.&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+x, p \xrightarrow[]{\substack{\text{Hamiltonian}\\\text{mechanics}}} x_\tau, p_\tau \xrightarrow[]{\substack{\text{negate}\\\text{momentum}}} x_\tau, -p_\tau  = x', p'\\
+x', p' \xrightarrow[]{\substack{\text{Hamiltonian}\\\text{mechanics}}} x'_\tau, p'_\tau \xrightarrow[]{\substack{\text{negate}\\\text{momentum}}}x'_\tau, -p'_\tau  = x, p
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;If we have perfect solver for the differential equation, then according to Equation (2) there is no need to reject any transition proposal. However, in reality the differential equation can only be solved in approximation with error, and thus $\pi(x, p)\not=\pi(x’, p’)$, meaning that the acceptance ratio is not strictly $1$ and certain fraction of the transition proposal would be rejected. It is worth noting that the method for computing the solution to the differential equation should still be reversible to respect the detailed balance equation. One hidden condition for such transition to be feasible is that the potential energy $V(\cdot)$ has to be differentiable, implying that the target distribution $\pi(\cdot)$ should be differentiable.&lt;/p&gt;
+
+&lt;p&gt;So now we have defined a proposal function according to Hamiltonian mechanics, which leads to large acceptance ratio. Are we done here? Not yet. If we stop here, then the Markov chain we defined is reducible, i.e., not every state is accessible from an initial state. In fact, we only have pairwise transition in the Markov chain. To ensure the sampling of the entire space, another proposal distribution $g_2$ is introduced, taking advantage of the fact that $\pi(x, p)$ has factorized form for which $p$ follows a zero-mean normal distribution – the proposal distribution $g_2$ simply samples the momentum value $p$ from the corresponding marginal distribution. For such proposal, the corresponding acceptance ratio is $1$&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+A((x, p'), (x, p)) = \min\left\{1, \frac{\pi(x, p')g_2(p|p')}{\pi(x, p)g_2(p'|p)}\right\} = \min\left\{1, \frac{\pi(x)}{\pi(x)}\right\}=1 .
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;Now we concatenate the above two proposals to have the final form of Hamiltonian MC sampling&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+x, p_0 \xrightarrow[]{\substack{\text{resample}\\\text{momentum}}} x, p 
+\xrightarrow[]{\substack{\text{Hamiltonian}\\\text{mechanics}}} x_\tau, p_\tau 
+\xrightarrow[]{\substack{\text{negate}\\\text{momentum}}} x_\tau, -p_\tau  = x', p'.
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;Since every time after applying the Hamiltonian mechanics the momentum is resampled, we can ignore the momentum negation operation, leading to the following&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+x \xrightarrow[]{\substack{\text{resample}\\\text{momentum}}} x, p 
+\xrightarrow[]{\substack{\text{Hamiltonian}\\\text{mechanics}}} x_\tau, p_\tau 
+\xrightarrow[]{\substack{\text{discard}\\\text{momentum}}} x_\tau = x',
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;and the corresponding acceptance ratio is&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+A((x_\tau, p_\tau), (x, p)) = \min\left\{1, \frac{\pi(x_\tau, p_\tau)}{\pi(x, p)}\right\} =  \min\left\{1, e^{\mathcal{H}(x, p) - \mathcal{H}(x_\tau, p_\tau)}\right\}.
+\end{align*}&lt;/script&gt;</content><author><name>Yang Yang</name></author><category term="Monte Carlo" /><summary type="html">A fundamental problem in statistical learning is to compute the expectation with respect to some target probability distribution $\pi$</summary></entry><entry><title type="html">Normalizing Flow I: understanding the change of variable equation</title><link href="https://yyang768osu.github.io/posts/2019/03/normalizing-flow-1/" rel="alternate" type="text/html" title="Normalizing Flow I: understanding the change of variable equation" /><published>2019-03-15T00:00:00-07:00</published><updated>2019-03-15T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2019/03/normalizing-flow-I-change-of-variable-equation</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2019/03/normalizing-flow-1/">&lt;p&gt;Normalizing flow is a technique for constructing complex probability distributions through invertible transformations of a simple distribution. It has been studied and applied in generative models under two contexts: (1) characterizing the approximation posterior distribution of latent variables in the case of variational inference (2) directly approximating the data distribution. When used in the second context, it has demonstrated its capability in generating high-fidelity audio, image, and video data.&lt;/p&gt;
+
+&lt;p&gt;The study of generative models is all about learning a distribution &lt;script type=&quot;math/tex&quot;&gt;\mathbb{P}_{\mathcal{X}}&lt;/script&gt; that fits the data $\mathcal{X}$ well. With such distribution $\mathbb{P}(\mathcal{X})$ we can, among other things, generate, by sampling from  $\mathbb{P}_{\mathcal{X}}$, artificial data point that resembles $\mathcal{X}$. Since the true data distribution lies in high-dimensional space and is potentially very complex, it is essential to have a parameterized distribution family that is flexible and expressive enough to approximate the true data distribution well.&lt;/p&gt;
+
+&lt;p&gt;The idea of flow-based methods is to &lt;em&gt;explicitly&lt;/em&gt; construct a parameterized family of distributions by transforming a known distribution &lt;script type=&quot;math/tex&quot;&gt;\mathbb{P}_{\mathcal{Z}}&lt;/script&gt;, e.g., a standard multi-variant Gaussian, through a concatenation of function mappings. Let’s consider the elementary case of a single function mapping $g$. For each sampled value $z$ from $\mathbb{P}_{\mathcal{Z}}$, we map it to a new value $x=g(z)$.&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
 z \xrightarrow{g(.)}  x
 \end{align*}&lt;/script&gt;
 
-&lt;p&gt;Up until this point, we have not introduced anything new. This way of transforming a known distribution using a function mapping $g$ is also adopted by generative adversarial network (GAN). The question that flow-based method asks is: can we get a tractable probability density function (pdf) of $x=g(z)$? If so, we can &lt;em&gt;directly&lt;/em&gt; optimize the probability density of dataset, i.e., the log likelihood of the data, rather than resorting to the duality approach adopted by GAN, or the lower-bound approach adopted by VAE.&lt;/p&gt;
+&lt;p&gt;Up until this point, we have not introduced anything new. This way of transforming a known distribution using a function mapping $g$ is also adopted by generative adversarial networks (GAN). The question that flow-based method asks is: can we get a tractable probability density function (pdf) of $x=g(z)$? If so, we can &lt;em&gt;directly&lt;/em&gt; optimize the probability density of the dataset, i.e., the log likelihood of the data, rather than resorting to the duality approach adopted by GAN, or the lower-bound approach adopted by VAE.&lt;/p&gt;
 
-&lt;p&gt;Unfortunately, for a general function $g$ that maps $z$ to $x$, the pdf of the new random variable $x=g(z)$ is quite complicated and usually intractable due to the need to calculate a multi-dimensional integral. However, if we restrict $g$ to be a bijective function (one-to-one correspondence) which is differentiable, then the general change-of-variable technique reduces to the following tractable form:&lt;/p&gt;
+&lt;p&gt;Unfortunately, for a general function $g$ that maps $z$ to $x$, the pdf of the new random variable $x=g(z)$ is quite complicated and usually intractable due to the need to calculate a multi-dimensional integral. However, if we restrict $g$ to be a bijective (one-to-one correspondence) and differentiable function, then the general change-of-variable technique reduces to the following tractable form:&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
 \mathbb{P}_\mathcal{X}(x) =  \mathbb{P}_{\mathcal{Z}}(z)\left|\det \frac{d g(z)}{d z}\right|^{-1}, x=g(z)
@@ -18,9 +152,9 @@ z \xrightarrow{g(.)}  x
 
 &lt;p&gt;An important consequence with the bijective assumption is that $z$ and $x$ must have the same dimension: if $z$ is a $d-$dimensional vector $z=[z_1, z_2, \ldots, z_d]$, the corresponds $x$ must also be a $d-$dimensional vector $x=[x_1, x_2, \ldots, x_d]$. It is worth emphasizing that the bijective assumption is essential to the tractability of the change-of-variable operation, and the resulting dimension invariance is a key restriction in flow-based methods.&lt;/p&gt;
 
-&lt;p&gt;The above equation, albeit tractable, looks by no means familiar or friendly — what is with the absolute value? the determinant? the Jacobian? the inverse? The whole equation screams for an intuitive explanation. So here we go — let’s gain some insights into the meaning of such expression.&lt;/p&gt;
+&lt;p&gt;The above equation, albeit tractable, looks by no means familiar or friendly — what is with the absolute value? the determinant? the Jacobian? the inverse? The whole equation screams for an intuitive explanation. So here we go — let’s gain some insights into the meaning of the formula.&lt;/p&gt;
 
-&lt;p&gt;One last thing before we move on: since $g$ is bijective and thus invertible, we can denote the inverse of $g$ as $f=g^{-1}$, which allows us to rewrite the equation as&lt;/p&gt;
+&lt;p&gt;First off, since $g$ is bijective and thus invertible, we can denote the inverse of $g$ as $f=g^{-1}$, which allows us to rewrite the equation as&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
 \mathbb{P}_\mathcal{X}(x) =  \mathbb{P}_{\mathcal{Z}}(f(x))\left|\det \frac{d x}{d f(x)}\right|^{-1} =  \mathbb{P}_{\mathcal{Z}}(f(x))\left|\det \frac{d f(x)}{d x}\right|
@@ -28,9 +162,9 @@ z \xrightarrow{g(.)}  x
 
 &lt;p&gt;In the last equation, we get ride of the inverse by resorting to the identity that the determinant of an inverse is the inverse of the determinant, the intuition of which will become clear later.&lt;/p&gt;
 
-&lt;p&gt;To understand the above equation, we start with a fundamental invariance in the change of probability random variables: the probability mass of the random variable $z$ in any subset of $\mathcal{Z}$ must be the same as the probability mass of $x$ in the corresponding region after the transformation, and vice versa.&lt;/p&gt;
+&lt;p&gt;To understand the above equation, we start with a fundamental invariance in the change of probability random variables: &lt;strong&gt;the probability mass of the random variable $z$ in any subset of $\mathcal{Z}$ must be the same as the probability mass of $x$ in the corresponding subset of $\mathcal{X}$ induced by transformation from $z$ to $x$&lt;/strong&gt;, and vice versa.&lt;/p&gt;
 
-&lt;p&gt;With this invariance in mind, let us consider the case when $x$ and $z$ have 2 dimensions, and focus on a small rectangular in $\mathcal{X}$ defined by two corner points $(a, b)$ and $(a+\Delta x_1, b + \Delta x_2)$. If $\Delta x_1$ and $\Delta x_2$ are small enough, we can approximate the probability mass on the rectangular as the density $\mathbb{P}_\mathcal{X}$ evaluated at point $(a,b)$ times the area of the rectangular. More precisely,&lt;/p&gt;
+&lt;p&gt;Let us exemplify the above statement with an example. Consider the case when $x$ and $z$ are 2 dimensional, and focus on a small rectangular in $\mathcal{X}$ defined by two corner points $(a, b)$ and $(a+\Delta x_1, b + \Delta x_2)$. If $\Delta x_1$ and $\Delta x_2$ are small enough, we can approximate the probability mass on the rectangular as the density $\mathbb{P}_\mathcal{X}$ evaluated at point $(a,b)$ times the area of the rectangular. More precisely,&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{align*}
@@ -39,7 +173,7 @@ z \xrightarrow{g(.)}  x
 =&amp;\mathbb{P}_\mathcal{X} ((a, b)) \Delta x_1 \Delta x_2
 \end{align*} %]]&gt;&lt;/script&gt;
 
-&lt;p&gt;This approximation is basically assuming that the density on the rectangular stays constant, which holds asymptotically true as we shrink the width $\Delta x_1$ and height $\Delta x_2$ of the rectangular. The left figure below provides a visual illustration for this example.&lt;/p&gt;
+&lt;p&gt;This approximation is basically assuming that the probabilistic density on the rectangular stays constant and equal to $\mathbb{P}_\mathcal{X} ((a, b))$, which holds asymptotically true as we shrink the width $\Delta x_1$ and height $\Delta x_2$ of the rectangular. The left figure below provides an illustration.&lt;/p&gt;
 
 &lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/flow.png&quot; alt=&quot;change of variable equation&quot; /&gt;&lt;/p&gt;
 
@@ -53,7 +187,7 @@ f((a+\Delta x_1, b))=&amp;(f_1(a+\Delta x_1,b), f_2(a+\Delta x_1,b))  \\
 +&amp; \left(o(\Delta x_1), o(\Delta x_1)\right) \text{ }\text{ second and higher order residual}
 \end{align*} %]]&gt;&lt;/script&gt;
 
-&lt;p&gt;As can be seen from the figure above, with $\Delta x_1$ and $\Delta x_2$ small enough, we can just ignore the higher order term and keep the linearized term, in which case the rectangular area is morphed into a parallelogram defined by the two vectors&lt;/p&gt;
+&lt;p&gt;With $\Delta x_1$ and $\Delta x_2$ small enough, we can just ignore the higher order term and keep the linearized term. As can be seen from the figure above, the rectangular area is morphed into a parallelogram defined by the two vectors&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{align*}
@@ -87,17 +221,17 @@ f((a+\Delta x_1, b))=&amp;(f_1(a+\Delta x_1,b), f_2(a+\Delta x_1,b))  \\
 \mathbb{P}_\mathcal{X} (x) = \mathbb{P}_\mathcal{Z} (f(x)) \left|\det {\bf J}_f(x)\right| = \mathbb{P}_\mathcal{Z} (f(x)) \left|\det \frac{\partial f(x)}{\partial x}\right|.
 \end{align*}&lt;/script&gt;
 
-&lt;p&gt;For space with dimension larger than two, the above equation still holds, with the small distinctions that the parallelogram becomes a parallelepiped, and the concept of area becomes a more general notion of volume.&lt;/p&gt;
+&lt;p&gt;For data with dimension larger than two, the above equation still holds, with the distinctions that the parallelogram becomes a parallelepiped, and the concept of area becomes a more general notion of volume.&lt;/p&gt;
 
-&lt;p&gt;If we follow to this point, it should be clear now what the physical interpretation is for the absolute-determinant-of-Jacobian — it represents the &lt;strong&gt;local, linearized rate of volume change&lt;/strong&gt; (quoted from &lt;a href=&quot;https://blog.evjang.com/2018/01/nf1.html&quot;&gt;this excellent blog&lt;/a&gt;) for the function transform. Why do we care about the rate of volume change? exactly because of the invariance of probability measure — in order to make sure each volume holds the same measure of probability before and after the transformation, we need to factor in the volume change induced by the transformation.&lt;/p&gt;
+&lt;p&gt;It should be clear now what the physical interpretation is for the absolute-determinant-of-Jacobian — it represents the &lt;strong&gt;local, linearized rate of volume change&lt;/strong&gt; (quoted from &lt;a href=&quot;https://blog.evjang.com/2018/01/nf1.html&quot;&gt;this excellent blog&lt;/a&gt;) for the function transform. Why do we care about the rate of volume change? exactly because of the invariance of probability measure — in order to make sure each volume holds the same measure of probability before and after the transformation, we need to factor in the volume change induced by the transformation.&lt;/p&gt;
 
-&lt;p&gt;With this interpretation that the absolute-determinant-of-Jacobian is just local linearized rate of volume change, it should not be surprising then that the determinant of a Jacobian of an inverse function is the inverse of the determinant Jacobian of the original function. In other words, if function $f$ expands a volume around $x$ by rate of $r$, then the inverse function $g=f^{-1}$ must shrink a volume around $f(x)$ by rate of $1/r$.&lt;/p&gt;</content><author><name>Yang Yang</name></author><category term="generative model" /><summary type="html">Normalizing flow is a technique for constructing complicated probability distributions through invertible transformations of a simple distribution. It has been studied and applied in generative models under two contexts: (1) characterizing approximation posterior distribution of latent variables in the case of variational inference (2) directly approximating the data distribution. When used in the second context, it has demonstrated its capability in generating high-fidelity audio, image, and video data.</summary></entry><entry><title type="html">Understanding conventional HMM-based ASR training</title><link href="https://yyang768osu.github.io/posts/2018/11/conventional-hmm-asr-training/" rel="alternate" type="text/html" title="Understanding conventional HMM-based ASR training" /><published>2018-11-17T00:00:00-08:00</published><updated>2018-11-17T00:00:00-08:00</updated><id>https://yyang768osu.github.io/posts/2018/11/understanding-conventional-hmm-based-asr-training</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2018/11/conventional-hmm-asr-training/">&lt;p&gt;Conventional HMM-based ASR system assumes a generative model comprised of a language model, a lexicon (e.g., pronunciation dictionary), and an acoustic model, as illustrated below. Here $\theta$ denotes the parameters to be learned and it comprises of the HMM state transition probabilities and GMM/DNN parameters.&lt;/p&gt;
+&lt;p&gt;With this interpretation that the absolute-determinant-of-Jacobian is just local linearized rate of volume change, it should not be surprising that the determinant of a Jacobian of an inverse function is the inverse of the determinant Jacobian of the original function. In other words, if function $f$ expands a volume around $x$ by rate of $r$, then the inverse function $g=f^{-1}$ must shrink a volume around $f(x)$ by the same rate of $r$.&lt;/p&gt;</content><author><name>Yang Yang</name></author><category term="generative model" /><summary type="html">Normalizing flow is a technique for constructing complex probability distributions through invertible transformations of a simple distribution. It has been studied and applied in generative models under two contexts: (1) characterizing the approximation posterior distribution of latent variables in the case of variational inference (2) directly approximating the data distribution. When used in the second context, it has demonstrated its capability in generating high-fidelity audio, image, and video data.</summary></entry><entry><title type="html">Understanding conventional HMM-based ASR training</title><link href="https://yyang768osu.github.io/posts/2018/11/conventional-hmm-asr-training/" rel="alternate" type="text/html" title="Understanding conventional HMM-based ASR training" /><published>2018-11-17T00:00:00-08:00</published><updated>2018-11-17T00:00:00-08:00</updated><id>https://yyang768osu.github.io/posts/2018/11/understanding-conventional-hmm-based-asr-training</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2018/11/conventional-hmm-asr-training/">&lt;p&gt;Conventional HMM-based ASR system assumes a generative model comprised of a language model, a lexicon (e.g., pronunciation dictionary), and an acoustic model, as illustrated below. Here $\theta$ denotes the parameters to be learned and it comprises of the HMM state transition probabilities and GMM/DNN parameters.&lt;/p&gt;
 
 &lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/HMM.png&quot; alt=&quot;conventional HMM based ASR probabilistic assumption&quot; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;maximum-likelihood-training&quot;&gt;Maximum likelihood training&lt;/h2&gt;
 
-&lt;p&gt;In maximum likelihood estimation (MLE), as stated in the equation below, the objective is to maximize the likelihood of the data being generated by the generative model. In other words, we want to find the value of the parameters $\theta$ so that the above model best explains the acoustic feature values that we observe.&lt;/p&gt;
+&lt;p&gt;In maximum likelihood estimation (MLE), as stated in the equation below, the objective is to maximize the likelihood of the data being generated by the generative model. In other words, we want to find the value of the parameters $\theta$ so that the above model best explains the acoustic features (e.g., spectrogram) that we observe.&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{align*}
@@ -105,7 +239,7 @@ f((a+\Delta x_1, b))=&amp;(f_1(a+\Delta x_1,b), f_2(a+\Delta x_1,b))  \\
 =&amp;\arg\max_\theta \sum_{n=1}^N \log \mathbb{P}\left({\bf x}^{(n)}|{\bf y}^{(n)};\theta\right).
 \end{align*} %]]&gt;&lt;/script&gt;
 
-&lt;p&gt;For ease of notation, for the rest of this section, let’s ignore the conditioning on ${\bf y}^{(n)}$ (or ${\bf p}^{(n)}$). The above formulation falls right into the discussion of the previous two posts:  &lt;a href=&quot;/posts/2018/08/variational_inference_1/&quot;&gt;variational lower bound&lt;/a&gt; and &lt;a href=&quot;/posts/2018/08/variational_inference_1/&quot;&gt;expectation maximization&lt;/a&gt;, which provide an iterative algorithm to approach the solution&lt;/p&gt;
+&lt;p&gt;For ease of notation, for the rest of this section, let’s ignore the conditioning on ${\bf y}^{(n)}$ (or ${\bf p}^{(n)}$). The difficulty in evaluating the above log-likelihood lies in the need to marginalize over all potential values of ${\bf z}^{(n)}$. This formulation falls right into the discussion of the previous two posts:  &lt;a href=&quot;/posts/2018/08/variational_inference_1/&quot;&gt;variational lower bound&lt;/a&gt; and &lt;a href=&quot;/posts/2018/08/variational_inference_1/&quot;&gt;expectation maximization&lt;/a&gt;, which provide an iterative algorithm to approach the solution&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align}
 \theta^{[i+1]} = \arg\max_{\theta} \sum_{n=1}^N \int \color{red}{\mathbb{P}\left({\bf z}^{(n)}| {\bf x}^{(n)};\theta^{[i]} \right)}\log \mathbb{P}\left({\bf x}^{(n)}, {\bf z}^{(n)};\theta\right)d z^{(n)}.
@@ -142,12 +276,12 @@ f((a+\Delta x_1, b))=&amp;(f_1(a+\Delta x_1,b), f_2(a+\Delta x_1,b))  \\
 \theta^{[i+1]}\text{ using Equation (1)}
 \end{align*} %]]&gt;&lt;/script&gt;&lt;/p&gt;
 
-&lt;p&gt;It is easy to argue that to have a accurate alignment, one would need accurate recognition, and to train an accurate recognition, one would have to rely on accurate alignment/segmentation.&lt;/p&gt;
+&lt;p&gt;It is easy to argue that to have an accurate alignment, we need accurate recognition, and to train an accurate recognition, we have to rely on accurate alignment/segmentation.&lt;/p&gt;
 
-&lt;p&gt;In convention ASR system, to bootstrap the training procedure, one has to start with a dataset that has human curated phoneme boundary/segmentation. Once the system is capacitated with reasonable recognition/inference, it is no longer confined with human aligned dataset and a much larger dataset can be used with just waveform and transcription pair. Eventually, after the system is able to deliver robust segmentation, one can make hard decision on the alignment, and only focus on improving the recognition performance with potentially a different system that has a much larger capacity, e.g., a DNN replacing the GMM model.&lt;/p&gt;
+&lt;p&gt;In a convention ASR system, to bootstrap the training procedure, we have to start with a dataset that has human curated phoneme boundary/segmentation. Once the system is capacitated with reasonable recognition/inference, it is no longer confined with human aligned dataset and a much larger dataset can be used with just waveform and the corresponding phoneme transcription. Eventually, after the system is able to deliver robust segmentation, we can make hard decision on the alignment, and only focus on improving the recognition performance with potentially a different system that has a much larger capacity, e.g., a DNN replacing the GMM model.&lt;/p&gt;
 
 &lt;h2 id=&quot;decoding&quot;&gt;Decoding&lt;/h2&gt;
-&lt;p&gt;In the decoding stage, one tries to find the word/sentence with the maximum a posterior (MAP) probability given the observed data&lt;/p&gt;
+&lt;p&gt;In the decoding stage, we try to find the word/sentence with the maximum a posterior (MAP) probability given the observed data&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{align*}
@@ -1014,83 +1148,4 @@ p(Z|X;\theta) &amp;= \arg\max_{q}\mathcal{L}(q,\theta).
 \begin{align*}
 \text{E step: }&amp;q^{(t)} = p(Z|X,\theta^{(t)})\\
 \text{M step: }&amp;\theta^{(t+1)} =\max_{\theta} \int p(Z|X,\theta^{(t)}) \ln P(Z,X|\theta)dZ {\color{red} + \ln p_\text{prior}(\theta)}. 
-\end{align*} %]]&gt;&lt;/script&gt;</content><author><name>Yang Yang</name></author><category term="variational inference" /><summary type="html">In the previous post we went through the derivation of variational lower-bound, and showed how it helps convert the Bayesian inference and density estimation problem to an optimization problem. Let’s briefly recap the problem setup and restate some key points.</summary></entry><entry><title type="html">A step-by-step guide to variational inference (1): variational lower bound</title><link href="https://yyang768osu.github.io/posts/2018/08/variational_inference_1/" rel="alternate" type="text/html" title="A step-by-step guide to variational inference (1): variational lower bound" /><published>2018-08-05T00:00:00-07:00</published><updated>2018-08-05T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2018/08/variational-inference-I-variational-lower-bound</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2018/08/variational_inference_1/">&lt;p&gt;In machine learning, graphic models are often used to describe the factorization of probability distributions. The detailed form of the graphic model encodes one’s belief/hypothesis regarding the underlying structure of the data. In this article, we confine the discussion to a general form of directed graphic model as illustrate below.&lt;/p&gt;
-
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/dgm.png&quot; alt=&quot;generative model&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Let $X=\{x^{(1)}, x^{(2)}, \ldots, x^{(n)}\}$ denote the dataset of interest, be it a set of images, a set of sound clips, or a set of document, depending on the problem at hand. The model describes a way for which the data is generated: we first sample a hidden/latent variable $z$ from the distribution $P(Z;\theta)$, and then sampled a data point $x$ from the distribution $P(X|z;\theta)$ given the latent variable. The two probabilities are defined as we like and are given as part of the graphic models. Here we assume that the two probabilities are parameterized by a set of variables $\theta$, although in general we could merge it as part of latent variable $Z$ as well (as a global latent variable, the value of which is shared among all data samples), if there is a prior distribution for $\theta$. It is worth noting that the $P(Z;\theta)$ and $P(X|Z;\theta)$ could be further factorized, whichever way we design them to be, however, in this article we will just focus on the general setting.&lt;/p&gt;
-
-&lt;p&gt;There are two intertwined problems associated with this form of generative models: density estimation, and Bayesian inference. For the problem of density estimation, we want to estimate the probability that the model assigns to all the data $X$ we are given in training, or more precisely $p(X; \theta)$. The value of $p(X; \theta)$ explains how likely it is for the model to generate the given training data. The larger the $p(X; \theta)$, the better our model explains the existing data. For models that are parameterized by $\theta$, fitting the model to best match the training data amounts to finding a value of $\theta$ that maximize the density $p(X; \theta)$.&lt;/p&gt;
-
-&lt;p&gt;For the problem of Bayesian inference, we want to infer the posterior probability of the unobserved hidden/latent variable given the observed data, or more precisely $p(Z|X;\theta)$. It is easy to see that these two problems are naturally intertwined from Bayes rule: $p(Z|X) = \frac{p(X|Z)p(Z)}{P(X)}$: since $p(X|Z)$ and $p(Z)$ are already given as part of the model assumption, if we solve one of the two problems, then the other one can be solved as well. Conceptually, the solution to the problems can be viewed as trying to find a reverse graph in the generative model.&lt;/p&gt;
-
-&lt;p&gt;Let’s now take a step back and ask the question: why do we bother with the introduction of latent/hidden variable? Can we just propose a model that captures $p(X;\theta)$ directly, and save the trouble of Bayesian inference for the latent variable all together?  Anyway, even with the direct characterization of  $p(X;\theta)$, the discussion above should still holds: the larger the  $p(X;\theta)$, the better our model explains the given data, and with a good model we can apply sampling to generate artificial data.&lt;/p&gt;
-
-&lt;p&gt;The benefits of the hidden/latent variables are two-fold:&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;The adoption of hidden/latent variables allows one to construct complex marginal data distributions $p(X)$ from simple and easy to evaluate distribution functions. For example, with $p(Z;\theta)$ being the multinomial distribution and $p(X|Z;\theta)$ being the normal distribution, we arrive at the Gaussian mixture model $p(X;\theta)=\int P(X|Z;\theta)P(Z;\theta)dZ$, which can characterize a wide range of complex distribution and has significantly more expressiveness power compared with just Gaussian or multinomial distribution alone. It is evident that a model that characterizes more complex distributions can better fit the data, especially with the high-dimensional complicated data we are usually focusing on.&lt;/li&gt;
-  &lt;li&gt;The hidden/latent variables can be viewed as general features extracted from the data, which can be utilized for any downstream tasks. The hidden/latent variables normally has much lower dimension compared with the data itself, and they represent low-dimensional message that conveys condensed information regarding the corresponding data. If a model can fit the data well, meaning that the likelihood is high for the model to generate the training data by sampling $X$ conditioned on a sampling of $Z$, then one can argue that $Z$ should capture the essence of the data. It is interesting to note how the above two points echo the previous discussion regarding the inter-connection between density estimation and Bayesian inference.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;In the Bayesian inference problem, as stated before, the task is to find the posterior distribution of the unobserved variable $Z$ given then observed variable $X$. Instead of tackling this problem head on by deriving $p(Z|X;\theta)=\frac{p(X|Z;\theta)p(Z;\theta)}{\int p(X|Z;\theta)p(Z;\theta)dZ}$, which is often intractable, let us introduce another distribution $q(Z)$ with the goal of mimicking $p(Z|X;\theta)$, and look at what the KL divergence between the two could decompose into:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-\begin{align*}
-&amp;\text{KL}{\big(}q||p(Z|X;\theta){\big)}\\
-=&amp;\int q(Z) \ln \frac{q(Z)}{p(Z|X;\theta)}dZ\\
-=&amp;\int q(Z) \ln \frac{q(Z)}{P(Z|X;\theta)}\frac{p(X;\theta)}{p(X;\theta)}dZ\\
-=&amp;\int q(Z) \ln \frac{q(Z)p(X;\theta)}{P(Z,X;\theta)}dZ\\
-=&amp;\int q(Z) \ln p(X;\theta)dZ-\int q(Z) \ln \frac{P(Z,X;\theta)}{q(Z)}dZ\\
-=&amp;\ln p(X;\theta)-\int q(Z) \ln \frac{P(Z,X;\theta)}{q(Z)}dZ.
-\end{align*} %]]&gt;&lt;/script&gt;
-
-&lt;p&gt;Making the short-hand notation of&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
-\mathcal{L}(q,\theta)=\int q(Z) \ln \frac{P(Z,X;\theta)}{q(Z)}dZ,
-\end{align*}&lt;/script&gt;
-
-&lt;p&gt;we can simplify the above equation as&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
-\ln p(X;\theta) = \text{KL}{\big(}q||p(Z|X;\theta){\big)} + \mathcal{L}(q,\theta).
-\end{align*}&lt;/script&gt;
-
-&lt;p&gt;The above equation is the cornerstone for a broad range of variational methods, which we will keep coming back to for later posts. Let’s stare at it for a while, observe it from different angles, and learn to appreciate its elegancy.&lt;/p&gt;
-
-&lt;p&gt;We should first observe that the three terms have fixed polarity: KL divergence is always nonnegative, whereas the log-likelihood term on the LHS of the equation, as well as the expression $\mathcal{L}(q,\theta)$ is always non-positive. At first glance into the definition of $\mathcal{L}$, it may look like it can be written in the form of negative KL divergence. However, one should note that $P(Z,X;\theta)$ is not a proper probability on $Z$ as $\int p(X,Z;\theta)dZ = p(X;\theta)&amp;lt;1$.&lt;/p&gt;
-
-&lt;p&gt;Given that the KL divergence term is always nonnegative, $\mathcal{L}(q,\theta)$ yield a lower bound on the log-likelihood of the data. In precise term, we have $\ln p(X;\theta) \geq \mathcal{L}(q,\theta)$.&lt;/p&gt;
-
-&lt;p&gt;The term $\mathcal{L}(q,\theta)$ can be viewed as a functional that maps a probability distribution function into a value. 
-Since the analysis and optimization of functional falls into the realm of calculus of variations, the distribution function $q$ itself is often called the variational distribution, and the lower bound $\mathcal{L}(q,\theta)$ is referred to as the variational lower-bound.&lt;/p&gt;
-
-&lt;p&gt;It is important to realize that the above equation is another manifestation of the inter-connection between the data likelihood $p(X;\theta)$ and the posterior distribution of latent variable $p(Z|X;\theta)$, this time linked through the variational distribution function $q$. For a fixed parameter $\theta$, if we increase the variational lower bound $\mathcal{L}(q,\theta)$ by adjusting $q$, then the updated lower-bound is closer to the log-likelihood of the data. At the same time, since an increment in $\mathcal{L}(q,\theta)$ would infer a decrement of $\text{KL}(q||p(Z|X;\theta))$, we know that the updated variational distribution $q$ is closer to the true posterior distribution measured in KL divergence. To precisely capture these observations, we arrive at the following two equations&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-\begin{align*}
-\ln p(X;\theta) &amp;= \max_{q}\mathcal{L}(q,\theta)\\
-p(Z|X;\theta) &amp;= \arg\max_{q}\mathcal{L}(q,\theta).
-\end{align*} %]]&gt;&lt;/script&gt;
-
-&lt;p&gt;This is the core of variational inference: with an introduction of a variational distribution $q$, we can turn both the log-likelihood calculation (i.e., density estimation) problem and the Bayesian inference problem into an optimization problem, and attack it with different optimization algorithms. This inference-optimization duality provides a very powerful tool. It is the backbone of many of the variational inference related methods such as expectation-maximization, mean-field approximation, and variational auto-encoder, which we will discuss in details in the subsequent posts.&lt;/p&gt;
-
-&lt;p&gt;As a closing note below we list two alternative proofs for the variational lower-bound.&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-\begin{align*}
-&amp;\ln p(X;\theta)\\
-=&amp;\ln\frac{p(X,Z;\theta)}{p(Z|X;\theta)}\\
-=&amp;\int q(Z)\ln\frac{p(X,Z;\theta)}{p(Z|X;\theta)}dZ\\
-=&amp;\int q(Z)\ln\frac{p(X,Z;\theta) q(Z)}{p(Z|X;\theta) q(Z)}dZ\\
-=&amp;\int q(Z)\ln\frac{p(X,Z;\theta)}{q(Z)}dZ+\int q(Z)\ln\frac{q(Z)}{p(Z|X;\theta)}dZ.\\
-=&amp;\mathcal{L}(q,\theta) + \text{KL}{\big(}q||p(Z|X;\theta){\big)}.
-\end{align*} %]]&gt;&lt;/script&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-\begin{align*}
-&amp;\ln p(X;\theta)\\
-=&amp;\ln \int p(X,Z;\theta)dZ\\
-=&amp;\ln \int q(Z)\frac{p(X,Z;\theta)}{q(Z)}dZ \\
-\geq &amp; \int q(Z)\ln\frac{p(X,Z;\theta)}{q(Z)}dZ.
-\end{align*} %]]&gt;&lt;/script&gt;</content><author><name>Yang Yang</name></author><category term="variational inference" /><summary type="html">In machine learning, graphic models are often used to describe the factorization of probability distributions. The detailed form of the graphic model encodes one’s belief/hypothesis regarding the underlying structure of the data. In this article, we confine the discussion to a general form of directed graphic model as illustrate below.</summary></entry></feed>
+\end{align*} %]]&gt;&lt;/script&gt;</content><author><name>Yang Yang</name></author><category term="variational inference" /><summary type="html">In the previous post we went through the derivation of variational lower-bound, and showed how it helps convert the Bayesian inference and density estimation problem to an optimization problem. Let’s briefly recap the problem setup and restate some key points.</summary></entry></feed>
