@@ -1,0 +1,514 @@
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+
+<meta charset="utf-8">
+
+
+
+<!-- begin SEO -->
+
+
+
+
+
+
+
+
+
+<title>Notes on Abstract Algebra - Yang Yang</title>
+
+
+
+
+
+
+
+<meta property="og:locale" content="en-US">
+<meta property="og:site_name" content="Yang Yang">
+<meta property="og:title" content="Notes on Abstract Algebra">
+
+
+  <link rel="canonical" href="https://yyang768osu.github.io/posts/2019/08/abstract_algebra/">
+  <meta property="og:url" content="https://yyang768osu.github.io/posts/2019/08/abstract_algebra/">
+
+
+
+  <meta property="og:description" content="lecture 1">
+
+
+
+
+
+  
+
+  
+
+
+
+
+
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2019-08-01T00:00:00-07:00">
+
+
+
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context" : "http://schema.org",
+      "@type" : "Person",
+      "name" : "Yang Yang",
+      "url" : "https://yyang768osu.github.io",
+      "sameAs" : null
+    }
+  </script>
+
+
+
+
+
+
+<!-- end SEO -->
+
+
+<link href="https://yyang768osu.github.io/feed.xml" type="application/atom+xml" rel="alternate" title="Yang Yang Feed">
+
+<!-- http://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="https://yyang768osu.github.io/assets/css/main.css">
+
+<meta http-equiv="cleartype" content="on">
+    
+
+<!-- start custom head snippets -->
+
+<link rel="apple-touch-icon" sizes="57x57" href="https://yyang768osu.github.io/images/apple-touch-icon-57x57.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="60x60" href="https://yyang768osu.github.io/images/apple-touch-icon-60x60.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="72x72" href="https://yyang768osu.github.io/images/apple-touch-icon-72x72.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="76x76" href="https://yyang768osu.github.io/images/apple-touch-icon-76x76.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="114x114" href="https://yyang768osu.github.io/images/apple-touch-icon-114x114.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="120x120" href="https://yyang768osu.github.io/images/apple-touch-icon-120x120.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="144x144" href="https://yyang768osu.github.io/images/apple-touch-icon-144x144.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="152x152" href="https://yyang768osu.github.io/images/apple-touch-icon-152x152.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="180x180" href="https://yyang768osu.github.io/images/apple-touch-icon-180x180.png?v=M44lzPylqQ">
+<link rel="icon" type="image/png" href="https://yyang768osu.github.io/images/favicon-32x32.png?v=M44lzPylqQ" sizes="32x32">
+<link rel="icon" type="image/png" href="https://yyang768osu.github.io/images/android-chrome-192x192.png?v=M44lzPylqQ" sizes="192x192">
+<link rel="icon" type="image/png" href="https://yyang768osu.github.io/images/favicon-96x96.png?v=M44lzPylqQ" sizes="96x96">
+<link rel="icon" type="image/png" href="https://yyang768osu.github.io/images/favicon-16x16.png?v=M44lzPylqQ" sizes="16x16">
+<link rel="manifest" href="https://yyang768osu.github.io/images/manifest.json?v=M44lzPylqQ">
+<link rel="mask-icon" href="https://yyang768osu.github.io/images/safari-pinned-tab.svg?v=M44lzPylqQ" color="#000000">
+<link rel="shortcut icon" href="/images/favicon.ico?v=M44lzPylqQ">
+<meta name="msapplication-TileColor" content="#000000">
+<meta name="msapplication-TileImage" content="https://yyang768osu.github.io/images/mstile-144x144.png?v=M44lzPylqQ">
+<meta name="msapplication-config" content="https://yyang768osu.github.io/images/browserconfig.xml?v=M44lzPylqQ">
+<meta name="theme-color" content="#ffffff">
+<link rel="stylesheet" href="https://yyang768osu.github.io/assets/css/academicons.css"/>
+
+<script type="text/x-mathjax-config"> MathJax.Hub.Config({ TeX: { equationNumbers: { autoNumber: "all" } } }); </script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      displayMath: [ ['$$', '$$'] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/latest.js?config=TeX-MML-AM_CHTML' async></script>
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        <button><div class="navicon"></div></button>
+        <ul class="visible-links">
+          <li class="masthead__menu-item masthead__menu-item--lg"><a href="https://yyang768osu.github.io/">Yang Yang</a></li>
+          
+            
+            <li class="masthead__menu-item"><a href="https://yyang768osu.github.io/year-archive/">Blog Posts</a></li>
+          
+        </ul>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+    
+
+
+
+
+
+<div id="main" role="main">
+  
+
+
+  <div class="sidebar sticky">
+  
+
+
+
+<div itemscope itemtype="http://schema.org/Person">
+
+  <div class="author__avatar">
+    
+    	<img src="https://yyang768osu.github.io/images/profile.png" class="author__avatar" alt="Yang Yang">
+    
+  </div>
+
+  <div class="author__content">
+    <h3 class="author__name">Yang Yang</h3>
+    <p class="author__bio">Qualcomm AI Research</p>
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li><i class="fa fa-fw fa-map-marker" aria-hidden="true"></i> San Diego, California</li>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+        <li><a href="https://github.com/yyang768osu"><i class="fa fa-fw fa-github" aria-hidden="true"></i> Github</a></li>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+        <li><a href="https://scholar.google.com/citations?user=mcncpioAAAAJ&hl=en"><i class="ai ai-google-scholar-square ai-fw"></i> Google Scholar</a></li>
+      
+      
+      
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Notes on Abstract Algebra">
+    <meta itemprop="description" content="lecture 1">
+    <meta itemprop="datePublished" content="August 01, 2019">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 class="page__title" itemprop="headline">Notes on Abstract Algebra
+</h1>
+          
+            <p class="page__meta"><i class="fa fa-clock-o" aria-hidden="true"></i> 
+
+
+  
+	  4 minute read
+	
+</p>
+          
+        
+        
+        
+          <p class="page__date"><strong><i class="fa fa-fw fa-calendar" aria-hidden="true"></i> Published:</strong> <time datetime="2019-08-01T00:00:00-07:00">August 01, 2019</time></p>
+        
+        
+             
+        
+    
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        <p><a href="https://www.youtube.com/watch?v=VdLhQs_y_E8">lecture 1</a></p>
+
+<p>Group $(G, \bullet)$ is a set $G$ equipped with a binary operation (often called a product operation) $\bullet$ that satisfies four conditions: closure, associativity, identity and invertibility, together called group axiom. The one that further satisfies commutativity is called Abelian group. One immediate property of group is that every element’s inverse is unique.</p>
+
+<p>One example is generalized linear group $G=GL_n(\mathbb{R})\subset M_n(\mathbb{R})$, with $\bullet$ being matrix multiplication. Note that there is no addition defined in $GL_n(\mathbb{R})$.</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+GL_n(\mathbb{R}) = \{A_{n\times n}: \det(A)\not=0\} = \{A_{n\times n}:\text{ there is an inverse matrix }A^{-1}\}
+\end{align*}</script>
+
+<p>To prove that it is closed under matrix multiplication, we need to show that $A\bullet B$ is invertible if $A$ and $B$ are invertible. Two proofs: (1) $A\bullet B\bullet (B^{-1}\bullet A^{-1}) = I$ (2) $\det(A\bullet B)=\det{A}\det{B}$. Since matrix multiplication is not commutative, $GL_n(\mathbb{R})$ is non-Abelian.</p>
+
+<p>Another example is integer $\mathbb{Z}$ with $\bullet$ being integer addition. It is an Abelian group.</p>
+
+<p>Another example is vector space $V$ with vector addition. It is also an Abelian group.</p>
+
+<p>For any set $T$, the set of all bijections (one-to-one and onto, aka injection and surjection) also forms a group with $\bullet$ being composition of maps. This is THE most general group. ALL groups arise by putting extra conditioning on this invertible bijection.</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+G=\left\{\text{all bijections } g:T\to T\right\} = \text{Sym}\{T\}
+\end{align*}</script>
+
+<p>In particular, as a famous group, for a finite set $T={1,2,\ldots, n}$, we note the symmetry group of $T$, $\text{Sym}{T}$ as symmetry group $S_n$. This is a finite group of order $n!$ that contains all permutations of a set with $n$ elements, and is non-Abelian once $n\geq 3$.</p>
+
+<p><a href="https://www.youtube.com/watch?v=e-a8auViFM0&amp;list=PLelIK3uylPMGzHBuR3hLMHrYfMqWWsmx5&amp;index=2">lecture 2</a></p>
+
+<p>Auto-morphism is same as bijection. $\text{Sym}(T)$ is also noted $\text{AA}(T)$, with $AA$ being All Auto-morphism.</p>
+
+<p>A subgroup $H\subset G$ is a subset that is closed under $\bullet$, contains the identity, and contains the inverses. Two trivial subgroups $G$ and ${e}$.</p>
+
+<p>$GL_n(\mathbb{R}) \subset \text{Sym}(\mathbb{R}^n)$ are bijections in $\mathbb{R}^n$ that preserve linear structure.</p>
+
+<p>$S_n=\text{Sym}\{1,2,\ldots, n\}$ is called permutation group of size $n$. $|S_n| = n!$.</p>
+
+<p>$S_3 = \{e, \tau, \tau’, \tau’’, \sigma, \sigma’\}$. $\tau$ is called transposition and $\sigma$ is rotation. Since $S_3$ is non-Abelian, $S_n$ for $n&gt;3$ is definitely non-Abelian given $S_3$ is a subgroup of $S_n$.</p>
+
+<p>Proposition: The subgroup of $(\mathbb{Z}, +)$ are precisely given by $(b\mathbb{Z}, +)$ where $b$ is a fixed integer.</p>
+
+<p>For any group $G$, and any element $g\in G$, there is a natural subgroup $H=\langle g\rangle$, called cyclic subgroup, generated by $g$, consists of all product of $g$ with itself. It is the smallest subgroup containing the element $g$. $\langle g\rangle=\{e, g, g^{-1}, g^2, g^{-2}, \ldots\}$, it is certainly closed under product and has inverse. Do not necessary think that those powers are distinct!</p>
+
+<p>If $g^m=e$ and $m$ is the smallest such power, we say $m$ is the order of $g\in G$. If no power $g^m=e$, we say that $g$ has infinite order.</p>
+
+<p>Big theorem: In a finite group, every element has finite order, and the order divides the order of the group. In infinite group, element can either has finite or infinite order.</p>
+
+<p><a href="https://www.youtube.com/watch?v=mwcNETa0KFI&amp;list=PLelIK3uylPMGzHBuR3hLMHrYfMqWWsmx5&amp;index=3">lecture 3</a></p>
+
+<p>Examples of groups: $GL_n(\mathbb{R})$, symmetric group on $n$ letters $S_n$, group of integer under addition.</p>
+
+<ol>
+  <li>All groups arise as a structure-preserving bijection of something.</li>
+  <li>Making new groups out of old</li>
+  <li>Subgraph structure of a group</li>
+  <li>Cyclic subgraph</li>
+</ol>
+
+<p>Isomorphism</p>
+
+<p>Consider the following groups:</p>
+
+<ol>
+  <li>$G_1=\{1, -1, i, -i\}\subset \mathbb{C}^*\triangleq(\mathbb{C}\backslash \{0\}, \times)$.</li>
+  <li>$G_2$: cyclic subgroup of $S_4$ (special group on four letters) generated by $\rho$, which cycles $(1,2,3,4)$ to $(2,3,4,1)$.</li>
+</ol>
+
+<p>$G_1$ and $G_2$ have the same multiplication table, but with different labeling.</p>
+
+<p>Formalization</p>
+
+<p>Isomorphism is a map $f$ between two groups which is bijective $G_1\to G_2$ such that it preserves the multiplication operations $f(x\bullet_{G_1}y) = f(x)\bullet_{G_2}f(y)$. $f$ is telling us how to relabel things.</p>
+
+<p>Fact</p>
+
+<p>Every two cyclic groups of order $n$ are isomorphic.</p>
+
+<p>Definition: a cyclic group is a group generated by some element. $G_1$ and $G_2$ are isomorphic if there is an isomorphism $f: G_1\to G_2$ between them.</p>
+
+<p>$(\mathbb{R}, +)$ and $(\mathbb{R}_{&gt;0}, \times)$ are isomorphic with the isomorphic $f(x)=exp(x)$. They are non-finite and non-cyclic.</p>
+
+<p>Example for finite groups that are not cyclic. Klein-4 group. Two ways to write it.</p>
+<ol>
+  <li>$G_1:\{e, \tau_1=((1,2)(3,4)), \tau_2=((1,3),(2,4)), \tau_1\tau_2=((1,4),(2,3))\}$.</li>
+  <li>$G_2: \{I, (-1,0; 0, 1), (1, 0; 0, -1), (-1,0;0;-1)\}$.</li>
+</ol>
+
+<p>Is Klein-4 group isomorphic to $\{1, -1, i, -i\}$. No, the former does not have elements of order 4 whereas $i$ and $-i$ are with order $4$.</p>
+
+<p>Some properties to test whether groups are isomorphic:</p>
+<ol>
+  <li>$|G_1|=|G_2|$</li>
+  <li>$G_1$ abelian $\Leftrightarrow$ $G_2$ abelian</li>
+  <li>$G_1$ and $G_2$ have the same number of elements of every order.</li>
+</ol>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+  
+
+
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fa fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="https://yyang768osu.github.io/tags/#algebra" class="page__taxonomy-item" rel="tag">algebra</a>
+    
+    </span>
+  </p>
+
+
+
+
+      </footer>
+
+      
+
+<section class="page__share">
+  
+    <h4 class="page__share-title">Share on</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=https://yyang768osu.github.io/posts/2019/08/abstract_algebra/" class="btn btn--twitter" title="Share on Twitter"><i class="fa fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https://yyang768osu.github.io/posts/2019/08/abstract_algebra/" class="btn btn--facebook" title="Share on Facebook"><i class="fa fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://plus.google.com/share?url=https://yyang768osu.github.io/posts/2019/08/abstract_algebra/" class="btn btn--google-plus" title="Share on Google Plus"><i class="fa fa-fw fa-google-plus" aria-hidden="true"></i><span> Google+</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https://yyang768osu.github.io/posts/2019/08/abstract_algebra/" class="btn btn--linkedin" title="Share on LinkedIn"><i class="fa fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+      
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://yyang768osu-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+
+
+
+      
+
+
+  <nav class="pagination">
+    
+      <a href="https://yyang768osu.github.io/posts/2019/07/mcmc/" class="pagination--pager" title="Markov Chain Monte Carlo: Gibbs, Metropolis-Hasting, and Hamiltonian
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+
+
+  
+  
+</div>
+
+
+    </script>
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<a href="/sitemap/">Sitemap</a>
+<!-- end custom footer snippets -->
+
+        
+
+<div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+    
+    
+    
+      <li><a href="http://github.com/yyang768osu"><i class="fa fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+    
+    
+    <li><a href="https://yyang768osu.github.io/feed.xml"><i class="fa fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2020 Yang Yang. Powered by <a href="http://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>, a fork of <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    <script src="https://yyang768osu.github.io/assets/js/main.min.js"></script>
+
+
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-123722738-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-123722738-1');
+</script>
+
+
+
+
+
+
+
+  </body>
+</html>
+
