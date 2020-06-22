@@ -1,0 +1,892 @@
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+
+<meta charset="utf-8">
+
+
+
+<!-- begin SEO -->
+
+
+
+
+
+
+
+
+
+<title>Notes on End-to-End Lossy Image Compression - Yang Yang</title>
+
+
+
+
+
+
+
+<meta property="og:locale" content="en-US">
+<meta property="og:site_name" content="Yang Yang">
+<meta property="og:title" content="Notes on End-to-End Lossy Image Compression">
+
+
+  <link rel="canonical" href="https://yyang768osu.github.io/posts/2020/06/e2e_lossy_image_compression/">
+  <meta property="og:url" content="https://yyang768osu.github.io/posts/2020/06/e2e_lossy_image_compression/">
+
+
+
+  <meta property="og:description" content="            Paper      Organization      Conference      Arxiv      Citation                  End2End      NYU      ICLR-2017      2017-03-03      336              CondProbMod      ETH      CVPR-2018      2019-06-04      128              Hyperprior      google      ICLR-2018      2018-05-01      181              MultiScale      UTokyo      ACCV-2018      2018-05-16      9              JointARHP      google      NeurIPS-2018      2018-09-08      104              NLAIC      NanjingU&amp;NYU      -      2019-04-22      11              ContentAdapt      Disney      CVPRW-2019      2019-06-05      0              ComputeEff      google      -      2019-12-18      1              IntegerLVM      google      ICLR-2019      non-arxiv      2              ContextAdapt      ETRI      ICLR-2019      2019-05-06      43              Benchmark      PKU      -      2020-02-19      1              Attention      Waseda      CVPR-2020      2020-03-30      2              ChannelAR      google      ICIP-2020      non-arxiv      0              ImproveInference      UCI      -      2020-06-09      0      ">
+
+
+
+
+
+  
+
+  
+
+
+
+
+
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2020-06-18T00:00:00-07:00">
+
+
+
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context" : "http://schema.org",
+      "@type" : "Person",
+      "name" : "Yang Yang",
+      "url" : "https://yyang768osu.github.io",
+      "sameAs" : null
+    }
+  </script>
+
+
+
+
+
+
+<!-- end SEO -->
+
+
+<link href="https://yyang768osu.github.io/feed.xml" type="application/atom+xml" rel="alternate" title="Yang Yang Feed">
+
+<!-- http://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="https://yyang768osu.github.io/assets/css/main.css">
+
+<meta http-equiv="cleartype" content="on">
+    
+
+<!-- start custom head snippets -->
+
+<link rel="apple-touch-icon" sizes="57x57" href="https://yyang768osu.github.io/images/apple-touch-icon-57x57.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="60x60" href="https://yyang768osu.github.io/images/apple-touch-icon-60x60.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="72x72" href="https://yyang768osu.github.io/images/apple-touch-icon-72x72.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="76x76" href="https://yyang768osu.github.io/images/apple-touch-icon-76x76.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="114x114" href="https://yyang768osu.github.io/images/apple-touch-icon-114x114.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="120x120" href="https://yyang768osu.github.io/images/apple-touch-icon-120x120.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="144x144" href="https://yyang768osu.github.io/images/apple-touch-icon-144x144.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="152x152" href="https://yyang768osu.github.io/images/apple-touch-icon-152x152.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="180x180" href="https://yyang768osu.github.io/images/apple-touch-icon-180x180.png?v=M44lzPylqQ">
+<link rel="icon" type="image/png" href="https://yyang768osu.github.io/images/favicon-32x32.png?v=M44lzPylqQ" sizes="32x32">
+<link rel="icon" type="image/png" href="https://yyang768osu.github.io/images/android-chrome-192x192.png?v=M44lzPylqQ" sizes="192x192">
+<link rel="icon" type="image/png" href="https://yyang768osu.github.io/images/favicon-96x96.png?v=M44lzPylqQ" sizes="96x96">
+<link rel="icon" type="image/png" href="https://yyang768osu.github.io/images/favicon-16x16.png?v=M44lzPylqQ" sizes="16x16">
+<link rel="manifest" href="https://yyang768osu.github.io/images/manifest.json?v=M44lzPylqQ">
+<link rel="mask-icon" href="https://yyang768osu.github.io/images/safari-pinned-tab.svg?v=M44lzPylqQ" color="#000000">
+<link rel="shortcut icon" href="/images/favicon.ico?v=M44lzPylqQ">
+<meta name="msapplication-TileColor" content="#000000">
+<meta name="msapplication-TileImage" content="https://yyang768osu.github.io/images/mstile-144x144.png?v=M44lzPylqQ">
+<meta name="msapplication-config" content="https://yyang768osu.github.io/images/browserconfig.xml?v=M44lzPylqQ">
+<meta name="theme-color" content="#ffffff">
+<link rel="stylesheet" href="https://yyang768osu.github.io/assets/css/academicons.css"/>
+
+<script type="text/x-mathjax-config"> MathJax.Hub.Config({ TeX: { equationNumbers: { autoNumber: "all" } } }); </script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      displayMath: [ ['$$', '$$'] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/latest.js?config=TeX-MML-AM_CHTML' async></script>
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        <button><div class="navicon"></div></button>
+        <ul class="visible-links">
+          <li class="masthead__menu-item masthead__menu-item--lg"><a href="https://yyang768osu.github.io/">Yang Yang</a></li>
+          
+            
+            <li class="masthead__menu-item"><a href="https://yyang768osu.github.io/year-archive/">Blog Posts</a></li>
+          
+        </ul>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+    
+
+
+
+
+
+<div id="main" role="main">
+  
+
+
+  <div class="sidebar sticky">
+  
+
+
+
+<div itemscope itemtype="http://schema.org/Person">
+
+  <div class="author__avatar">
+    
+    	<img src="https://yyang768osu.github.io/images/profile.png" class="author__avatar" alt="Yang Yang">
+    
+  </div>
+
+  <div class="author__content">
+    <h3 class="author__name">Yang Yang</h3>
+    <p class="author__bio"></p>
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li><i class="fa fa-fw fa-map-marker" aria-hidden="true"></i> San Diego, California</li>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+        <li><a href="https://github.com/yyang768osu"><i class="fa fa-fw fa-github" aria-hidden="true"></i> Github</a></li>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+        <li><a href="https://scholar.google.com/citations?user=mcncpioAAAAJ&hl=en"><i class="ai ai-google-scholar-square ai-fw"></i> Google Scholar</a></li>
+      
+      
+      
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Notes on End-to-End Lossy Image Compression">
+    <meta itemprop="description" content="            Paper      Organization      Conference      Arxiv      Citation                  End2End      NYU      ICLR-2017      2017-03-03      336              CondProbMod      ETH      CVPR-2018      2019-06-04      128              Hyperprior      google      ICLR-2018      2018-05-01      181              MultiScale      UTokyo      ACCV-2018      2018-05-16      9              JointARHP      google      NeurIPS-2018      2018-09-08      104              NLAIC      NanjingU&amp;NYU      -      2019-04-22      11              ContentAdapt      Disney      CVPRW-2019      2019-06-05      0              ComputeEff      google      -      2019-12-18      1              IntegerLVM      google      ICLR-2019      non-arxiv      2              ContextAdapt      ETRI      ICLR-2019      2019-05-06      43              Benchmark      PKU      -      2020-02-19      1              Attention      Waseda      CVPR-2020      2020-03-30      2              ChannelAR      google      ICIP-2020      non-arxiv      0              ImproveInference      UCI      -      2020-06-09      0      ">
+    <meta itemprop="datePublished" content="June 18, 2020">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 class="page__title" itemprop="headline">Notes on End-to-End Lossy Image Compression
+</h1>
+          
+            <p class="page__meta"><i class="fa fa-clock-o" aria-hidden="true"></i> 
+
+
+  
+	  13 minute read
+	
+</p>
+          
+        
+        
+        
+          <p class="page__date"><strong><i class="fa fa-fw fa-calendar" aria-hidden="true"></i> Published:</strong> <time datetime="2020-06-18T00:00:00-07:00">June 18, 2020</time></p>
+        
+        
+             
+        
+    
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        <table id="summary">
+  <thead>
+    <tr>
+      <th>Paper</th>
+      <th>Organization</th>
+      <th>Conference</th>
+      <th>Arxiv</th>
+      <th>Citation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="#e2e">End2End</a></td>
+      <td>NYU</td>
+      <td>ICLR-2017</td>
+      <td><a href="https://arxiv.org/abs/1611.01704">2017-03-03</a></td>
+      <td>336</td>
+    </tr>
+    <tr>
+      <td><a href="#cpm">CondProbMod</a></td>
+      <td>ETH</td>
+      <td>CVPR-2018</td>
+      <td><a href="https://arxiv.org/abs/1801.04260">2019-06-04</a></td>
+      <td>128</td>
+    </tr>
+    <tr>
+      <td><a href="#hp">Hyperprior</a></td>
+      <td>google</td>
+      <td>ICLR-2018</td>
+      <td><a href="https://arxiv.org/abs/1802.01436">2018-05-01</a></td>
+      <td>181</td>
+    </tr>
+    <tr>
+      <td><a href="#ms">MultiScale</a></td>
+      <td>UTokyo</td>
+      <td>ACCV-2018</td>
+      <td><a href="https://arxiv.org/abs/1805.06386">2018-05-16</a></td>
+      <td>9</td>
+    </tr>
+    <tr>
+      <td><a href="#jarhp">JointARHP</a></td>
+      <td>google</td>
+      <td>NeurIPS-2018</td>
+      <td><a href="https://arxiv.org/abs/1809.02736">2018-09-08</a></td>
+      <td>104</td>
+    </tr>
+    <tr>
+      <td><a href="#nlaic">NLAIC</a></td>
+      <td>NanjingU&amp;NYU</td>
+      <td>-</td>
+      <td><a href="https://arxiv.org/abs/1904.09757">2019-04-22</a></td>
+      <td>11</td>
+    </tr>
+    <tr>
+      <td><a href="#ca">ContentAdapt</a></td>
+      <td>Disney</td>
+      <td>CVPRW-2019</td>
+      <td><a href="https://arxiv.org/abs/1906.01223">2019-06-05</a></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td><a href="#ce">ComputeEff</a></td>
+      <td>google</td>
+      <td>-</td>
+      <td><a href="https://arxiv.org/abs/1912.08771">2019-12-18</a></td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td><a href="#ilvm">IntegerLVM</a></td>
+      <td>google</td>
+      <td>ICLR-2019</td>
+      <td><a href="https://bit.ly/30Q4fW2">non-arxiv</a></td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td><a href="#ctxa">ContextAdapt</a></td>
+      <td>ETRI</td>
+      <td>ICLR-2019</td>
+      <td><a href="https://arxiv.org/abs/1809.10452">2019-05-06</a></td>
+      <td>43</td>
+    </tr>
+    <tr>
+      <td><a href="#bm">Benchmark</a></td>
+      <td>PKU</td>
+      <td>-</td>
+      <td><a href="https://arxiv.org/abs/2002.03711">2020-02-19</a></td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td><a href="#att">Attention</a></td>
+      <td>Waseda</td>
+      <td>CVPR-2020</td>
+      <td><a href="https://arxiv.org/abs/2001.01568">2020-03-30</a></td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td><a href="#car">ChannelAR</a></td>
+      <td>google</td>
+      <td>ICIP-2020</td>
+      <td><a href="https://bit.ly/2zOei2Q">non-arxiv</a></td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td><a href="#ii">ImproveInference</a></td>
+      <td>UCI</td>
+      <td>-</td>
+      <td><a href="https://arxiv.org/abs/2006.04240">2020-06-09</a></td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="e2e">End2End</h2>
+<p>Johannes Ballé, Valero Laparra, Eero P. Simoncelli, “<em>End-to-end Optimized Image Compression</em>,” ICLR-2018</p>
+
+<ul>
+  <li>In traditional <em>transform coding</em>, transform, quantizer, and entropy code are separately optimized.</li>
+  <li>This work propose a framework for end-to-end optimization of an image compression model with
+    <ol>
+      <li>GDN (Generalized divisive normalization) as nonlinear transform which is proven effective in Gaussianizing image density</li>
+      <li>Uniform scalar quantization, modeled by adding uniform noise for gradient computation</li>
+      <li>Continous prior distribution
+        <ul>
+          <li>With a continous latent pdf of $p_y$, the quantized latent pmf can be modelled with $p_y\circledast\text{uniform-pdf}$ evaluated at quantized points</li>
+          <li>$p_y\circledast\text{uniform-pdf}(y_i) = \text{CDF}_y(y_i+1/2) - \text{CDF}_y(y_i-1/2)$.</li>
+          <li>In this work, $p_y$ is modeled by a piecewise linear function (linear spline)</li>
+          <li>Entropy coding is achieved using CABAC with a tree context and exponential Golomb code (for value outside of the max/min range)</li>
+        </ul>
+      </li>
+    </ol>
+  </li>
+  <li>Connection to variational autoencoder (denote $p$ as the generative distribution, $q$ as the variational distribution)
+<script type="math/tex">% <![CDATA[
+\begin{align*}
+D_\text{KL}(q_{y|x}||p_{y|x}) =& \mathbb{E}_{y\sim q}\log q(y|x) - \mathbb{E}_{y\sim q}\log p(y|x)\notag\\
+=&\mathbb{E}_{y\sim q}\log q(y|x) - \mathbb{E}_{y\sim q}\log \frac{p(y)p(x|y)}{p(x)}\notag\\
+=&\underbrace{\mathbb{E}_{y\sim q}\log q(y|x)}_{\text{constant}} - \underbrace{\mathbb{E}_{y\sim q}\log p(y)}_{\text{rate term}} - \underbrace{\mathbb{E}_{y\sim q}\log p(x|y)}_{\text{distortion term}} + \underbrace{\log p(x)}_{\text{constant}}.
+\end{align*} %]]></script></li>
+  <li>Provisional study shows that GDN/IGDN can be replaced by ReLU at the cost of substantially larger number of parameters/layers</li>
+</ul>
+
+<p><a href="#summary">go back</a></p>
+
+<h2 id="cpm">CondProbMod</h2>
+<p>Fabian Mentzer, Eirikur Agustsson, Michael Tschannen, Radu Timofte, Luc Van Gool, “<em>Conditional Probability Models for Deep Image Compression</em>,” CVPR-2018</p>
+
+<h3 id="quantization-method">Quantization method</h3>
+<p>For a set of centers $\{c_1, c_2, \ldots, c_L\}$
+<script type="math/tex">\begin{align*}
+\text{forward: }\hat{z_i} \triangleq Q(z_i) \triangleq \arg\min_j ||z_i-c_j||\text{ }\text{ }\text{ }
+\text{backward: }\tilde{z_i} \triangleq \sum_{j=1}^L\frac{\exp(\sigma||z_i - c_j||)}{\sum_{l=1}^L \exp(\sigma ||z_i-c_l||)}c_j
+\end{align*}</script></p>
+<h3 id="entropy-model">Entropy model</h3>
+<ul>
+  <li>3D extension to PixelCNN with fully factorized latents.</li>
+  <li>They find it beneficial to learn an importance map to help the CNN attend to different re- gions of the image with different amounts of bits. While</li>
+</ul>
+
+<h3 id="training-methodology">Training methodology</h3>
+<p>Iterate between the following two steps</p>
+<ol>
+  <li>Take a gradient step for encoder, decoder, and quantizer w.r.t. loss of $\text{distortion} + \lambda\times\text{rate-on-masked-latent}$</li>
+  <li>Take a gradient step for entropy model w.r.t. loss of $\text{distortion} + \lambda\times\text{rate-on-all-latent}$
+    <ul>
+      <li>Use hinge loss on rate term</li>
+    </ul>
+  </li>
+</ol>
+
+<p style="text-align: center;"><img src="/images/image_compression/CondProbMod.png" alt="Conditional Probablity Model for Deep Image Compression" /></p>
+
+<p><a href="#summary">go back</a></p>
+
+<h2 id="hp">Hyperprior</h2>
+<p>Johannes Ballé, David Minnen, Saurabh Singh, Sung Jin Hwang, Nick Johnston, “<em>Variational Image Compression With a Scale Hyperprior,</em>” ICLR-2018</p>
+
+<p style="text-align: center;"><img src="/images/image_compression/HyperPrior.png" alt="HyperPrior" /></p>
+<p>($N=128, M=192$ for 5 lower values; $N=192, M=320$ for 3 higher values)</p>
+
+<ul>
+  <li>Two interpretations of hyperprior/hyper-latent
+    <ul>
+      <li>hyper-latent can be viewed as side information that signal modifications to the entropy model so that it fits better to a specific data sample instead of using a fixed entropy model that is fit to an ensemble of data. The amount of side information can be small compared to the reduction in codelength achieved by matching entropy model more closely to a particular image.</li>
+      <li>hyper-prior can be viewed as hierarchical latent variable model where the distribution of latent $\hat{y}$ is model by another latent variable model (small caveat: for the proposed scheme to truly be a hierarchical latent variable model, the input to the hyper-encoder should be $\hat{y}$, instead of $y$.)</li>
+    </ul>
+  </li>
+  <li>Probablistic modelling of latent $y$ and hyper-latent $z$
+    <ul>
+      <li>Distribution of latent $y$ is modelled by a Gaussian distribution, whose standard deviation (subsequently referred to as <code class="highlighter-rouge">scale</code>) is given as the output of the hyper-decoder. Each element (across spatial and channel dimension) could have a different scale. The pmf of the quantized latent $\hat{y}$ is then <script type="math/tex">\text{CDF}_{\text{Gaussian}}\left(\frac{\hat{y}+1/2}{\text{scale}}\right) - \text{CDF}_{\text{Gaussian}}\left(\frac{\hat{y}-1/2}{\text{scale}}\right)</script>.
+        <ul>
+          <li>Inactive latent will be $0$ accompanied by a super small scale (so that the pmf of $0$ is close to $1.0$)</li>
+          <li>Marginalized latent distribution is a Gaussian scale mixture (GSM)</li>
+          <li>Compared with <a href="#e2e">End2End</a>, the entropy model is image-dependent and spatial adaptive</li>
+        </ul>
+      </li>
+      <li>Distribution of hyper-latent $z$ is modelled by a non-parametric, fully factorized, univariant density model. The density is defined by its CDF $f_K\circ f_{K-1} \circ \ldots \circ f_1$ with $f_{K}(x)=\text{sigmoid}(H_Kx+b_K)$ and $f_k(x)=H_kx+b_k + a_k\odot \text{tanh}(H_k x + b_k)$. $\{(H_k, b_k)\}_k$ are enforced to be positive using <code class="highlighter-rouge">softplus</code> and $\{a_k\}_k$ are enforced to be larger than $-1$ using <code class="highlighter-rouge">tanh</code> (to make sure that $c$ is a monotonic increasing function)</li>
+    </ul>
+  </li>
+</ul>
+
+<p><a href="#summary">go back</a></p>
+
+<h2 id="ms">MultiScale</h2>
+<p>Ken Nakanishi, Shin-ichi Maeda, Takeru Miyato, Daisuke Okanohara, “<em>Neural Multi-scale Image Compression</em>,” ACCV-2018</p>
+
+<p>Key ideas:</p>
+<ul>
+  <li>Multi-scale lossy autoencoder
+    <ul>
+      <li>Latent is formed by quantizing feature maps at different resolution/scale</li>
+      <li>Densest latent is factored out first; coarest scale is factored out the last</li>
+      <li>Multi-scale latent are unpooled to have the same resolution as the densest feature map and then concatenated</li>
+      <li>space-to-depth and depth-to-space are used instead of strided convolution and transposed convolution</li>
+      <li>Quantization scheme is the same as that in <a href="#cpm">CondProbMod</a></li>
+    </ul>
+  </li>
+  <li>Parallel multi-scale entropy model
+    <ul>
+      <li>Block based auto-regressive entropy model, where each block is defined as spatially subsampled latent (last figure below). The rationale is that spatial correlation between pixels decreases as the pixels are distant from each other.</li>
+      <li>This can be viewed as channel autoregressive prior model if there is a space-to-depth reshaping upfront.</li>
+      <li>Entropy model is separately optimized after training the auto-encoder (due to memory and computation constraint of training)</li>
+    </ul>
+  </li>
+</ul>
+
+<p style="text-align: center;"><img src="/images/image_compression/MultiScale.png" alt="MultiScale" /></p>
+
+<p style="text-align: center;"><img src="/images/image_compression/MultiScale_network.png" alt="MultiScale network architecture" /></p>
+
+<p style="text-align: center;"><img src="/images/image_compression/MultiScale_prior.png" alt="MultiScale prior architecture" /></p>
+
+<p><a href="#summary">go back</a></p>
+
+<h2 id="jarhp">JointARHP</h2>
+<p>David Minnen, Johannes Ballé, George Toderici, “<em>Joint Autoregressive and Hierarchical Priors for Learned Image Compression</em>,” NeurIPS-2018</p>
+
+<p style="text-align: center;"><img src="/images/image_compression/JointARHP.png" alt="Joint AutoRegressive and Hyperprior" /></p>
+<p style="text-align: center;"><img src="/images/image_compression/JointARHP_network.png" alt="Network architecture of Joint AutoRegressive and Hyperprior" /></p>
+
+<ul>
+  <li>First learning based approach to outperform BPG on both PSNR and MS-SSIM.
+    <ul>
+      <li>Even the model trained with MSE outperform BPG on MS-SSIM</li>
+    </ul>
+  </li>
+  <li>Extend the GSM(Gaussian scale mixture)-based entropy model to GMM(Gaussian mixture model)-based one, by having hyper-decoder generate both scale and mean. This change itself leads to performance better than BPG.
+    <ul>
+      <li>Exchanging Gaussian distribution to Logistic distribution has almost no effect</li>
+      <li>Exchanging Gaussian distribution to Laplacian decreases performance more substantially</li>
+    </ul>
+  </li>
+  <li>Empirically, $\hat{z}$ comprises only a very small percentage of the total file size, so AR model is not applied to hyper latent.</li>
+  <li><em>Entropy Parameter</em> network uses 1x1 convolution to avoid information leakage (prior of a latent depending on undecoded ones)</li>
+</ul>
+
+<p style="text-align: center;"><img src="/images/image_compression/JointARHP_latent.png" alt="Latent analysis" /></p>
+<p>Latents for the channel with the higest entropy</p>
+
+<p><a href="#summary">go back</a></p>
+
+<h2 id="nlaic">NLAIC</h2>
+<p>Haojie Liu, Tong Chen, Peiyao Guo, Qiu Shen, Xun Cao, Yao Wang, Zhan Ma, “<em>Non-local Attention Optimized Deep Image Compression</em>, “ 2019-04-22 Arxiv</p>
+
+<p>Two contributions (on top of <a href="#jarhp">JointARHP</a>):</p>
+<ul>
+  <li>Introduce a non-local attention module for analysis and synthesis transform</li>
+  <li>Adopt 3D masked convolution to exploit correlation across channels (<a href="#jarhp">JointARHP</a> used 2D masked convolution)
+    <ul>
+      <li>This part is the same as <a href="#cpm">CondProbMod</a> though</li>
+    </ul>
+  </li>
+</ul>
+
+<p>It is observed that the percentage of bits spent on hyper-latent $\hat{z}$ decreases as overall rate increases.</p>
+
+<p style="text-align: center;"><img src="/images/image_compression/NLAIC.png" alt="NLAIC" /></p>
+
+<p><a href="#summary">go back</a></p>
+
+<h2 id="ca">ContentAdapt</h2>
+<p>Joaquim Campos, Simon Meierhans, Abdelaziz Djelouah, Christopher Schroers, “<em>Content Adaptive Optimization for Neural Image Compression</em>,” CVPRW-2019</p>
+
+<p>Key idea</p>
+<ul>
+  <li>Optimize the latent representation <em>individually</em> on a per image basis, during encoding process
+    <ul>
+      <li>The key benefit of the proposed solution lies in the ability to achieve an improved compression performance while the neural compression network and the predictive model are kept fixed and the computing time on the decoder side remains unchanged. This is particularly beneficial in situations such as streaming, where the encoding complexity is not the limiting factor when compared to the transmission and decoding.</li>
+      <li>Optimize for rate distortion metric on a single image over the latent</li>
+      <li>Results are obtained with 1500 training steps, which takes 5 mins per HD image on a Titan Xp GPU</li>
+      <li>About 0.5dB improvement on Tecnick dataset at the same bitrate</li>
+      <li>Experiments are based on <a href="#jarhp">JointARHP</a> model and <a href="#e2e">End2End</a> model</li>
+    </ul>
+  </li>
+  <li>Compare with two other adaptation method that requires model update (1) Fine-tune the entire model (2) Fine-tune only the entropy model
+    <ul>
+      <li>Fine-tune on entropy model only leads to small gains</li>
+      <li>Per image latent adaptation sometimes can be as competitive as model fine-tuned on specific sequences.</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Note that <em>content adaptive</em> is different from <em>context adaptive</em>, the latter describes an entropy model where the distribution of a latent depends on some previously decoded latents (i.e., auto-regressive entropy model).</p>
+
+<p><a href="#summary">go back</a></p>
+
+<h2 id="ce">ComputeEff</h2>
+<p>Nick Johnston, Elad Eban, Ariel Gordon, Johannes Ballé, “<em>Computationally Efficient Neural Image Compression</em>,” 2019-12-18 Arxiv</p>
+
+<p>Two contributions:</p>
+<ol>
+  <li>Simplify generalized divisive normalization (GDN) module
+    <ul>
+      <li>GDN in full flexible form
+<script type="math/tex">\begin{align*}
+z_i  = x_i/{\big (}\beta_i + \sum_j \gamma_{ij}|x_j|^{\alpha_{ij}}{\big )}^{\epsilon_i}
+\end{align*}</script></li>
+      <li>GDN used in prior image compression works ($\alpha_{ij}=2$ and $\epsilon_i=0.5$)</li>
+      <li>More implementation friendly GDN with no performance loss ($\alpha_{ij}=1$ and $\epsilon_i=1$)</li>
+    </ul>
+  </li>
+  <li>Apply automatic network optimization techniques to reduce the computation complexity of the mean-scale architecture (<a href="#hp">Hyperprior</a> + mean estimate from hyper-decoder)</li>
+</ol>
+
+<p><a href="#summary">go back</a></p>
+
+<h2 id="ilvm">IntegerLVM</h2>
+<p>Johannes Ballé, Nick Johnston, David Minnen, “<em>Integer Networks for Data Compression with Latent-Variable Models</em>,” ICLR-2019</p>
+
+<ul>
+  <li>Range coding can fail catastrophically if the computation of prior differs slightly from between the transmitter and receiver, which is common scenario when floating point math is used and sender and receiver operates on different hardware or software platform, as <em>numerical round-off</em> is platform dependent.</li>
+  <li>This work proposes to use integer arithmetic in prior modeling NNs by restricting all data types to be integral and all operations implementated using either basic arithmetic or lookup tables, in order to prevent computational non-determinism in computation of prior.</li>
+</ul>
+
+<p>The operation at a single layer is abstracted as 
+<script type="math/tex">\begin{align*}
+v = (Hx + b)\oslash c\text{ and }
+w = g(v)
+\end{align*}</script>
+with $b, v, c$ share the same bitwidth (bitwidth of the accumulator) and $H, w$ share the same bitwidth. Some details on how these integer numbers are parametrized:</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+&H = \left[
+\begin{array}{c}
+Q(h_1'\times s(h_1'))\\
+\cdots\\
+Q(h_N'\times s(h_N'))\\
+\end{array}
+\right],
+s(h') = \max\left\{0, \min\left\{\frac{2^{K-1}-1}{\max h_i}, \frac{-2^{K-1}}{\min h_i}, 1/\epsilon\right\}\right\}\\
+&b = Q(2^K b'), c=Q(2^K r(c'))
+\end{align*} %]]></script>
+
+<p>For backward propagation, it is proposed to use straight through gradient for quantization operation $Q(\cdot)$, gradient of division for rounding division, and gradient of a scaled accumulative of a generalized Gaussian for ReLU.</p>
+
+<p>In NN based prior modeling, NN generates parameters of a certain distribution family. In case of <a href="#hp">Hyperprior</a>, the distribution is zero-mean Gaussian and the parameter is the scale of the Gaussian. Here one only need to make sure the parameter generation part is deterministic. If the parametrized pmf itself cannot be computed deterministically (as is the case for Gaussian), one can precompute all possible values and express it as a look up table over discrete latent values and the discrete parameters.</p>
+
+<p>For the scale of Gaussian, the discretization is chosen to be logarithmic, which minimizes redundancy for a given number of quantiazation levels.</p>
+
+<p><a href="#summary">go back</a></p>
+
+<h2 id="ctxa">ContextAdapt</h2>
+<p>Jooyoung Lee, Seunghyun Cho, Seung-Kwon Beack, “<em>Context-adaptive Entropy Model for End-to-end Optimized Image Compression</em>,” ICLR-2019</p>
+
+<p>Technical wise this paper is almost identical to <a href="#jarhp">JointARHP</a> work. One difference is that latent $y$ is split into two parts, one modelled with proposed joint auto-regressive and hyper-prior model, the other with a simple entropy model. Please refer to <a href="https://openreview.net/forum?id=HyxKIiAqYQ">open review</a> for more insight.</p>
+
+<p>Hyper-prior is referred to as <em>bit-consuming context</em> and auto-regressive part is referred to as <em>bit-free context</em>.</p>
+
+<p><a href="#summary">go back</a></p>
+
+<h2 id="bm">Benchmark</h2>
+<p>Yueyu Hu, Wenhan Yang, Zhan Ma, Jiaying Liu, “<em>Learning End-to-End Lossy Image Compression: A Benchmark</em>,” 2020-02-19 Arxiv</p>
+
+<p>Key contributions</p>
+<ul>
+  <li>Provide a comprehensive overview of existing end-to-end learned image compression methods (up to <a href="#ca">ContextAdapt</a>)
+    <ul>
+      <li>Summary of test results on Kodak, Tecnick, and CLIC across many different solutions</li>
+    </ul>
+  </li>
+  <li>Propose a method with one more hierarchy of latent on top of the hyperprior architecture and aggregate latents from all levels as input to the synthesis network</li>
+</ul>
+
+<p style="text-align: center;"><img src="/images/image_compression/Benchmark.png" alt="Benchmark" /></p>
+
+<p style="text-align: center;"><img src="/images/image_compression/Benchmark_aggregation.png" alt="Benchmark Aggregation" /></p>
+
+<p style="text-align: center;"><img src="/images/image_compression/Benchmark_Kodak.png" alt="Benchmark Kodak" /></p>
+
+<p style="text-align: center;"><img src="/images/image_compression/Benchmark_Tecnick.png" alt="Benchmark Tecnick" /></p>
+
+<p style="text-align: center;"><img src="/images/image_compression/Benchmark_CLIC.png" alt="Benchmark CLIC" /></p>
+
+<p><a href="#summary">go back</a></p>
+
+<h2 id="att">Attention</h2>
+<p>Zhengxue Cheng, Heming Sun, Masaru Takeuchi, Jiro Katto, “<em>Learned Image Compression with Discretized Gaussian Mixture Likelihoods and Attention Modules</em>,” CVPR-2020</p>
+
+<p style="text-align: center;"><img src="/images/image_compression/Attention.png" alt="Learned Image Compression with Discretized Gaussian Mixture Likelihoods and Attention Modules" /></p>
+<p>(a) <a href="#e2e">End2End</a> (b) <a href="#hp">Hyperprior</a> (c) <a href="#jarhp">JointARHP</a>/<a href="#ctxa">ContextAdapt</a> (d) <a href="#att">Attention</a></p>
+
+<p>This paper builds on top of <a href="#jarhp">JointARHP</a> with the following key contributions</p>
+<ol>
+  <li>Use discretized Gaussian mixture model to parametrize $p(\hat{y}|\hat{z})$
+    <ul>
+      <li>Ablation study shows no gain beyond $K=3$ ($K$ denotes the number of mixture components)</li>
+    </ul>
+  </li>
+  <li>Adopt a simplified attention module into the analysis and synthesis transform
+    <ul>
+      <li>No non-local block</li>
+    </ul>
+  </li>
+  <li>Make some architecture changes on top of <a href="#jarhp">JointARHP</a>
+    <ul>
+      <li>Use subpixel convolution (aka <code class="highlighter-rouge">torch.pixelshuffle</code>, <code class="highlighter-rouge">depth_to_space</code>) instead of transposed convolution</li>
+      <li>Use four 3x3 convolution with residual connection as replacement of the 5x5 convolution</li>
+      <li>Pad image height and width to a multiple of 64 using reflect padding before feeding into the learned network ($y$ is downsampled by 16, $z$ is additionally downsampled by 4)</li>
+    </ul>
+  </li>
+</ol>
+
+<p>It claimed to be the first work that achieves comparable performance with VVC</p>
+<ul>
+  <li>VTM 5.2 is used; RGB is first converted to 8-bit YUV444, and then fed into VTM. QP={22, 27, 32, 37, 42, 47}</li>
+</ul>
+
+<p style="text-align: center;"><img src="/images/image_compression/Attention_network.png" alt="Network architecture" /></p>
+<p>Detailed network structure</p>
+
+<p style="text-align: center;"><img src="/images/image_compression/Attention_simplified_attention.png" alt="Simplified attention module" /></p>
+<p>Simplified attention module (no non-local block; just multiplicative operation)</p>
+
+<p><a href="#summary">go back</a></p>
+
+<h2 id="car">ChannelAR</h2>
+<p>David Minnen, Saurabh Singh, “<em>Channel-wise AutoregRessive Entropy Models for Learned Image Compression</em>” ICIP-2020</p>
+
+<p style="text-align: center;"><img src="/images/image_compression/ChannelAR.png" alt="Channel-wise autoregressive entropy models for learned image compression" /></p>
+
+<p>Three contributions</p>
+<ol>
+  <li>Channel Conditioning (CC)
+    <ul>
+      <li>Split latent tensor along the channel dimension and condition the entropy parameters for each slice on previously decoded slices.</li>
+      <li>In a model with $N$ slices, each slice contains $H\times W\times C/N$ values</li>
+      <li>Increasing the number of splits from 0 to 4 yields significant gains, while moving from 5 to 10 splits yields relatively little additional savings.</li>
+    </ul>
+  </li>
+  <li>Latent Residual Prediction (LRP)
+    <ul>
+      <li>Unclear how it is done</li>
+      <li>LRP has almost no benefit for models that do not use channel-conditioning</li>
+      <li>Regardless of the number of CC splits, LRP slightly reduces RD performance at high bit rates. At low bit rates, the benefit of LRP increases with the number of CC splits.</li>
+    </ul>
+  </li>
+  <li>Rounding based training
+    <ul>
+      <li>The mixed approach uses the same uniform noise for learning entropy models but replaces the noisy tensor with a rounded one whenever the quantized tensor is passed to a synthesis transform.</li>
+      <li>The benefit is minimal at higher quality levels but becomes significant at lower bit rates.</li>
+    </ul>
+  </li>
+</ol>
+
+<p>Best model achieves an average BD rate saving of 13.9% over BPG and 6.7% over <a href="#hp">Hyperprior</a>.</p>
+
+<p><a href="#summary">go back</a></p>
+
+<h2 id="ii">ImproveInference</h2>
+<p>Yibo Yang, Robert Bamler, Stephan Mandt, “<em>Improving Inference for Neural Image Compression</em>,” 2020-06-09 Arxiv</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+  
+
+
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fa fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="https://yyang768osu.github.io/tags/#compression" class="page__taxonomy-item" rel="tag">compression</a>
+    
+    </span>
+  </p>
+
+
+
+
+      </footer>
+
+      
+
+<section class="page__share">
+  
+    <h4 class="page__share-title">Share on</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=https://yyang768osu.github.io/posts/2020/06/e2e_lossy_image_compression/" class="btn btn--twitter" title="Share on Twitter"><i class="fa fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https://yyang768osu.github.io/posts/2020/06/e2e_lossy_image_compression/" class="btn btn--facebook" title="Share on Facebook"><i class="fa fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://plus.google.com/share?url=https://yyang768osu.github.io/posts/2020/06/e2e_lossy_image_compression/" class="btn btn--google-plus" title="Share on Google Plus"><i class="fa fa-fw fa-google-plus" aria-hidden="true"></i><span> Google+</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https://yyang768osu.github.io/posts/2020/06/e2e_lossy_image_compression/" class="btn btn--linkedin" title="Share on LinkedIn"><i class="fa fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+      
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://yyang768osu-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+
+
+
+      
+
+
+  <nav class="pagination">
+    
+      <a href="https://yyang768osu.github.io/posts/2020/06/optical_flow/" class="pagination--pager" title="Notes on Optical Flow
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+
+
+  
+  
+</div>
+
+
+    </script>
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<a href="/sitemap/">Sitemap</a>
+<!-- end custom footer snippets -->
+
+        
+
+<div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+    
+    
+    
+      <li><a href="http://github.com/yyang768osu"><i class="fa fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+    
+    
+    <li><a href="https://yyang768osu.github.io/feed.xml"><i class="fa fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2020 Yang Yang. Powered by <a href="http://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>, a fork of <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    <script src="https://yyang768osu.github.io/assets/js/main.min.js"></script>
+
+
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-123722738-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-123722738-1');
+</script>
+
+
+
+
+
+
+
+  </body>
+</html>
+

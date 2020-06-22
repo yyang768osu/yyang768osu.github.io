@@ -1,4 +1,473 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="https://yyang768osu.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://yyang768osu.github.io/" rel="alternate" type="text/html" /><updated>2020-06-17T22:50:16-07:00</updated><id>https://yyang768osu.github.io/</id><title type="html">Yang Yang</title><subtitle>Engineer at Qualcomm</subtitle><author><name>Yang Yang</name></author><entry><title type="html">Notes on Optical Flow</title><link href="https://yyang768osu.github.io/posts/2020/06/optical_flow/" rel="alternate" type="text/html" title="Notes on Optical Flow" /><published>2020-06-16T00:00:00-07:00</published><updated>2020-06-16T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2020/06/notes-on-optical-flow</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2020/06/optical_flow/">&lt;ul id=&quot;markdown-toc&quot;&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="https://yyang768osu.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://yyang768osu.github.io/" rel="alternate" type="text/html" /><updated>2020-06-21T22:00:46-07:00</updated><id>https://yyang768osu.github.io/</id><title type="html">Yang Yang</title><subtitle>Engineer at Qualcomm</subtitle><author><name>Yang Yang</name></author><entry><title type="html">Notes on End-to-End Lossy Image Compression</title><link href="https://yyang768osu.github.io/posts/2020/06/e2e_lossy_image_compression/" rel="alternate" type="text/html" title="Notes on End-to-End Lossy Image Compression" /><published>2020-06-18T00:00:00-07:00</published><updated>2020-06-18T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2020/06/notes-on-end-to-end-lossy-image-compression</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2020/06/e2e_lossy_image_compression/">&lt;table id=&quot;summary&quot;&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Paper&lt;/th&gt;
+      &lt;th&gt;Organization&lt;/th&gt;
+      &lt;th&gt;Conference&lt;/th&gt;
+      &lt;th&gt;Arxiv&lt;/th&gt;
+      &lt;th&gt;Citation&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;#e2e&quot;&gt;End2End&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;NYU&lt;/td&gt;
+      &lt;td&gt;ICLR-2017&lt;/td&gt;
+      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/1611.01704&quot;&gt;2017-03-03&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;336&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;#cpm&quot;&gt;CondProbMod&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;ETH&lt;/td&gt;
+      &lt;td&gt;CVPR-2018&lt;/td&gt;
+      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/1801.04260&quot;&gt;2019-06-04&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;128&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;#hp&quot;&gt;Hyperprior&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;google&lt;/td&gt;
+      &lt;td&gt;ICLR-2018&lt;/td&gt;
+      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/1802.01436&quot;&gt;2018-05-01&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;181&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;#ms&quot;&gt;MultiScale&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;UTokyo&lt;/td&gt;
+      &lt;td&gt;ACCV-2018&lt;/td&gt;
+      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/1805.06386&quot;&gt;2018-05-16&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;9&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;#jarhp&quot;&gt;JointARHP&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;google&lt;/td&gt;
+      &lt;td&gt;NeurIPS-2018&lt;/td&gt;
+      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/1809.02736&quot;&gt;2018-09-08&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;104&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;#nlaic&quot;&gt;NLAIC&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;NanjingU&amp;amp;NYU&lt;/td&gt;
+      &lt;td&gt;-&lt;/td&gt;
+      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/1904.09757&quot;&gt;2019-04-22&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;11&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;#ca&quot;&gt;ContentAdapt&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;Disney&lt;/td&gt;
+      &lt;td&gt;CVPRW-2019&lt;/td&gt;
+      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/1906.01223&quot;&gt;2019-06-05&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;#ce&quot;&gt;ComputeEff&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;google&lt;/td&gt;
+      &lt;td&gt;-&lt;/td&gt;
+      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/1912.08771&quot;&gt;2019-12-18&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;#ilvm&quot;&gt;IntegerLVM&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;google&lt;/td&gt;
+      &lt;td&gt;ICLR-2019&lt;/td&gt;
+      &lt;td&gt;&lt;a href=&quot;https://bit.ly/30Q4fW2&quot;&gt;non-arxiv&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;2&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;#ctxa&quot;&gt;ContextAdapt&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;ETRI&lt;/td&gt;
+      &lt;td&gt;ICLR-2019&lt;/td&gt;
+      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/1809.10452&quot;&gt;2019-05-06&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;43&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;#bm&quot;&gt;Benchmark&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;PKU&lt;/td&gt;
+      &lt;td&gt;-&lt;/td&gt;
+      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/2002.03711&quot;&gt;2020-02-19&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;#att&quot;&gt;Attention&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;Waseda&lt;/td&gt;
+      &lt;td&gt;CVPR-2020&lt;/td&gt;
+      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/2001.01568&quot;&gt;2020-03-30&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;2&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;#car&quot;&gt;ChannelAR&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;google&lt;/td&gt;
+      &lt;td&gt;ICIP-2020&lt;/td&gt;
+      &lt;td&gt;&lt;a href=&quot;https://bit.ly/2zOei2Q&quot;&gt;non-arxiv&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;#ii&quot;&gt;ImproveInference&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;UCI&lt;/td&gt;
+      &lt;td&gt;-&lt;/td&gt;
+      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/2006.04240&quot;&gt;2020-06-09&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h2 id=&quot;e2e&quot;&gt;End2End&lt;/h2&gt;
+&lt;p&gt;Johannes Ballé, Valero Laparra, Eero P. Simoncelli, “&lt;em&gt;End-to-end Optimized Image Compression&lt;/em&gt;,” ICLR-2018&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;In traditional &lt;em&gt;transform coding&lt;/em&gt;, transform, quantizer, and entropy code are separately optimized.&lt;/li&gt;
+  &lt;li&gt;This work propose a framework for end-to-end optimization of an image compression model with
+    &lt;ol&gt;
+      &lt;li&gt;GDN (Generalized divisive normalization) as nonlinear transform which is proven effective in Gaussianizing image density&lt;/li&gt;
+      &lt;li&gt;Uniform scalar quantization, modeled by adding uniform noise for gradient computation&lt;/li&gt;
+      &lt;li&gt;Continous prior distribution
+        &lt;ul&gt;
+          &lt;li&gt;With a continous latent pdf of $p_y$, the quantized latent pmf can be modelled with $p_y\circledast\text{uniform-pdf}$ evaluated at quantized points&lt;/li&gt;
+          &lt;li&gt;$p_y\circledast\text{uniform-pdf}(y_i) = \text{CDF}_y(y_i+1/2) - \text{CDF}_y(y_i-1/2)$.&lt;/li&gt;
+          &lt;li&gt;In this work, $p_y$ is modeled by a piecewise linear function (linear spline)&lt;/li&gt;
+          &lt;li&gt;Entropy coding is achieved using CABAC with a tree context and exponential Golomb code (for value outside of the max/min range)&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Connection to variational autoencoder (denote $p$ as the generative distribution, $q$ as the variational distribution)
+&lt;script type=&quot;math/tex&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+D_\text{KL}(q_{y|x}||p_{y|x}) =&amp; \mathbb{E}_{y\sim q}\log q(y|x) - \mathbb{E}_{y\sim q}\log p(y|x)\notag\\
+=&amp;\mathbb{E}_{y\sim q}\log q(y|x) - \mathbb{E}_{y\sim q}\log \frac{p(y)p(x|y)}{p(x)}\notag\\
+=&amp;\underbrace{\mathbb{E}_{y\sim q}\log q(y|x)}_{\text{constant}} - \underbrace{\mathbb{E}_{y\sim q}\log p(y)}_{\text{rate term}} - \underbrace{\mathbb{E}_{y\sim q}\log p(x|y)}_{\text{distortion term}} + \underbrace{\log p(x)}_{\text{constant}}.
+\end{align*} %]]&gt;&lt;/script&gt;&lt;/li&gt;
+  &lt;li&gt;Provisional study shows that GDN/IGDN can be replaced by ReLU at the cost of substantially larger number of parameters/layers&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;cpm&quot;&gt;CondProbMod&lt;/h2&gt;
+&lt;p&gt;Fabian Mentzer, Eirikur Agustsson, Michael Tschannen, Radu Timofte, Luc Van Gool, “&lt;em&gt;Conditional Probability Models for Deep Image Compression&lt;/em&gt;,” CVPR-2018&lt;/p&gt;
+
+&lt;h3 id=&quot;quantization-method&quot;&gt;Quantization method&lt;/h3&gt;
+&lt;p&gt;For a set of centers $\{c_1, c_2, \ldots, c_L\}$
+&lt;script type=&quot;math/tex&quot;&gt;\begin{align*}
+\text{forward: }\hat{z_i} \triangleq Q(z_i) \triangleq \arg\min_j ||z_i-c_j||\text{ }\text{ }\text{ }
+\text{backward: }\tilde{z_i} \triangleq \sum_{j=1}^L\frac{\exp(\sigma||z_i - c_j||)}{\sum_{l=1}^L \exp(\sigma ||z_i-c_l||)}c_j
+\end{align*}&lt;/script&gt;&lt;/p&gt;
+&lt;h3 id=&quot;entropy-model&quot;&gt;Entropy model&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;3D extension to PixelCNN with fully factorized latents.&lt;/li&gt;
+  &lt;li&gt;They find it beneficial to learn an importance map to help the CNN attend to different re- gions of the image with different amounts of bits. While&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;training-methodology&quot;&gt;Training methodology&lt;/h3&gt;
+&lt;p&gt;Iterate between the following two steps&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Take a gradient step for encoder, decoder, and quantizer w.r.t. loss of $\text{distortion} + \lambda\times\text{rate-on-masked-latent}$&lt;/li&gt;
+  &lt;li&gt;Take a gradient step for entropy model w.r.t. loss of $\text{distortion} + \lambda\times\text{rate-on-all-latent}$
+    &lt;ul&gt;
+      &lt;li&gt;Use hinge loss on rate term&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/CondProbMod.png&quot; alt=&quot;Conditional Probablity Model for Deep Image Compression&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;hp&quot;&gt;Hyperprior&lt;/h2&gt;
+&lt;p&gt;Johannes Ballé, David Minnen, Saurabh Singh, Sung Jin Hwang, Nick Johnston, “&lt;em&gt;Variational Image Compression With a Scale Hyperprior,&lt;/em&gt;” ICLR-2018&lt;/p&gt;
+
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/HyperPrior.png&quot; alt=&quot;HyperPrior&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;($N=128, M=192$ for 5 lower values; $N=192, M=320$ for 3 higher values)&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Two interpretations of hyperprior/hyper-latent
+    &lt;ul&gt;
+      &lt;li&gt;hyper-latent can be viewed as side information that signal modifications to the entropy model so that it fits better to a specific data sample instead of using a fixed entropy model that is fit to an ensemble of data. The amount of side information can be small compared to the reduction in codelength achieved by matching entropy model more closely to a particular image.&lt;/li&gt;
+      &lt;li&gt;hyper-prior can be viewed as hierarchical latent variable model where the distribution of latent $\hat{y}$ is model by another latent variable model (small caveat: for the proposed scheme to truly be a hierarchical latent variable model, the input to the hyper-encoder should be $\hat{y}$, instead of $y$.)&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Probablistic modelling of latent $y$ and hyper-latent $z$
+    &lt;ul&gt;
+      &lt;li&gt;Distribution of latent $y$ is modelled by a Gaussian distribution, whose standard deviation (subsequently referred to as &lt;code class=&quot;highlighter-rouge&quot;&gt;scale&lt;/code&gt;) is given as the output of the hyper-decoder. Each element (across spatial and channel dimension) could have a different scale. The pmf of the quantized latent $\hat{y}$ is then &lt;script type=&quot;math/tex&quot;&gt;\text{CDF}_{\text{Gaussian}}\left(\frac{\hat{y}+1/2}{\text{scale}}\right) - \text{CDF}_{\text{Gaussian}}\left(\frac{\hat{y}-1/2}{\text{scale}}\right)&lt;/script&gt;.
+        &lt;ul&gt;
+          &lt;li&gt;Inactive latent will be $0$ accompanied by a super small scale (so that the pmf of $0$ is close to $1.0$)&lt;/li&gt;
+          &lt;li&gt;Marginalized latent distribution is a Gaussian scale mixture (GSM)&lt;/li&gt;
+          &lt;li&gt;Compared with &lt;a href=&quot;#e2e&quot;&gt;End2End&lt;/a&gt;, the entropy model is image-dependent and spatial adaptive&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;Distribution of hyper-latent $z$ is modelled by a non-parametric, fully factorized, univariant density model. The density is defined by its CDF $f_K\circ f_{K-1} \circ \ldots \circ f_1$ with $f_{K}(x)=\text{sigmoid}(H_Kx+b_K)$ and $f_k(x)=H_kx+b_k + a_k\odot \text{tanh}(H_k x + b_k)$. $\{(H_k, b_k)\}_k$ are enforced to be positive using &lt;code class=&quot;highlighter-rouge&quot;&gt;softplus&lt;/code&gt; and $\{a_k\}_k$ are enforced to be larger than $-1$ using &lt;code class=&quot;highlighter-rouge&quot;&gt;tanh&lt;/code&gt; (to make sure that $c$ is a monotonic increasing function)&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;ms&quot;&gt;MultiScale&lt;/h2&gt;
+&lt;p&gt;Ken Nakanishi, Shin-ichi Maeda, Takeru Miyato, Daisuke Okanohara, “&lt;em&gt;Neural Multi-scale Image Compression&lt;/em&gt;,” ACCV-2018&lt;/p&gt;
+
+&lt;p&gt;Key ideas:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Multi-scale lossy autoencoder
+    &lt;ul&gt;
+      &lt;li&gt;Latent is formed by quantizing feature maps at different resolution/scale&lt;/li&gt;
+      &lt;li&gt;Densest latent is factored out first; coarest scale is factored out the last&lt;/li&gt;
+      &lt;li&gt;Multi-scale latent are unpooled to have the same resolution as the densest feature map and then concatenated&lt;/li&gt;
+      &lt;li&gt;space-to-depth and depth-to-space are used instead of strided convolution and transposed convolution&lt;/li&gt;
+      &lt;li&gt;Quantization scheme is the same as that in &lt;a href=&quot;#cpm&quot;&gt;CondProbMod&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Parallel multi-scale entropy model
+    &lt;ul&gt;
+      &lt;li&gt;Block based auto-regressive entropy model, where each block is defined as spatially subsampled latent (last figure below). The rationale is that spatial correlation between pixels decreases as the pixels are distant from each other.&lt;/li&gt;
+      &lt;li&gt;This can be viewed as channel autoregressive prior model if there is a space-to-depth reshaping upfront.&lt;/li&gt;
+      &lt;li&gt;Entropy model is separately optimized after training the auto-encoder (due to memory and computation constraint of training)&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/MultiScale.png&quot; alt=&quot;MultiScale&quot; /&gt;&lt;/p&gt;
+
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/MultiScale_network.png&quot; alt=&quot;MultiScale network architecture&quot; /&gt;&lt;/p&gt;
+
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/MultiScale_prior.png&quot; alt=&quot;MultiScale prior architecture&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;jarhp&quot;&gt;JointARHP&lt;/h2&gt;
+&lt;p&gt;David Minnen, Johannes Ballé, George Toderici, “&lt;em&gt;Joint Autoregressive and Hierarchical Priors for Learned Image Compression&lt;/em&gt;,” NeurIPS-2018&lt;/p&gt;
+
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/JointARHP.png&quot; alt=&quot;Joint AutoRegressive and Hyperprior&quot; /&gt;&lt;/p&gt;
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/JointARHP_network.png&quot; alt=&quot;Network architecture of Joint AutoRegressive and Hyperprior&quot; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;First learning based approach to outperform BPG on both PSNR and MS-SSIM.
+    &lt;ul&gt;
+      &lt;li&gt;Even the model trained with MSE outperform BPG on MS-SSIM&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Extend the GSM(Gaussian scale mixture)-based entropy model to GMM(Gaussian mixture model)-based one, by having hyper-decoder generate both scale and mean. This change itself leads to performance better than BPG.
+    &lt;ul&gt;
+      &lt;li&gt;Exchanging Gaussian distribution to Logistic distribution has almost no effect&lt;/li&gt;
+      &lt;li&gt;Exchanging Gaussian distribution to Laplacian decreases performance more substantially&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Empirically, $\hat{z}$ comprises only a very small percentage of the total file size, so AR model is not applied to hyper latent.&lt;/li&gt;
+  &lt;li&gt;&lt;em&gt;Entropy Parameter&lt;/em&gt; network uses 1x1 convolution to avoid information leakage (prior of a latent depending on undecoded ones)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/JointARHP_latent.png&quot; alt=&quot;Latent analysis&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;Latents for the channel with the higest entropy&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;nlaic&quot;&gt;NLAIC&lt;/h2&gt;
+&lt;p&gt;Haojie Liu, Tong Chen, Peiyao Guo, Qiu Shen, Xun Cao, Yao Wang, Zhan Ma, “&lt;em&gt;Non-local Attention Optimized Deep Image Compression&lt;/em&gt;, “ 2019-04-22 Arxiv&lt;/p&gt;
+
+&lt;p&gt;Two contributions (on top of &lt;a href=&quot;#jarhp&quot;&gt;JointARHP&lt;/a&gt;):&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Introduce a non-local attention module for analysis and synthesis transform&lt;/li&gt;
+  &lt;li&gt;Adopt 3D masked convolution to exploit correlation across channels (&lt;a href=&quot;#jarhp&quot;&gt;JointARHP&lt;/a&gt; used 2D masked convolution)
+    &lt;ul&gt;
+      &lt;li&gt;This part is the same as &lt;a href=&quot;#cpm&quot;&gt;CondProbMod&lt;/a&gt; though&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;It is observed that the percentage of bits spent on hyper-latent $\hat{z}$ decreases as overall rate increases.&lt;/p&gt;
+
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/NLAIC.png&quot; alt=&quot;NLAIC&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;ca&quot;&gt;ContentAdapt&lt;/h2&gt;
+&lt;p&gt;Joaquim Campos, Simon Meierhans, Abdelaziz Djelouah, Christopher Schroers, “&lt;em&gt;Content Adaptive Optimization for Neural Image Compression&lt;/em&gt;,” CVPRW-2019&lt;/p&gt;
+
+&lt;p&gt;Key idea&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Optimize the latent representation &lt;em&gt;individually&lt;/em&gt; on a per image basis, during encoding process
+    &lt;ul&gt;
+      &lt;li&gt;The key benefit of the proposed solution lies in the ability to achieve an improved compression performance while the neural compression network and the predictive model are kept fixed and the computing time on the decoder side remains unchanged. This is particularly beneficial in situations such as streaming, where the encoding complexity is not the limiting factor when compared to the transmission and decoding.&lt;/li&gt;
+      &lt;li&gt;Optimize for rate distortion metric on a single image over the latent&lt;/li&gt;
+      &lt;li&gt;Results are obtained with 1500 training steps, which takes 5 mins per HD image on a Titan Xp GPU&lt;/li&gt;
+      &lt;li&gt;About 0.5dB improvement on Tecnick dataset at the same bitrate&lt;/li&gt;
+      &lt;li&gt;Experiments are based on &lt;a href=&quot;#jarhp&quot;&gt;JointARHP&lt;/a&gt; model and &lt;a href=&quot;#e2e&quot;&gt;End2End&lt;/a&gt; model&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Compare with two other adaptation method that requires model update (1) Fine-tune the entire model (2) Fine-tune only the entropy model
+    &lt;ul&gt;
+      &lt;li&gt;Fine-tune on entropy model only leads to small gains&lt;/li&gt;
+      &lt;li&gt;Per image latent adaptation sometimes can be as competitive as model fine-tuned on specific sequences.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Note that &lt;em&gt;content adaptive&lt;/em&gt; is different from &lt;em&gt;context adaptive&lt;/em&gt;, the latter describes an entropy model where the distribution of a latent depends on some previously decoded latents (i.e., auto-regressive entropy model).&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;ce&quot;&gt;ComputeEff&lt;/h2&gt;
+&lt;p&gt;Nick Johnston, Elad Eban, Ariel Gordon, Johannes Ballé, “&lt;em&gt;Computationally Efficient Neural Image Compression&lt;/em&gt;,” 2019-12-18 Arxiv&lt;/p&gt;
+
+&lt;p&gt;Two contributions:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Simplify generalized divisive normalization (GDN) module
+    &lt;ul&gt;
+      &lt;li&gt;GDN in full flexible form
+&lt;script type=&quot;math/tex&quot;&gt;\begin{align*}
+z_i  = x_i/{\big (}\beta_i + \sum_j \gamma_{ij}|x_j|^{\alpha_{ij}}{\big )}^{\epsilon_i}
+\end{align*}&lt;/script&gt;&lt;/li&gt;
+      &lt;li&gt;GDN used in prior image compression works ($\alpha_{ij}=2$ and $\epsilon_i=0.5$)&lt;/li&gt;
+      &lt;li&gt;More implementation friendly GDN with no performance loss ($\alpha_{ij}=1$ and $\epsilon_i=1$)&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Apply automatic network optimization techniques to reduce the computation complexity of the mean-scale architecture (&lt;a href=&quot;#hp&quot;&gt;Hyperprior&lt;/a&gt; + mean estimate from hyper-decoder)&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;ilvm&quot;&gt;IntegerLVM&lt;/h2&gt;
+&lt;p&gt;Johannes Ballé, Nick Johnston, David Minnen, “&lt;em&gt;Integer Networks for Data Compression with Latent-Variable Models&lt;/em&gt;,” ICLR-2019&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Range coding can fail catastrophically if the computation of prior differs slightly from between the transmitter and receiver, which is common scenario when floating point math is used and sender and receiver operates on different hardware or software platform, as &lt;em&gt;numerical round-off&lt;/em&gt; is platform dependent.&lt;/li&gt;
+  &lt;li&gt;This work proposes to use integer arithmetic in prior modeling NNs by restricting all data types to be integral and all operations implementated using either basic arithmetic or lookup tables, in order to prevent computational non-determinism in computation of prior.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The operation at a single layer is abstracted as 
+&lt;script type=&quot;math/tex&quot;&gt;\begin{align*}
+v = (Hx + b)\oslash c\text{ and }
+w = g(v)
+\end{align*}&lt;/script&gt;
+with $b, v, c$ share the same bitwidth (bitwidth of the accumulator) and $H, w$ share the same bitwidth. Some details on how these integer numbers are parametrized:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+&amp;H = \left[
+\begin{array}{c}
+Q(h_1'\times s(h_1'))\\
+\cdots\\
+Q(h_N'\times s(h_N'))\\
+\end{array}
+\right],
+s(h') = \max\left\{0, \min\left\{\frac{2^{K-1}-1}{\max h_i}, \frac{-2^{K-1}}{\min h_i}, 1/\epsilon\right\}\right\}\\
+&amp;b = Q(2^K b'), c=Q(2^K r(c'))
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;For backward propagation, it is proposed to use straight through gradient for quantization operation $Q(\cdot)$, gradient of division for rounding division, and gradient of a scaled accumulative of a generalized Gaussian for ReLU.&lt;/p&gt;
+
+&lt;p&gt;In NN based prior modeling, NN generates parameters of a certain distribution family. In case of &lt;a href=&quot;#hp&quot;&gt;Hyperprior&lt;/a&gt;, the distribution is zero-mean Gaussian and the parameter is the scale of the Gaussian. Here one only need to make sure the parameter generation part is deterministic. If the parametrized pmf itself cannot be computed deterministically (as is the case for Gaussian), one can precompute all possible values and express it as a look up table over discrete latent values and the discrete parameters.&lt;/p&gt;
+
+&lt;p&gt;For the scale of Gaussian, the discretization is chosen to be logarithmic, which minimizes redundancy for a given number of quantiazation levels.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;ctxa&quot;&gt;ContextAdapt&lt;/h2&gt;
+&lt;p&gt;Jooyoung Lee, Seunghyun Cho, Seung-Kwon Beack, “&lt;em&gt;Context-adaptive Entropy Model for End-to-end Optimized Image Compression&lt;/em&gt;,” ICLR-2019&lt;/p&gt;
+
+&lt;p&gt;Technical wise this paper is almost identical to &lt;a href=&quot;#jarhp&quot;&gt;JointARHP&lt;/a&gt; work. One difference is that latent $y$ is split into two parts, one modelled with proposed joint auto-regressive and hyper-prior model, the other with a simple entropy model. Please refer to &lt;a href=&quot;https://openreview.net/forum?id=HyxKIiAqYQ&quot;&gt;open review&lt;/a&gt; for more insight.&lt;/p&gt;
+
+&lt;p&gt;Hyper-prior is referred to as &lt;em&gt;bit-consuming context&lt;/em&gt; and auto-regressive part is referred to as &lt;em&gt;bit-free context&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;bm&quot;&gt;Benchmark&lt;/h2&gt;
+&lt;p&gt;Yueyu Hu, Wenhan Yang, Zhan Ma, Jiaying Liu, “&lt;em&gt;Learning End-to-End Lossy Image Compression: A Benchmark&lt;/em&gt;,” 2020-02-19 Arxiv&lt;/p&gt;
+
+&lt;p&gt;Key contributions&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Provide a comprehensive overview of existing end-to-end learned image compression methods (up to &lt;a href=&quot;#ca&quot;&gt;ContextAdapt&lt;/a&gt;)
+    &lt;ul&gt;
+      &lt;li&gt;Summary of test results on Kodak, Tecnick, and CLIC across many different solutions&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Propose a method with one more hierarchy of latent on top of the hyperprior architecture and aggregate latents from all levels as input to the synthesis network&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/Benchmark.png&quot; alt=&quot;Benchmark&quot; /&gt;&lt;/p&gt;
+
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/Benchmark_aggregation.png&quot; alt=&quot;Benchmark Aggregation&quot; /&gt;&lt;/p&gt;
+
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/Benchmark_Kodak.png&quot; alt=&quot;Benchmark Kodak&quot; /&gt;&lt;/p&gt;
+
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/Benchmark_Tecnick.png&quot; alt=&quot;Benchmark Tecnick&quot; /&gt;&lt;/p&gt;
+
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/Benchmark_CLIC.png&quot; alt=&quot;Benchmark CLIC&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;att&quot;&gt;Attention&lt;/h2&gt;
+&lt;p&gt;Zhengxue Cheng, Heming Sun, Masaru Takeuchi, Jiro Katto, “&lt;em&gt;Learned Image Compression with Discretized Gaussian Mixture Likelihoods and Attention Modules&lt;/em&gt;,” CVPR-2020&lt;/p&gt;
+
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/Attention.png&quot; alt=&quot;Learned Image Compression with Discretized Gaussian Mixture Likelihoods and Attention Modules&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;(a) &lt;a href=&quot;#e2e&quot;&gt;End2End&lt;/a&gt; (b) &lt;a href=&quot;#hp&quot;&gt;Hyperprior&lt;/a&gt; (c) &lt;a href=&quot;#jarhp&quot;&gt;JointARHP&lt;/a&gt;/&lt;a href=&quot;#ctxa&quot;&gt;ContextAdapt&lt;/a&gt; (d) &lt;a href=&quot;#att&quot;&gt;Attention&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;This paper builds on top of &lt;a href=&quot;#jarhp&quot;&gt;JointARHP&lt;/a&gt; with the following key contributions&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Use discretized Gaussian mixture model to parametrize $p(\hat{y}|\hat{z})$
+    &lt;ul&gt;
+      &lt;li&gt;Ablation study shows no gain beyond $K=3$ ($K$ denotes the number of mixture components)&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Adopt a simplified attention module into the analysis and synthesis transform
+    &lt;ul&gt;
+      &lt;li&gt;No non-local block&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Make some architecture changes on top of &lt;a href=&quot;#jarhp&quot;&gt;JointARHP&lt;/a&gt;
+    &lt;ul&gt;
+      &lt;li&gt;Use subpixel convolution (aka &lt;code class=&quot;highlighter-rouge&quot;&gt;torch.pixelshuffle&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;depth_to_space&lt;/code&gt;) instead of transposed convolution&lt;/li&gt;
+      &lt;li&gt;Use four 3x3 convolution with residual connection as replacement of the 5x5 convolution&lt;/li&gt;
+      &lt;li&gt;Pad image height and width to a multiple of 64 using reflect padding before feeding into the learned network ($y$ is downsampled by 16, $z$ is additionally downsampled by 4)&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;It claimed to be the first work that achieves comparable performance with VVC&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;VTM 5.2 is used; RGB is first converted to 8-bit YUV444, and then fed into VTM. QP={22, 27, 32, 37, 42, 47}&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/Attention_network.png&quot; alt=&quot;Network architecture&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;Detailed network structure&lt;/p&gt;
+
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/Attention_simplified_attention.png&quot; alt=&quot;Simplified attention module&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;Simplified attention module (no non-local block; just multiplicative operation)&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;car&quot;&gt;ChannelAR&lt;/h2&gt;
+&lt;p&gt;David Minnen, Saurabh Singh, “&lt;em&gt;Channel-wise AutoregRessive Entropy Models for Learned Image Compression&lt;/em&gt;” ICIP-2020&lt;/p&gt;
+
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/ChannelAR.png&quot; alt=&quot;Channel-wise autoregressive entropy models for learned image compression&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Three contributions&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Channel Conditioning (CC)
+    &lt;ul&gt;
+      &lt;li&gt;Split latent tensor along the channel dimension and condition the entropy parameters for each slice on previously decoded slices.&lt;/li&gt;
+      &lt;li&gt;In a model with $N$ slices, each slice contains $H\times W\times C/N$ values&lt;/li&gt;
+      &lt;li&gt;Increasing the number of splits from 0 to 4 yields significant gains, while moving from 5 to 10 splits yields relatively little additional savings.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Latent Residual Prediction (LRP)
+    &lt;ul&gt;
+      &lt;li&gt;Unclear how it is done&lt;/li&gt;
+      &lt;li&gt;LRP has almost no benefit for models that do not use channel-conditioning&lt;/li&gt;
+      &lt;li&gt;Regardless of the number of CC splits, LRP slightly reduces RD performance at high bit rates. At low bit rates, the benefit of LRP increases with the number of CC splits.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Rounding based training
+    &lt;ul&gt;
+      &lt;li&gt;The mixed approach uses the same uniform noise for learning entropy models but replaces the noisy tensor with a rounded one whenever the quantized tensor is passed to a synthesis transform.&lt;/li&gt;
+      &lt;li&gt;The benefit is minimal at higher quality levels but becomes significant at lower bit rates.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Best model achieves an average BD rate saving of 13.9% over BPG and 6.7% over &lt;a href=&quot;#hp&quot;&gt;Hyperprior&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;ii&quot;&gt;ImproveInference&lt;/h2&gt;
+&lt;p&gt;Yibo Yang, Robert Bamler, Stephan Mandt, “&lt;em&gt;Improving Inference for Neural Image Compression&lt;/em&gt;,” 2020-06-09 Arxiv&lt;/p&gt;</content><author><name>Yang Yang</name></author><category term="compression" /><summary type="html">Paper Organization Conference Arxiv Citation End2End NYU ICLR-2017 2017-03-03 336 CondProbMod ETH CVPR-2018 2019-06-04 128 Hyperprior google ICLR-2018 2018-05-01 181 MultiScale UTokyo ACCV-2018 2018-05-16 9 JointARHP google NeurIPS-2018 2018-09-08 104 NLAIC NanjingU&amp;amp;NYU - 2019-04-22 11 ContentAdapt Disney CVPRW-2019 2019-06-05 0 ComputeEff google - 2019-12-18 1 IntegerLVM google ICLR-2019 non-arxiv 2 ContextAdapt ETRI ICLR-2019 2019-05-06 43 Benchmark PKU - 2020-02-19 1 Attention Waseda CVPR-2020 2020-03-30 2 ChannelAR google ICIP-2020 non-arxiv 0 ImproveInference UCI - 2020-06-09 0</summary></entry><entry><title type="html">Notes on Optical Flow</title><link href="https://yyang768osu.github.io/posts/2020/06/optical_flow/" rel="alternate" type="text/html" title="Notes on Optical Flow" /><published>2020-06-16T00:00:00-07:00</published><updated>2020-06-16T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2020/06/notes-on-optical-flow</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2020/06/optical_flow/">&lt;ul id=&quot;markdown-toc&quot;&gt;
   &lt;li&gt;&lt;a href=&quot;#definition-of-optical-flow&quot; id=&quot;markdown-toc-definition-of-optical-flow&quot;&gt;Definition of Optical Flow&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#useful-resources&quot; id=&quot;markdown-toc-useful-resources&quot;&gt;Useful Resources&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#traditional-approach&quot; id=&quot;markdown-toc-traditional-approach&quot;&gt;Traditional Approach&lt;/a&gt;    &lt;ul&gt;
@@ -1427,107 +1896,4 @@ x^{(t+1)}[n]=\frac{  \sum_{m=-\infty}^\infty w[n-Sm]\text{IDFT}\left(\widehat{X}
 
 &lt;p&gt;and go back to step 1.&lt;/p&gt;
 
-&lt;p&gt;https://pdfs.semanticscholar.org/ade8/d1511a61d78948bb0d43e207593389935421.pdf&lt;/p&gt;</content><author><name>Yang Yang</name></author><category term="text to speech" /><summary type="html">Here’s the problem: we are given some modified short-time-Fourier-transform (STFT) or modified spectrogram (magnitude of STFT). The STFT/spectrogram is called modified to stress the fact that it in general does not corresponds to any valid time-domain signal: it may be obtained by modifying a STFT/spectrogram of some real signal, or it may simply be generated by a neural network. The task here is to synthesize a time-domain signal from this target STFT/spectrogram, such that the STFT/spectrogram of the synthesized signal is as close to the target as possible.</summary></entry><entry><title type="html">A step-by-step guide to variational inference (4): variational auto encoder</title><link href="https://yyang768osu.github.io/posts/2018/08/variational_inference_4/" rel="alternate" type="text/html" title="A step-by-step guide to variational inference (4): variational auto encoder" /><published>2018-08-05T00:00:00-07:00</published><updated>2018-08-05T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2018/08/variational-inference-IV-variational-auto-encoder</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2018/08/variational_inference_4/">&lt;p&gt;The variational lower bound $\mathcal{L}$ sits in the core of variational inference. It connects the density estimation problem with the Bayesian inference problem through a variational (free to vary) distribution $q$, and it converts both problems into an optimization problem. Here let’s briefly revisit the identity associated with variational lower bound&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-\begin{align*}
-\ln p(X;\theta) &amp;= \text{KL}{\big(}q|| p(Z|X;\theta){\big)} + \mathcal{L}(q,\theta)\\
-\text{where }\mathcal{L}(q, \theta) &amp;=\int q(Z) \ln \frac{p(X,Z;\theta)}{q(Z)} dZ
-\end{align*} %]]&gt;&lt;/script&gt;
-
-&lt;p&gt;The identity holds for any arbitrary probability function $q$. $\mathcal{L}$ is a lower bound for the data log-likelihood $\ln p(X;\theta)$ given the non-negativity of the KL divergence. From the identify we can obtain the following two equations&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-\begin{aligned}
-\ln p(X;\theta) &amp;= \max_{q} \mathcal{L}(q,\theta)\\
-p(Z|X;\theta) &amp;= \underset{q}{\arg\max} \mathcal{L}(q,\theta),
-\end{aligned} %]]&gt;&lt;/script&gt;
-
-&lt;p&gt;which testified the claim that both density estimation (LHS of the first equation) and Bayesian inference (LHS of the second equation) are linked with the same optimization function. There are two implications if we increases the value of $\mathcal{L}$ by tweaking the distribution $q$: (1) $\mathcal{L}$ becomes a tighter lower bound of $\ln p(X;\theta)$, meaning that it is closer to the true data log-likelihood in value (2) the distribution function $q$ itself is closer to the true posterior distribution measured in KL divergence.&lt;/p&gt;
-
-&lt;p&gt;Often, we are also given the task of finding the ML estimate of the parameter $\theta$ (or MAP estimate of the parameter $\theta$), which requires taking the maximum of $\ln p(X;\theta)$ (or $\ln p(X|\theta) + \ln p_\text{prior}(\theta)$ for the MAP case) with respect to $\theta$, yielding the following problem&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
-\max_{\theta}\max_{q}\mathcal{L}(q, \theta).
-\end{align*}&lt;/script&gt;
-
-&lt;p&gt;By increasing the variation lower bound $\mathcal{L}$ with respect to $\theta$, by which the model is parameterized, we are essentially searching for model that can better fit to the data.&lt;/p&gt;
-
-&lt;p&gt;It should be clear that is it desirable to maximize $\mathcal{L}$ with respect to both the variational distribution $q$ and the generative parameter $\theta$: maximize it with respect to $q$ would yield a better inference function; maximize it with respect to $\theta$ would give us a better model.&lt;/p&gt;
-
-&lt;p&gt;Instead of allowing $q$ to be any function within the probability function space, for analytical tractability, we assume that it is parameterized by $\phi$ and is a function of the observed data $x$, denoted as $q_\phi(x)$. For the generative model, let us modified the notation slightly by assuming that the prior distribution $p(z)$ is unparameterized, and denote the conditional generative probability as $p_\theta(x|z)$, leading to the following expression of the variational lower bound&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
-\mathcal{L}(\phi, \theta, x^{(i)}) = \int q_\phi\left(z^{(i)}|x^{(i)}\right)\ln \frac{p_\theta\left(x^{(i)}|z^{(i)}\right)p\left(z^{(i)}\right)}{q_\phi\left(z^{(i)}|x^{(i)}\right)}dz^{(i)}
-\end{align*}&lt;/script&gt;
-
-&lt;p&gt;Note that we used to express the variational lower bound in terms of the complete observed dataset $X={x^{(1)},\ldots, x^{(N)}}$ as well as the corresponding latent variables $Z={z^{(1)},\ldots, z^{(N)}}$. Since each data point and the corresponding latent variables are generated independently, it can be decomposed into the summation of $N$ terms, one for each data point $x^{(i)}$ as shown above. Those $N$ identity equations are linked through global parameter $\phi$ and $\theta$.&lt;/p&gt;
-
-&lt;p&gt;As discussed before, to obtain a better model and to obtain a closer approximation to the true posterior inference function, one needs to differentiate and optimize $\sum_{i=1}^N\mathcal{L}(\phi, \theta, x^{(i)})$ with respect to both $\phi$, the parameter of the inference function, and $\theta$, the parameter of the model. Here’s a plan: let us calculate the gradient for the lower bound with respect to both parameters, and be done with the problem by applying our favorite stochastic gradient descent algorithm to find a solution. Actually we will show later that such a stochastic training framework is analogous to using an auto-encoder architecture with a specific regularization function.&lt;/p&gt;
-
-&lt;p&gt;Soon enough you will realize a major challenge: it is not clear how to differentiate against $\phi$. There is very little chance for us to expect a close-form expression if we directly differentiate what is inside the integral, as the integral itself is hard even without the differentiation. We will  spend some time here to dig into the issue, which is the key to the understanding of the variational auto-encoding algorithm.&lt;/p&gt;
-
-&lt;p&gt;Since the lower-bound exists in the form of the expectation with respect to the variational distribution $q_\phi$, the work-around here is to seek for Monte-Carlo estimation for the integral with the sampling from distribution $q_\phi\left(z^{(i)}|x^{(i)}\right)$. Let us focus on the general problem of $\nabla_\phi \mathbb{E}_{q_\phi(z|x)}\left[f(z)\right]$, for which there are two approaches that use sampling to approximate the expectation:&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Approach 1&lt;/strong&gt;:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-\begin{align*}
-&amp;\nabla_\phi \mathbb{E}_{q_\phi(z|x)}\left[f(z)\right] \\
-=&amp;\int \nabla_\phi q_\phi(z|x)  f(z) dz\\
-=&amp;\int q_\phi(z|x) \frac{\nabla_\phi q_\phi(z|x)}{q_\phi(z|x)}  f(z) dz\\
-=&amp; \int q_\phi(z|x)  \nabla_\phi \ln q_\phi(z|x) f(z) dz \\
-=&amp; \mathbb{E}_{q_\phi(z|x)}\left[ \nabla_\phi \ln q_\phi(z|x) f(z)\right] \\
-\text{(Monte Carlo)} \approx &amp;\frac{1}{S}\sum_{s=1}^S \nabla_\phi \ln q_\phi(z^{[s]}|x) f(z^{[s]}) 
-\end{align*} %]]&gt;&lt;/script&gt;
-
-&lt;p&gt;&lt;strong&gt;Approach 2&lt;/strong&gt;:&lt;/p&gt;
-
-&lt;p&gt;This approach makes an additional assumption on $q_\phi(z|x)$: assume that we can obtain samples of $z$ by first sampling through a distribution $p(\epsilon)$ that is independent of $\phi$, and then apply a $(\phi,x)$-dependent transformation of  $g_\phi(\epsilon, x)$. Effectively we are assuming that the random variable $\mathcal{Z}$ is a $\phi-$dependent function of a $\phi$-independent random variable $\mathcal{E}$: $\mathcal{Z} = g_\phi(\mathcal{E},x)$. Reflecting this assumption in the differential of expectation, we obtain&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-\begin{align*}
-&amp;\nabla_\phi \mathbb{E}_{q_\phi(z|x)}\left[f(z)\right]\\
-=&amp;\nabla_\phi \int q_\phi(z|x)f(z) dz\\
-\text{(parameter substitution)}=&amp;\nabla_\phi \int p(\epsilon)f(g_\phi(\epsilon, x))d\epsilon\\
-=&amp; \int p(\epsilon) \nabla_\phi f(g_\phi(\epsilon, x))d\epsilon\\
-\text{(Monte Carlo)}\approx&amp; \frac{1}{S}\sum_{s=1}^S  \nabla_\phi f(g_\phi(\epsilon^{[s]},x))
-\end{align*} %]]&gt;&lt;/script&gt;
-
-&lt;p&gt;This seems like a good solution: the Monte Carlo sampling itself is not a function of $\phi$, and $\phi$ just appear as the parameter of the transformation function  $g_\phi$ that maps the samples from $\mathcal{E}$ to the samples in $\mathcal{Z}$. In this case $q_\phi$ is just the induced distribution as a function of the prior distribution of $\mathcal{E}$ as well as the transformation function $g_\phi$. This parameter substitution technique is branded as &lt;em&gt;the reparameterization trick&lt;/em&gt; in the original paper of variational auto encoder.&lt;/p&gt;
-
-&lt;p&gt;To understand the implication of such assumption, let’s ask this question: is it feasible to design the prior distribution of $\mathcal{E}$ and the transformation function $g_\phi$ in any arbitrary form? You may wonder why do we even care. Well there is a hidden factor that we need to take care of before claiming victory. Looking at the variational lower bound expression, not only do we need to integrate with respect to the distribution $q_\phi$, which can be achieved using Monte Carlo by the help of this reparameterization trick, we also need to ensure a closed-form expression of the density function $q_\phi(z|x)$ itself, as it lives inside the expectation/integral. This limits the way we can choose the random variable $\mathcal{E}$ and the function $g_\phi$.&lt;/p&gt;
-
-&lt;p&gt;To investigate on the requirement of $\mathcal{E}$ and $g_\phi$ such that the induced random variable $\mathcal{Z} = g_\phi(\mathcal{E},x)$ has a tractable density/distribution function (easy to evaluate), let’s try to express distribution $q_\phi$ as a function of $p_\epsilon$ and $g_\phi(z,x)$. For any monotonic function $g_\phi$, the induced distribution $q_\phi$ &lt;a href=&quot;https://en.wikipedia.org/wiki/Random_variable#Functions_of_random_variables&quot;&gt;can be derived&lt;/a&gt; as&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
-q_\phi(z) = p_\epsilon\left(g_\phi^{-1}(z)\right)\left|\frac{\partial g_\phi^{-1}(z)}{\partial z}\right|.
-\end{align*}&lt;/script&gt;
-
-&lt;p&gt;To enforce a closed form expression for $q_\phi$, we have two general design choices on $p_\epsilon$ and $g_\phi$, as is evident from the expression above: (1) let $p_\epsilon$ be a uniform distribution on $[0,1]$ and $g_\phi=\text{CDF}^{-1}$ be the inverse of any distribution with closed-form cumulative distribution function. (2) let $p_\epsilon$ be any distribution with closed form density and $g_\phi$ be an easy form of monotonic function, e.g., a linear function.&lt;/p&gt;
-
-&lt;p&gt;In the context of variational auto encoder in the original paper, the second design choice is picked: $p_\epsilon$ is chosen as the standard normal distribution and  $g_\phi$ is a linear function of $\epsilon$, whose slope and intercept is an arbitrary function of $x$ and $\phi$ characterized using a neural network. In this case the induced distribution $q_\phi$ is a normal distribution whose mean and variances is determined by a neural network with the input $x$ and parameter $\phi$.&lt;/p&gt;
-
-&lt;p&gt;Now that we went through what &lt;em&gt;the reparameterization trick&lt;/em&gt; is, let us return back to the problem of finding the gradient of $\mathcal{L}(\phi, \theta, x^{(i)})$ with respect to $\phi$ and $\theta$. Applying the reparameterization trick, we obtain the following gradient-friendly Monte Carlo estimate of the variational lower bound&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-\begin{align*}
-\mathcal{L}(\phi, \theta, x^{(i)}) =&amp; \int q_\phi\left(z^{(i)}|x^{(i)}\right)\ln \frac{p_\theta\left(x^{(i)}|z^{(i)}\right)p\left(z^{(i)}\right)}{q_\phi\left(z^{(i)}|x^{(i)}\right)}dz^{(i)}\\
-\text{(Monte Carlo)}\approx&amp;\frac{1}{S}\sum_{s=1}^S \ln  \frac{p_\theta\left(x^{(i)}|z^{(i)[s]}\right)p\left(z^{(i)[s]}\right)}{q_\phi\left(z^{(i)[s]}|x^{(i)}\right)}\\
-\text{(Reparameterization)}=&amp;\frac{1}{S}\sum_{s=1}^S \ln  \frac{p_\theta\left(x^{(i)}|g_\phi (\epsilon^{[s]}, x^{(i)})\right)p\left(g_\phi (\epsilon^{[s]}, x^{(i)})\right)}{q_\phi\left(g_\phi (\epsilon^{[s]}, x^{(i)})|x^{(i)}\right)}\\
-\text{where } \epsilon^{[s]}&amp;\text{ is drawn i.i.d. from }p_\epsilon. 
-\end{align*} %]]&gt;&lt;/script&gt;
-
-&lt;p&gt;Here’s an alternative way to decompose $\mathcal{L}$ and apply Monte Carlo and reparameterization, for which there is a close form expression for the second term (KL divergence) and only the first part is approximated.&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-\begin{align*}
-\mathcal{L}(\phi, \theta, x^{(i)}) =&amp; \int q_\phi\left(z^{(i)}|x^{(i)}\right)\ln \frac{p_\theta\left(x^{(i)}|z^{(i)}\right)p\left(z^{(i)}\right)}{q_\phi\left(z^{(i)}|x^{(i)}\right)}dz^{(i)}\\
-=&amp;\int q_\phi\left(z^{(i)}|x^{(i)}\right)\ln p_\theta\left(x^{(i)}|z^{(i)}\right) dz^{(i)}-\text{KL}\left( q_\phi\left(z^{(i)}|x^{(i)}\right){\Big|\Big|} p\left(z^{(i)}\right)\right)\\
-\text{(Monte Carlo)}\approx&amp; \frac{1}{S}\sum_{s=1}^S \ln p_\theta\left(x^{(i)}|z^{(i)[s]}\right)  -\text{KL}\left( q_\phi\left(z^{(i)}|x^{(i)}\right){\Big|\Big|} p\left(z^{(i)}\right)\right)\\
-\text{(Reparameterization)}\approx&amp; \frac{1}{S}\sum_{s=1}^S \ln p_\theta\left(x^{(i)}|g_\phi (\epsilon^{[s]}, x^{(i)})\right)  -\text{KL}\left( q_\phi\left(z^{(i)}|x^{(i)}\right){\Big|\Big|} p\left(z^{(i)}\right)\right)
-\end{align*} %]]&gt;&lt;/script&gt;
-
-&lt;p&gt;This decomposition leads to the interpretation of probabilistic auto-encoder, which is named variational auto-encoder as it rooted from the maximization of the variational lower bound.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/vae.png&quot; alt=&quot;Variational Auto Encoder&quot; /&gt;&lt;/p&gt;</content><author><name>Yang Yang</name></author><category term="variational inference" /><summary type="html">The variational lower bound $\mathcal{L}$ sits in the core of variational inference. It connects the density estimation problem with the Bayesian inference problem through a variational (free to vary) distribution $q$, and it converts both problems into an optimization problem. Here let’s briefly revisit the identity associated with variational lower bound</summary></entry></feed>
+&lt;p&gt;https://pdfs.semanticscholar.org/ade8/d1511a61d78948bb0d43e207593389935421.pdf&lt;/p&gt;</content><author><name>Yang Yang</name></author><category term="text to speech" /><summary type="html">Here’s the problem: we are given some modified short-time-Fourier-transform (STFT) or modified spectrogram (magnitude of STFT). The STFT/spectrogram is called modified to stress the fact that it in general does not corresponds to any valid time-domain signal: it may be obtained by modifying a STFT/spectrogram of some real signal, or it may simply be generated by a neural network. The task here is to synthesize a time-domain signal from this target STFT/spectrogram, such that the STFT/spectrogram of the synthesized signal is as close to the target as possible.</summary></entry></feed>
