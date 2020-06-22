@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="https://yyang768osu.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://yyang768osu.github.io/" rel="alternate" type="text/html" /><updated>2020-06-21T22:00:46-07:00</updated><id>https://yyang768osu.github.io/</id><title type="html">Yang Yang</title><subtitle>Engineer at Qualcomm</subtitle><author><name>Yang Yang</name></author><entry><title type="html">Notes on End-to-End Lossy Image Compression</title><link href="https://yyang768osu.github.io/posts/2020/06/e2e_lossy_image_compression/" rel="alternate" type="text/html" title="Notes on End-to-End Lossy Image Compression" /><published>2020-06-18T00:00:00-07:00</published><updated>2020-06-18T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2020/06/notes-on-end-to-end-lossy-image-compression</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2020/06/e2e_lossy_image_compression/">&lt;table id=&quot;summary&quot;&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="https://yyang768osu.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://yyang768osu.github.io/" rel="alternate" type="text/html" /><updated>2020-06-22T15:52:21-07:00</updated><id>https://yyang768osu.github.io/</id><title type="html">Yang Yang</title><subtitle>Engineer at Qualcomm</subtitle><author><name>Yang Yang</name></author><entry><title type="html">Notes on End-to-End Lossy Image Compression</title><link href="https://yyang768osu.github.io/posts/2020/06/e2e_lossy_image_compression/" rel="alternate" type="text/html" title="Notes on End-to-End Lossy Image Compression" /><published>2020-06-18T00:00:00-07:00</published><updated>2020-06-18T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2020/06/notes-on-end-to-end-lossy-image-compression</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2020/06/e2e_lossy_image_compression/">&lt;table id=&quot;summary&quot;&gt;
   &lt;thead&gt;
     &lt;tr&gt;
       &lt;th&gt;Paper&lt;/th&gt;
@@ -174,14 +174,19 @@ D_\text{KL}(q_{y|x}||p_{y|x}) =&amp; \mathbb{E}_{y\sim q}\log q(y|x) - \mathbb{E
 &lt;h2 id=&quot;hp&quot;&gt;Hyperprior&lt;/h2&gt;
 &lt;p&gt;Johannes Ballé, David Minnen, Saurabh Singh, Sung Jin Hwang, Nick Johnston, “&lt;em&gt;Variational Image Compression With a Scale Hyperprior,&lt;/em&gt;” ICLR-2018&lt;/p&gt;
 
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/HyperPrior.png&quot; alt=&quot;HyperPrior&quot; /&gt;&lt;/p&gt;
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/Hyperprior.png&quot; alt=&quot;HyperPrior&quot; /&gt;&lt;/p&gt;
 &lt;p&gt;($N=128, M=192$ for 5 lower values; $N=192, M=320$ for 3 higher values)&lt;/p&gt;
 
 &lt;ul&gt;
   &lt;li&gt;Two interpretations of hyperprior/hyper-latent
     &lt;ul&gt;
       &lt;li&gt;hyper-latent can be viewed as side information that signal modifications to the entropy model so that it fits better to a specific data sample instead of using a fixed entropy model that is fit to an ensemble of data. The amount of side information can be small compared to the reduction in codelength achieved by matching entropy model more closely to a particular image.&lt;/li&gt;
-      &lt;li&gt;hyper-prior can be viewed as hierarchical latent variable model where the distribution of latent $\hat{y}$ is model by another latent variable model (small caveat: for the proposed scheme to truly be a hierarchical latent variable model, the input to the hyper-encoder should be $\hat{y}$, instead of $y$.)&lt;/li&gt;
+      &lt;li&gt;hyper-prior can be viewed as hierarchical latent variable model where the distribution of latent $\hat{y}$ is model by another latent variable model
+        &lt;ul&gt;
+          &lt;li&gt;Small caveat: for the proposed scheme to truly be a hierarchical latent variable model, the input to the hyper-encoder should be $\hat{y}$, instead of $y$.
+  $ &lt;a href=&quot;#ii&quot;&gt;ImprovedInference&lt;/a&gt; mentioned that changing the input to the hyper encoder from $y$ to $\hat{y}$ hurt performance (more than what bits-back can save for lossless compression of $\hat{y}$).&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
   &lt;li&gt;Probablistic modelling of latent $y$ and hyper-latent $z$
@@ -467,7 +472,26 @@ s(h') = \max\left\{0, \min\left\{\frac{2^{K-1}-1}{\max h_i}, \frac{-2^{K-1}}{\mi
 &lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;ii&quot;&gt;ImproveInference&lt;/h2&gt;
-&lt;p&gt;Yibo Yang, Robert Bamler, Stephan Mandt, “&lt;em&gt;Improving Inference for Neural Image Compression&lt;/em&gt;,” 2020-06-09 Arxiv&lt;/p&gt;</content><author><name>Yang Yang</name></author><category term="compression" /><summary type="html">Paper Organization Conference Arxiv Citation End2End NYU ICLR-2017 2017-03-03 336 CondProbMod ETH CVPR-2018 2019-06-04 128 Hyperprior google ICLR-2018 2018-05-01 181 MultiScale UTokyo ACCV-2018 2018-05-16 9 JointARHP google NeurIPS-2018 2018-09-08 104 NLAIC NanjingU&amp;amp;NYU - 2019-04-22 11 ContentAdapt Disney CVPRW-2019 2019-06-05 0 ComputeEff google - 2019-12-18 1 IntegerLVM google ICLR-2019 non-arxiv 2 ContextAdapt ETRI ICLR-2019 2019-05-06 43 Benchmark PKU - 2020-02-19 1 Attention Waseda CVPR-2020 2020-03-30 2 ChannelAR google ICIP-2020 non-arxiv 0 ImproveInference UCI - 2020-06-09 0</summary></entry><entry><title type="html">Notes on Optical Flow</title><link href="https://yyang768osu.github.io/posts/2020/06/optical_flow/" rel="alternate" type="text/html" title="Notes on Optical Flow" /><published>2020-06-16T00:00:00-07:00</published><updated>2020-06-16T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2020/06/notes-on-optical-flow</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2020/06/optical_flow/">&lt;ul id=&quot;markdown-toc&quot;&gt;
+&lt;p&gt;Yibo Yang, Robert Bamler, Stephan Mandt, “&lt;em&gt;Improving Inference for Neural Image Compression&lt;/em&gt;,” 2020-06-09 Arxiv&lt;/p&gt;
+
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/ImproveInference.png&quot; alt=&quot;Improve Inference&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Propose an algorithm with the following steps:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;(a) A fixed generative model (decoder) with hyper-latent, latent, and output as $z$, $y$ and $x$ respectively&lt;/li&gt;
+  &lt;li&gt;(b) Conventional amortized inference based encoding&lt;/li&gt;
+  &lt;li&gt;(d) &lt;a href=&quot;#ca&quot;&gt;Content adapative&lt;/a&gt; procedure: both latent and hyper-latent are finetuned for a specific image&lt;/li&gt;
+  &lt;li&gt;(e) Finetune $y$ with the following loss: assuming $z$ follows a Gaussian posterior (with parameter $\mu_z$ and $\sigma_z$ that are jointly finetuned) with rate of $y$ characterized by NELBO.
+    &lt;ul&gt;
+      &lt;li&gt;Can we stop here? no, because $\mu_z$ and $\sigma_z$ cannot be derived at the decoder side so NELBO cannot be fulfilled with bits-back&lt;/li&gt;
+      &lt;li&gt;$\hat{y}$ is fixed now.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;(f) With a fixed random seed, finetune $\my_z$ and $\sigma_z$ to minimize NELBO with a fixed $\hat{y}$. This finetuning procedure is reproducible at the decoder side so that we can get back number of bits correponds to the entropy of discrete Gaussian with parameter $\mu_z$ and $\sigma_z$.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;</content><author><name>Yang Yang</name></author><category term="compression" /><summary type="html">Paper Organization Conference Arxiv Citation End2End NYU ICLR-2017 2017-03-03 336 CondProbMod ETH CVPR-2018 2019-06-04 128 Hyperprior google ICLR-2018 2018-05-01 181 MultiScale UTokyo ACCV-2018 2018-05-16 9 JointARHP google NeurIPS-2018 2018-09-08 104 NLAIC NanjingU&amp;amp;NYU - 2019-04-22 11 ContentAdapt Disney CVPRW-2019 2019-06-05 0 ComputeEff google - 2019-12-18 1 IntegerLVM google ICLR-2019 non-arxiv 2 ContextAdapt ETRI ICLR-2019 2019-05-06 43 Benchmark PKU - 2020-02-19 1 Attention Waseda CVPR-2020 2020-03-30 2 ChannelAR google ICIP-2020 non-arxiv 0 ImproveInference UCI - 2020-06-09 0</summary></entry><entry><title type="html">Notes on Optical Flow</title><link href="https://yyang768osu.github.io/posts/2020/06/optical_flow/" rel="alternate" type="text/html" title="Notes on Optical Flow" /><published>2020-06-16T00:00:00-07:00</published><updated>2020-06-16T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2020/06/notes-on-optical-flow</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2020/06/optical_flow/">&lt;ul id=&quot;markdown-toc&quot;&gt;
   &lt;li&gt;&lt;a href=&quot;#definition-of-optical-flow&quot; id=&quot;markdown-toc-definition-of-optical-flow&quot;&gt;Definition of Optical Flow&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#useful-resources&quot; id=&quot;markdown-toc-useful-resources&quot;&gt;Useful Resources&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#traditional-approach&quot; id=&quot;markdown-toc-traditional-approach&quot;&gt;Traditional Approach&lt;/a&gt;    &lt;ul&gt;

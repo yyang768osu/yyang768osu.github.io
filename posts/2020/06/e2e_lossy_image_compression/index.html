@@ -251,7 +251,7 @@
 
 
   
-	  13 minute read
+	  14 minute read
 	
 </p>
           
@@ -444,14 +444,19 @@ D_\text{KL}(q_{y|x}||p_{y|x}) =& \mathbb{E}_{y\sim q}\log q(y|x) - \mathbb{E}_{y
 <h2 id="hp">Hyperprior</h2>
 <p>Johannes Ballé, David Minnen, Saurabh Singh, Sung Jin Hwang, Nick Johnston, “<em>Variational Image Compression With a Scale Hyperprior,</em>” ICLR-2018</p>
 
-<p style="text-align: center;"><img src="/images/image_compression/HyperPrior.png" alt="HyperPrior" /></p>
+<p style="text-align: center;"><img src="/images/image_compression/Hyperprior.png" alt="HyperPrior" /></p>
 <p>($N=128, M=192$ for 5 lower values; $N=192, M=320$ for 3 higher values)</p>
 
 <ul>
   <li>Two interpretations of hyperprior/hyper-latent
     <ul>
       <li>hyper-latent can be viewed as side information that signal modifications to the entropy model so that it fits better to a specific data sample instead of using a fixed entropy model that is fit to an ensemble of data. The amount of side information can be small compared to the reduction in codelength achieved by matching entropy model more closely to a particular image.</li>
-      <li>hyper-prior can be viewed as hierarchical latent variable model where the distribution of latent $\hat{y}$ is model by another latent variable model (small caveat: for the proposed scheme to truly be a hierarchical latent variable model, the input to the hyper-encoder should be $\hat{y}$, instead of $y$.)</li>
+      <li>hyper-prior can be viewed as hierarchical latent variable model where the distribution of latent $\hat{y}$ is model by another latent variable model
+        <ul>
+          <li>Small caveat: for the proposed scheme to truly be a hierarchical latent variable model, the input to the hyper-encoder should be $\hat{y}$, instead of $y$.
+  $ <a href="#ii">ImprovedInference</a> mentioned that changing the input to the hyper encoder from $y$ to $\hat{y}$ hurt performance (more than what bits-back can save for lossless compression of $\hat{y}$).</li>
+        </ul>
+      </li>
     </ul>
   </li>
   <li>Probablistic modelling of latent $y$ and hyper-latent $z$
@@ -738,6 +743,25 @@ s(h') = \max\left\{0, \min\left\{\frac{2^{K-1}-1}{\max h_i}, \frac{-2^{K-1}}{\mi
 
 <h2 id="ii">ImproveInference</h2>
 <p>Yibo Yang, Robert Bamler, Stephan Mandt, “<em>Improving Inference for Neural Image Compression</em>,” 2020-06-09 Arxiv</p>
+
+<p style="text-align: center;"><img src="/images/image_compression/ImproveInference.png" alt="Improve Inference" /></p>
+
+<p>Propose an algorithm with the following steps:</p>
+
+<ul>
+  <li>(a) A fixed generative model (decoder) with hyper-latent, latent, and output as $z$, $y$ and $x$ respectively</li>
+  <li>(b) Conventional amortized inference based encoding</li>
+  <li>(d) <a href="#ca">Content adapative</a> procedure: both latent and hyper-latent are finetuned for a specific image</li>
+  <li>(e) Finetune $y$ with the following loss: assuming $z$ follows a Gaussian posterior (with parameter $\mu_z$ and $\sigma_z$ that are jointly finetuned) with rate of $y$ characterized by NELBO.
+    <ul>
+      <li>Can we stop here? no, because $\mu_z$ and $\sigma_z$ cannot be derived at the decoder side so NELBO cannot be fulfilled with bits-back</li>
+      <li>$\hat{y}$ is fixed now.</li>
+    </ul>
+  </li>
+  <li>(f) With a fixed random seed, finetune $\my_z$ and $\sigma_z$ to minimize NELBO with a fixed $\hat{y}$. This finetuning procedure is reproducible at the decoder side so that we can get back number of bits correponds to the entropy of discrete Gaussian with parameter $\mu_z$ and $\sigma_z$.</li>
+</ul>
+
+<p><a href="#summary">go back</a></p>
 
 
         
