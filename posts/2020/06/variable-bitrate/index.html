@@ -1,0 +1,570 @@
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+
+<meta charset="utf-8">
+
+
+
+<!-- begin SEO -->
+
+
+
+
+
+
+
+
+
+<title>Variable Bitrate Method for End-to-End Lossy Compression - Yang Yang</title>
+
+
+
+
+
+
+
+<meta property="og:locale" content="en-US">
+<meta property="og:site_name" content="Yang Yang">
+<meta property="og:title" content="Variable Bitrate Method for End-to-End Lossy Compression">
+
+
+  <link rel="canonical" href="https://yyang768osu.github.io/posts/2020/06/variable-bitrate/">
+  <meta property="og:url" content="https://yyang768osu.github.io/posts/2020/06/variable-bitrate/">
+
+
+
+  <meta property="og:description" content="            Paper      Organization      Conference      Arxiv                  VariableBitrateRNN      Google      ICLR-2016      2016-05-01              PrimingSpatialAdapt      Google      CVPR-2018      2017-05-29              ConditionlAE      Samsung      ICCV-2019      2019-09-11              ContentAdapt      Huawei      CVPRW-2020      non-arxiv              DeadZone      Fujitsu      CVPRW-2020      2020-04-26              QualityScalingFactor      NanjingU      ICASSP-2020      non-arxiv              BayesianAC      UCI      ICML-2020      2020-02-18              YOTO      Google Brain      ICLR-2020      non-arxiv      ">
+
+
+
+
+
+  
+
+  
+
+
+
+
+
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2020-06-23T00:00:00-07:00">
+
+
+
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context" : "http://schema.org",
+      "@type" : "Person",
+      "name" : "Yang Yang",
+      "url" : "https://yyang768osu.github.io",
+      "sameAs" : null
+    }
+  </script>
+
+
+
+
+
+
+<!-- end SEO -->
+
+
+<link href="https://yyang768osu.github.io/feed.xml" type="application/atom+xml" rel="alternate" title="Yang Yang Feed">
+
+<!-- http://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="https://yyang768osu.github.io/assets/css/main.css">
+
+<meta http-equiv="cleartype" content="on">
+    
+
+<!-- start custom head snippets -->
+
+<link rel="apple-touch-icon" sizes="57x57" href="https://yyang768osu.github.io/images/apple-touch-icon-57x57.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="60x60" href="https://yyang768osu.github.io/images/apple-touch-icon-60x60.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="72x72" href="https://yyang768osu.github.io/images/apple-touch-icon-72x72.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="76x76" href="https://yyang768osu.github.io/images/apple-touch-icon-76x76.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="114x114" href="https://yyang768osu.github.io/images/apple-touch-icon-114x114.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="120x120" href="https://yyang768osu.github.io/images/apple-touch-icon-120x120.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="144x144" href="https://yyang768osu.github.io/images/apple-touch-icon-144x144.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="152x152" href="https://yyang768osu.github.io/images/apple-touch-icon-152x152.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="180x180" href="https://yyang768osu.github.io/images/apple-touch-icon-180x180.png?v=M44lzPylqQ">
+<link rel="icon" type="image/png" href="https://yyang768osu.github.io/images/favicon-32x32.png?v=M44lzPylqQ" sizes="32x32">
+<link rel="icon" type="image/png" href="https://yyang768osu.github.io/images/android-chrome-192x192.png?v=M44lzPylqQ" sizes="192x192">
+<link rel="icon" type="image/png" href="https://yyang768osu.github.io/images/favicon-96x96.png?v=M44lzPylqQ" sizes="96x96">
+<link rel="icon" type="image/png" href="https://yyang768osu.github.io/images/favicon-16x16.png?v=M44lzPylqQ" sizes="16x16">
+<link rel="manifest" href="https://yyang768osu.github.io/images/manifest.json?v=M44lzPylqQ">
+<link rel="mask-icon" href="https://yyang768osu.github.io/images/safari-pinned-tab.svg?v=M44lzPylqQ" color="#000000">
+<link rel="shortcut icon" href="/images/favicon.ico?v=M44lzPylqQ">
+<meta name="msapplication-TileColor" content="#000000">
+<meta name="msapplication-TileImage" content="https://yyang768osu.github.io/images/mstile-144x144.png?v=M44lzPylqQ">
+<meta name="msapplication-config" content="https://yyang768osu.github.io/images/browserconfig.xml?v=M44lzPylqQ">
+<meta name="theme-color" content="#ffffff">
+<link rel="stylesheet" href="https://yyang768osu.github.io/assets/css/academicons.css"/>
+
+<script type="text/x-mathjax-config"> MathJax.Hub.Config({ TeX: { equationNumbers: { autoNumber: "all" } } }); </script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      displayMath: [ ['$$', '$$'] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/latest.js?config=TeX-MML-AM_CHTML' async></script>
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        <button><div class="navicon"></div></button>
+        <ul class="visible-links">
+          <li class="masthead__menu-item masthead__menu-item--lg"><a href="https://yyang768osu.github.io/">Yang Yang</a></li>
+          
+            
+            <li class="masthead__menu-item"><a href="https://yyang768osu.github.io/year-archive/">Blog Posts</a></li>
+          
+        </ul>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+    
+
+
+
+
+
+<div id="main" role="main">
+  
+
+
+  <div class="sidebar sticky">
+  
+
+
+
+<div itemscope itemtype="http://schema.org/Person">
+
+  <div class="author__avatar">
+    
+    	<img src="https://yyang768osu.github.io/images/profile.png" class="author__avatar" alt="Yang Yang">
+    
+  </div>
+
+  <div class="author__content">
+    <h3 class="author__name">Yang Yang</h3>
+    <p class="author__bio"></p>
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li><i class="fa fa-fw fa-map-marker" aria-hidden="true"></i> San Diego, California</li>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+        <li><a href="https://github.com/yyang768osu"><i class="fa fa-fw fa-github" aria-hidden="true"></i> Github</a></li>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+        <li><a href="https://scholar.google.com/citations?user=mcncpioAAAAJ&hl=en"><i class="ai ai-google-scholar-square ai-fw"></i> Google Scholar</a></li>
+      
+      
+      
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Variable Bitrate Method for End-to-End Lossy Compression">
+    <meta itemprop="description" content="            Paper      Organization      Conference      Arxiv                  VariableBitrateRNN      Google      ICLR-2016      2016-05-01              PrimingSpatialAdapt      Google      CVPR-2018      2017-05-29              ConditionlAE      Samsung      ICCV-2019      2019-09-11              ContentAdapt      Huawei      CVPRW-2020      non-arxiv              DeadZone      Fujitsu      CVPRW-2020      2020-04-26              QualityScalingFactor      NanjingU      ICASSP-2020      non-arxiv              BayesianAC      UCI      ICML-2020      2020-02-18              YOTO      Google Brain      ICLR-2020      non-arxiv      ">
+    <meta itemprop="datePublished" content="June 23, 2020">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 class="page__title" itemprop="headline">Variable Bitrate Method for End-to-End Lossy Compression
+</h1>
+          
+            <p class="page__meta"><i class="fa fa-clock-o" aria-hidden="true"></i> 
+
+
+  
+	  3 minute read
+	
+</p>
+          
+        
+        
+        
+          <p class="page__date"><strong><i class="fa fa-fw fa-calendar" aria-hidden="true"></i> Published:</strong> <time datetime="2020-06-23T00:00:00-07:00">June 23, 2020</time></p>
+        
+        
+             
+        
+    
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        <table id="summary">
+  <thead>
+    <tr>
+      <th>Paper</th>
+      <th>Organization</th>
+      <th>Conference</th>
+      <th>Arxiv</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="#vbr">VariableBitrateRNN</a></td>
+      <td>Google</td>
+      <td>ICLR-2016</td>
+      <td><a href="https://arxiv.org/abs/1511.06085">2016-05-01</a></td>
+    </tr>
+    <tr>
+      <td><a href="#psa">PrimingSpatialAdapt</a></td>
+      <td>Google</td>
+      <td>CVPR-2018</td>
+      <td><a href="https://arxiv.org/abs/1703.10114">2017-05-29</a></td>
+    </tr>
+    <tr>
+      <td><a href="#cae">ConditionlAE</a></td>
+      <td>Samsung</td>
+      <td>ICCV-2019</td>
+      <td><a href="https://arxiv.org/abs/1909.04802">2019-09-11</a></td>
+    </tr>
+    <tr>
+      <td><a href="#ca">ContentAdapt</a></td>
+      <td>Huawei</td>
+      <td>CVPRW-2020</td>
+      <td><a href="https://bit.ly/3etV3L0">non-arxiv</a></td>
+    </tr>
+    <tr>
+      <td><a href="#dz">DeadZone</a></td>
+      <td>Fujitsu</td>
+      <td>CVPRW-2020</td>
+      <td><a href="https://arxiv.org/abs/2004.05855">2020-04-26</a></td>
+    </tr>
+    <tr>
+      <td><a href="#qsf">QualityScalingFactor</a></td>
+      <td>NanjingU</td>
+      <td>ICASSP-2020</td>
+      <td><a href="https://bit.ly/2Z19UpD">non-arxiv</a></td>
+    </tr>
+    <tr>
+      <td><a href="#bac">BayesianAC</a></td>
+      <td>UCI</td>
+      <td>ICML-2020</td>
+      <td><a href="https://arxiv.org/abs/2002.08158">2020-02-18</a></td>
+    </tr>
+    <tr>
+      <td><a href="#yoto">YOTO</a></td>
+      <td>Google Brain</td>
+      <td>ICLR-2020</td>
+      <td><a href="https://openreview.net/forum?id=HyxY6JHKwr">non-arxiv</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="vbr">VariableBitrateRNN</h2>
+<p>George Toderici, Sean M. O’Malley, Sung Jin Hwang, Damien Vincent, David Minnen, Shumeet Baluja, Michele Covell, Rahul Sukthankar, “<em>Variable Rate Image Compression with Recurrent Neural Networks</em>, “ ICLR-2016</p>
+
+<p><a href="#summary">go back</a></p>
+
+<h2 id="psa">PrimingSpatialAdapt</h2>
+<p>Nick Johnston, Damien Vincent, David Minnen, Michele Covell, Saurabh Singh, Troy Chinen, Sung Jin Hwang, Joel Shor, George Toderici, “<em>Improved Lossy Image Compression with Priming and Spatially Adaptive Bit Rates for Recurrent Networks,</em>”, CVPR-2018</p>
+
+<p><a href="#summary">go back</a></p>
+
+<h2 id="cae">ConditionalAE</h2>
+<p>Yoojin Choi, Mostafa El-Khamy, Jungwon Lee, “<em>Variable Rate Deep Image Compression With a Conditional Autoencoder</em>,” ICCV-2019</p>
+
+<p>Introduce two rate control parameters</p>
+<ol>
+  <li>Lagrangian multiplier $\lambda$ (coarse rate adaptation)
+    <ul>
+      <li>$\lambda$ is chosen from a predefined <em>finite set</em> of values.</li>
+      <li>It is injected to the network through conditional convolution block (for both encoder, decoder and prior model). During training $\lambda$ is randomly sampled</li>
+    </ul>
+  </li>
+  <li>Quantization bin size $\Delta$ (fine rate adaptation)
+    <ul>
+      <li>Only the quantizer and prior probability evaluation take $\Delta$ as input</li>
+    </ul>
+  </li>
+</ol>
+
+<p>Remarks</p>
+<ul>
+  <li>Main idea is to solve multiple objectives using one conditional network, instead of solving them individually using separate non-conditional networks.</li>
+  <li>Since both $\lambda$ and $\Delta$ are parameters to the decoding process, they need to be included as part of the bitstream and decoded first.</li>
+  <li>Universal quantization with dithering is applied instead of adding uniform noise to approximate quantization noise during training, and all latent are dithered with a single uniform random variable. Authors reported better performance with this dithering based universal quantization, but no intuition/reasoning is provided.</li>
+  <li>Single model performs on par with JointARHP and ContextAdapt in the <a href="/posts/2020/06/e2e_lossy_image_compression/">End-to-End image compression post</a></li>
+</ul>
+
+<p style="text-align: center;"><img src="/images/variable_bitrate/ConditionalAE_conditionalconvolution.png" alt="Conditional convolution" /></p>
+<p>$\lambda$-dependent channel-wise scaling and offset</p>
+<p style="text-align: center;"><img src="/images/variable_bitrate/ConditionalAE_plot.png" alt="Performance" /></p>
+<p style="text-align: center;"><img src="/images/variable_bitrate/ConditionalAE_architecture.png" alt="Network architecture" /></p>
+<p>CConv stands for conditional convolution. Context model is used for both prior and hyper-prior.</p>
+
+<p><a href="#summary">go back</a></p>
+
+<h2 id="ca">ContentAdapt</h2>
+<p>Tiansheng Guo, Jing Wang, Ze Cui, Yihui Feng, Yunying Ge, Bo Bai, “<em>Variable Rate Image Compression with Content Adaptive Optimization</em>,” CVPRW-2020</p>
+
+<p style="text-align: center;"><img src="/images/variable_bitrate/ContentAdapt.png" alt="Network architecture" /></p>
+
+<p><a href="#summary">go back</a></p>
+
+<h2 id="dz">DeadZone</h2>
+<p>Jing Zhou, Akira Nakagawa, Keizo Kato, Sihan Wen, Kimihiko Kazui, Zhiming Tan, “<em>Variable Rate Image Compression Method with Dead-zone Quantizer</em>,” CVPRW-2020</p>
+
+<p><a href="#summary">go back</a></p>
+
+<h2 id="qsf">QualityScalingFactor</h2>
+<p>Tong Chen, Zhan Ma, “<em>Variable Bitrate Image Compression with Quality Scaling Factors</em>”, ICASSP-2020</p>
+
+<p>Motivating experiment/observation</p>
+<ul>
+  <li>First train a simple VAE network similiar to at a high bitrate, and retrained this network to get multiple models at different but lower bitrates.</li>
+  <li>An interesting observation is that similar but scaled patterns are retained for feature maps at a specific channel across a variety of bit rates, leading to a reasonable conclusion that we could apply the scaling after the identical convolutions without resorting to the complete retraining (see right figure below).</li>
+</ul>
+<p style="text-align: center;"><img src="/images/variable_bitrate/QualityScalingFactor.png" alt="Quality Scaling Factor" /></p>
+
+<p>Idea/Remarks</p>
+<ul>
+  <li>Finetune per-channel quantization steps for each R-D point. Encoder, decoder, prior model are fixed.</li>
+  <li>Per-channel quantization steps need to be transmitted to the decoder as well (not mentioned in the paper).</li>
+  <li>This scheme is similar to setting $\Delta$ in <a href="#cae">ConditionalAE</a>.</li>
+</ul>
+
+<p><a href="#summary">go back</a></p>
+
+<h2 id="bac">BayesianAC</h2>
+<p>Yibo Yang, Robert Bamler, Stephan Mandt, “<em>Variable-Bitrate Neural Compression via Bayesian Arithmetic Coding</em>,” ICML-2020</p>
+
+<p><a href="#summary">go back</a></p>
+
+<h2 id="yoto">YOTO</h2>
+<p>Alexey Dosovitskiy, Josip Djolonga, “<em>You Only Train Once: Loss-Conditional Training of Deep Networks</em>,” ICLR-2020</p>
+
+<p>Similar idea as <a href="#cae">ConditionalAE</a> – $\lambda$ serves as conditional input to the convolutional layers (channel-wise scale and offset, obtained using a MLP). $\lambda$ is sampled from a log-normal distribution (not sure why).</p>
+
+<p><a href="#summary">go back</a></p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+  
+
+
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fa fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="https://yyang768osu.github.io/tags/#compression" class="page__taxonomy-item" rel="tag">compression</a>
+    
+    </span>
+  </p>
+
+
+
+
+      </footer>
+
+      
+
+<section class="page__share">
+  
+    <h4 class="page__share-title">Share on</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=https://yyang768osu.github.io/posts/2020/06/variable-bitrate/" class="btn btn--twitter" title="Share on Twitter"><i class="fa fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https://yyang768osu.github.io/posts/2020/06/variable-bitrate/" class="btn btn--facebook" title="Share on Facebook"><i class="fa fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://plus.google.com/share?url=https://yyang768osu.github.io/posts/2020/06/variable-bitrate/" class="btn btn--google-plus" title="Share on Google Plus"><i class="fa fa-fw fa-google-plus" aria-hidden="true"></i><span> Google+</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https://yyang768osu.github.io/posts/2020/06/variable-bitrate/" class="btn btn--linkedin" title="Share on LinkedIn"><i class="fa fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+      
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://yyang768osu-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+
+
+
+      
+
+
+  <nav class="pagination">
+    
+      <a href="https://yyang768osu.github.io/posts/2020/06/e2e_lossy_image_compression/" class="pagination--pager" title="End-to-End Lossy Image Compression
+">Previous</a>
+    
+    
+      <a href="https://yyang768osu.github.io/posts/2020/06/arithmetic-coding/" class="pagination--pager" title="Understanding and Implementing Arithmetic Coding (AC)
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+
+
+  
+  
+</div>
+
+
+    </script>
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<a href="/sitemap/">Sitemap</a>
+<!-- end custom footer snippets -->
+
+        
+
+<div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+    
+    
+    
+      <li><a href="http://github.com/yyang768osu"><i class="fa fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+    
+    
+    <li><a href="https://yyang768osu.github.io/feed.xml"><i class="fa fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2020 Yang Yang. Powered by <a href="http://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>, a fork of <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    <script src="https://yyang768osu.github.io/assets/js/main.min.js"></script>
+
+
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-123722738-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-123722738-1');
+</script>
+
+
+
+
+
+
+
+  </body>
+</html>
+
