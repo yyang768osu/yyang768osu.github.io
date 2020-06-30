@@ -1,0 +1,778 @@
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+
+<meta charset="utf-8">
+
+
+
+<!-- begin SEO -->
+
+
+
+
+
+
+
+
+
+<title>Notes on Video Frame Synthesis - Yang Yang</title>
+
+
+
+
+
+
+
+<meta property="og:locale" content="en-US">
+<meta property="og:site_name" content="Yang Yang">
+<meta property="og:title" content="Notes on Video Frame Synthesis">
+
+
+  <link rel="canonical" href="https://yyang768osu.github.io/posts/2020/06/video-frame-synthesis/">
+  <meta property="og:url" content="https://yyang768osu.github.io/posts/2020/06/video-frame-synthesis/">
+
+
+
+  <meta property="og:description" content="            Paper      Organization      Conference      Arxiv      Citation                  AdaptConv      Portland SU      CVPR-2017      2017-05-22      149              AdaptSepConv      Portland SU      ICCV-2017      2017-08-05      209              DeepVoxFlow      CUHK UIUC PonyAI Google      ICCV-2017      2017-08-05      279              SuperSloMo      UMass NVIDIA UC-Merced      CVPR-2018      2018-07-13      142              PhaseNet      ETH Disney      CVPR-2018      2018-04-03      47              DepthAware      SJTU UC-Merced Google      CVPR-2019      2019-04-01      35              Quadratic      CMU SenseTime BNU UC-Merced      NeurIPS-2019      2019-11-02      5              AIM2019      ICCVW-2019      ICCVW-2019      2019-11-19      22      ">
+
+
+
+
+
+  
+
+  
+
+
+
+
+
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2020-06-27T00:00:00-07:00">
+
+
+
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context" : "http://schema.org",
+      "@type" : "Person",
+      "name" : "Yang Yang",
+      "url" : "https://yyang768osu.github.io",
+      "sameAs" : null
+    }
+  </script>
+
+
+
+
+
+
+<!-- end SEO -->
+
+
+<link href="https://yyang768osu.github.io/feed.xml" type="application/atom+xml" rel="alternate" title="Yang Yang Feed">
+
+<!-- http://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="https://yyang768osu.github.io/assets/css/main.css">
+
+<meta http-equiv="cleartype" content="on">
+    
+
+<!-- start custom head snippets -->
+
+<link rel="apple-touch-icon" sizes="57x57" href="https://yyang768osu.github.io/images/apple-touch-icon-57x57.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="60x60" href="https://yyang768osu.github.io/images/apple-touch-icon-60x60.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="72x72" href="https://yyang768osu.github.io/images/apple-touch-icon-72x72.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="76x76" href="https://yyang768osu.github.io/images/apple-touch-icon-76x76.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="114x114" href="https://yyang768osu.github.io/images/apple-touch-icon-114x114.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="120x120" href="https://yyang768osu.github.io/images/apple-touch-icon-120x120.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="144x144" href="https://yyang768osu.github.io/images/apple-touch-icon-144x144.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="152x152" href="https://yyang768osu.github.io/images/apple-touch-icon-152x152.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="180x180" href="https://yyang768osu.github.io/images/apple-touch-icon-180x180.png?v=M44lzPylqQ">
+<link rel="icon" type="image/png" href="https://yyang768osu.github.io/images/favicon-32x32.png?v=M44lzPylqQ" sizes="32x32">
+<link rel="icon" type="image/png" href="https://yyang768osu.github.io/images/android-chrome-192x192.png?v=M44lzPylqQ" sizes="192x192">
+<link rel="icon" type="image/png" href="https://yyang768osu.github.io/images/favicon-96x96.png?v=M44lzPylqQ" sizes="96x96">
+<link rel="icon" type="image/png" href="https://yyang768osu.github.io/images/favicon-16x16.png?v=M44lzPylqQ" sizes="16x16">
+<link rel="manifest" href="https://yyang768osu.github.io/images/manifest.json?v=M44lzPylqQ">
+<link rel="mask-icon" href="https://yyang768osu.github.io/images/safari-pinned-tab.svg?v=M44lzPylqQ" color="#000000">
+<link rel="shortcut icon" href="/images/favicon.ico?v=M44lzPylqQ">
+<meta name="msapplication-TileColor" content="#000000">
+<meta name="msapplication-TileImage" content="https://yyang768osu.github.io/images/mstile-144x144.png?v=M44lzPylqQ">
+<meta name="msapplication-config" content="https://yyang768osu.github.io/images/browserconfig.xml?v=M44lzPylqQ">
+<meta name="theme-color" content="#ffffff">
+<link rel="stylesheet" href="https://yyang768osu.github.io/assets/css/academicons.css"/>
+
+<script type="text/x-mathjax-config"> MathJax.Hub.Config({ TeX: { equationNumbers: { autoNumber: "all" } } }); </script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      displayMath: [ ['$$', '$$'] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/latest.js?config=TeX-MML-AM_CHTML' async></script>
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        <button><div class="navicon"></div></button>
+        <ul class="visible-links">
+          <li class="masthead__menu-item masthead__menu-item--lg"><a href="https://yyang768osu.github.io/">Yang Yang</a></li>
+          
+            
+            <li class="masthead__menu-item"><a href="https://yyang768osu.github.io/year-archive/">Blog Posts</a></li>
+          
+        </ul>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+    
+
+
+
+
+
+<div id="main" role="main">
+  
+
+
+  <div class="sidebar sticky">
+  
+
+
+
+<div itemscope itemtype="http://schema.org/Person">
+
+  <div class="author__avatar">
+    
+    	<img src="https://yyang768osu.github.io/images/profile.png" class="author__avatar" alt="Yang Yang">
+    
+  </div>
+
+  <div class="author__content">
+    <h3 class="author__name">Yang Yang</h3>
+    <p class="author__bio"></p>
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li><i class="fa fa-fw fa-map-marker" aria-hidden="true"></i> San Diego, California</li>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+        <li><a href="https://github.com/yyang768osu"><i class="fa fa-fw fa-github" aria-hidden="true"></i> Github</a></li>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+        <li><a href="https://scholar.google.com/citations?user=mcncpioAAAAJ&hl=en"><i class="ai ai-google-scholar-square ai-fw"></i> Google Scholar</a></li>
+      
+      
+      
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Notes on Video Frame Synthesis">
+    <meta itemprop="description" content="            Paper      Organization      Conference      Arxiv      Citation                  AdaptConv      Portland SU      CVPR-2017      2017-05-22      149              AdaptSepConv      Portland SU      ICCV-2017      2017-08-05      209              DeepVoxFlow      CUHK UIUC PonyAI Google      ICCV-2017      2017-08-05      279              SuperSloMo      UMass NVIDIA UC-Merced      CVPR-2018      2018-07-13      142              PhaseNet      ETH Disney      CVPR-2018      2018-04-03      47              DepthAware      SJTU UC-Merced Google      CVPR-2019      2019-04-01      35              Quadratic      CMU SenseTime BNU UC-Merced      NeurIPS-2019      2019-11-02      5              AIM2019      ICCVW-2019      ICCVW-2019      2019-11-19      22      ">
+    <meta itemprop="datePublished" content="June 27, 2020">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 class="page__title" itemprop="headline">Notes on Video Frame Synthesis
+</h1>
+          
+            <p class="page__meta"><i class="fa fa-clock-o" aria-hidden="true"></i> 
+
+
+  
+	  6 minute read
+	
+</p>
+          
+        
+        
+        
+          <p class="page__date"><strong><i class="fa fa-fw fa-calendar" aria-hidden="true"></i> Published:</strong> <time datetime="2020-06-27T00:00:00-07:00">June 27, 2020</time></p>
+        
+        
+             
+        
+    
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        <table>
+  <thead>
+    <tr>
+      <th>Paper</th>
+      <th>Organization</th>
+      <th>Conference</th>
+      <th>Arxiv</th>
+      <th>Citation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="#ac">AdaptConv</a></td>
+      <td>Portland SU</td>
+      <td>CVPR-2017</td>
+      <td><a href="https://arxiv.org/pdf/1703.07514">2017-05-22</a></td>
+      <td>149</td>
+    </tr>
+    <tr>
+      <td><a href="#asc">AdaptSepConv</a></td>
+      <td>Portland SU</td>
+      <td>ICCV-2017</td>
+      <td><a href="https://arxiv.org/abs/1708.01692">2017-08-05</a></td>
+      <td>209</td>
+    </tr>
+    <tr>
+      <td><a href="#dvf">DeepVoxFlow</a></td>
+      <td>CUHK UIUC PonyAI Google</td>
+      <td>ICCV-2017</td>
+      <td><a href="https://arxiv.org/pdf/1702.02463">2017-08-05</a></td>
+      <td>279</td>
+    </tr>
+    <tr>
+      <td><a href="#ssm">SuperSloMo</a></td>
+      <td>UMass NVIDIA UC-Merced</td>
+      <td>CVPR-2018</td>
+      <td><a href="https://arxiv.org/abs/1712.00080">2018-07-13</a></td>
+      <td>142</td>
+    </tr>
+    <tr>
+      <td><a href="#pa">PhaseNet</a></td>
+      <td>ETH Disney</td>
+      <td>CVPR-2018</td>
+      <td><a href="https://arxiv.org/abs/1804.00884">2018-04-03</a></td>
+      <td>47</td>
+    </tr>
+    <tr>
+      <td><a href="#da">DepthAware</a></td>
+      <td>SJTU UC-Merced Google</td>
+      <td>CVPR-2019</td>
+      <td><a href="https://arxiv.org/abs/1904.00830">2019-04-01</a></td>
+      <td>35</td>
+    </tr>
+    <tr>
+      <td><a href="#quad">Quadratic</a></td>
+      <td>CMU SenseTime BNU UC-Merced</td>
+      <td>NeurIPS-2019</td>
+      <td><a href="https://arxiv.org/abs/1911.00627">2019-11-02</a></td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <td><a href="#aim2019">AIM2019</a></td>
+      <td>ICCVW-2019</td>
+      <td>ICCVW-2019</td>
+      <td><a href="https://arxiv.org/abs/1911.07783">2019-11-19</a></td>
+      <td>22</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Why video frame synthesis is needed?</p>
+<ul>
+  <li>noval view synthesis/interpolation</li>
+  <li>frame rate up-conversion</li>
+  <li>slow motion effect</li>
+  <li>frame recovery in video streaming</li>
+</ul>
+
+<p>Chanllenging scenarios for video synthesis</p>
+<ul>
+  <li>occlusion</li>
+  <li>motion blurs</li>
+  <li>abrupt brightness/lighting change</li>
+</ul>
+
+<h2 id="ac">AdaptConv</h2>
+<p>Simon Niklaus, Long Mai, Feng Liu, “<em>Video Frame Interpolation via Adaptive Convolution</em>,” CVPR-2017</p>
+
+<p><a href="#summary">go back</a></p>
+
+<h2 id="asc">AdaptSepConv</h2>
+<p>Simon Niklaus, Long Mai, Feng Liu, “<em>Video Frame Interpolation via Adaptive Separable Convolution</em>,” ICCV-2017</p>
+
+<p><a href="#summary">go back</a></p>
+
+<h2 id="dvf">DeepVoxFlow</h2>
+<p>Ziwei Liu, Raymond A. Yeh, Xiaoou Tang, Yiming Liu, Aseem Agarwala, “<em>Video Frame Synthesis using Deep Voxel Flow</em>,” ICCV-2017</p>
+
+<p><a href="#summary">go back</a></p>
+
+<h2 id="ssm">SuperSloMo</h2>
+<p>Huaizu Jiang, Deqing Sun, Varun Jampani, Ming-Hsuan Yang, Erik Learned-Miller, Jan Kautz, “<em>Super SloMo: High Quality Estimation of Multiple Intermediate Frames for Video Interpolation</em>,” CVPR-2018</p>
+
+<h3 id="main-idea">Main Idea</h3>
+
+<p>Very crude estimation of $f_{t\to 1}$:</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+f_{t\to 1}&\approx (1-t)f_{0\to 1}\\
+f_{t\to 1}&\approx -(1-t)f_{1\to 0}
+\end{align*} %]]></script>
+
+<p>Weighing the two crude estimation by the relative distance to $t$ yields the estimate</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+\hat{f}_{t\to 1}&\triangleq (1-t)^2 f_{0\to 1} - t(1-t)f_{1\to 0}\\\
+\hat{f}_{t\to 0}&\triangleq t^2 f_{1\to 1} - t(1-t)f_{0\to 1}
+\end{align*} %]]></script>
+
+<p style="text-align: center;"><img src="/images/frame_synthesis/SuperSloMo.png" alt="SuperSloMo" /></p>
+
+<h3 id="network-architecture">Network architecture</h3>
+<p>Both flow computation and flow interpolation network adopt U-Net architecture. There are 6 hierarchies in the encoder, consisting of two convolutional and one Leaky ReLU (α=0.1) layers. At the end of each hierarchy except the last one, an average pooling layer with a stride of 2 is used to decrease the spatial dimension. There are 5 hierarchies in the decoder part. At the beginning of each hierarchy, a bilinear upsampling layer is used to increase the spatial dimension by a factor of 2, followed by two convolutional and Leaky ReLU layers.</p>
+
+<p>Emprical observations:</p>
+<ul>
+  <li>For flow estimation network it is crucial to have large filters in the first few layers of the encoder to capture long range motion</li>
+  <li>Concatenating the output of two encoder to the last decoder yields slightly better performance</li>
+  <li>It is slightly more advantageous to output optical flow residual rather than the refined optical flow</li>
+</ul>
+
+<h3 id="loss-function">Loss Function</h3>
+
+<p>A combination of reconstruction loss, warping loss, perceptual loss (<code class="highlighter-rouge">conv4_3</code> of VGG16), and smoothness loss</p>
+
+<p><a href="#summary">go back</a></p>
+
+<h2 id="pa">PhaseNet</h2>
+<p>Simone Meyer, Abdelaziz Djelouah, Brian McWilliams, Alexander Sorkine-Hornung, Markus Gross, Christopher Schroers, “<em>PhaseNet for Video Frame Interpolation</em>,” CVPR-2018</p>
+
+<p><a href="#summary">go back</a></p>
+
+<h2 id="da">DepthAware</h2>
+<p>Wenbo Bao, Wei-Sheng Lai, Chao Ma, Xiaoyun Zhang, Zhiyong Gao, Ming-Hsuan Yang, “<em>Depth-Aware Video Frame Interpolation</em>,” CVPR-2019</p>
+
+<p style="text-align: center;"><img src="/images/frame_synthesis/DepthAware.png" alt="Depth Aware Video Frame Interpolation" /></p>
+
+<p>Motivation</p>
+<ul>
+  <li>Most existing effort relies on large amount of training data and modeling capacity to implicitly infer the occlusion, which may not be effective to handle a wide variety of scenes in the wild.</li>
+  <li>The authors propose to explicitly detect occlusion by exploiting the depth information for video frame interpolation</li>
+</ul>
+
+<h3 id="depth-aware-flow-projection">Depth Aware Flow Projection</h3>
+
+<p>Similar to <a href="#flowreversal">flow reversal layer</a> in <a href="#quad">Quadratic Video Interpolation</a> paper, a flow reversal logic is introduced, with the difference that depth information is used to weigh the contribution from different displayments.</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+f_{v\to u}(x) &= \frac{
+\sum_{y + f_{u \to v}(y) \in \mathcal{N}(x)} w\left(y\right) \left(-f_{u \to v}(y)\right)
+}
+{
+\sum_{y + f_{u \to v}(y) \in \mathcal{N}(x)} w\left(y\right) 
+}, \text{where}\\
+w(y)&=\frac{1}{\text{Depth of }y\text{ at frame $u$}}
+\end{align*} %]]></script>
+
+<p>To fill in the holes of the projected flow, an <em>outside-in strategy</em> is used</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+f_{v\to u}(x) =& 1/\mathcal{N}(x)\sum_{y\in \mathcal{N}(x)} f_{v\to u}(x), \text{ where}\\
+& \mathcal{N}(x)\text{ is the 4 neighbors of }x.
+\end{align*} %]]></script>
+
+<h3 id="flow-estimation-network">Flow Estimation Network</h3>
+<p>PWCNet with pre-trained weight</p>
+
+<h3 id="depth-estimation-network">Depth Estimation Network</h3>
+<p>Hourglass architecture, <a href="https://arxiv.org/abs/1804.00607">Megadepth</a> model with pre-trained weight</p>
+
+<h3 id="context-extraction-network">Context Extraction Network</h3>
+<p style="text-align: center;"><img src="/images/frame_synthesis/DepthAware_contextextractionnetwork.png" alt="DAIN context extraction network" /></p>
+
+<h3 id="kernel-estimation-network">Kernel Estimation Network</h3>
+<p>U-Net architecture to estimate 4×4 local ker- nels for each pixel.</p>
+
+<h3 id="adapative-warping">Adapative Warping</h3>
+<p><a href="https://arxiv.org/pdf/1810.08768">Combining</a> kernal based and flow based warping.</p>
+
+<h3 id="frame-synthesis-network">Frame Synthesis Network</h3>
+<p>Input: warped depth maps, warped contextual features, projected flows, and interpolation kernels.</p>
+
+<h3 id="loss-function-1">Loss Function</h3>
+
+<script type="math/tex; mode=display">\begin{align*}
+\sum_{x}\rho\left(\hat{I}_t(x)-I_t(x)\right)\text{ where }\rho\text{ is the Charbonnier penalty function.}
+\end{align*}</script>
+
+<p><a href="#summary">go back</a></p>
+
+<h2 id="quad">Quadratic</h2>
+<p>Xiangyu Xu, Li Siyao, Wenxiu Sun, Qian Yin, Ming-Hsuan Yang, “<em>Quadratic video interpolation</em>,” NeurIPS-2019</p>
+
+<p style="text-align: center;"><img src="/images/frame_synthesis/QuadraticVideoInterpolation.png" alt="Quadratic Video Interpolation" /></p>
+
+<h3 id="quadratic-flow-prediction">Quadratic Flow Prediction</h3>
+
+<p>Consider the motion model of $f_{0\to t}(x) = \int_0^t (v(x) + a(x) \tau)d\tau = v(x) t + \frac{1}{2}a(x) t^2$ where pixel $x$ at time $0$ is moving with instantaneous velocity of $v(x)$ and constant acceleration $a(x)$, we have</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+f_{0\to 1}(x) = v(x) + \frac{1}{2}a(x)\\
+f_{0\to -1}(x) = -v(x) + \frac{1}{2}a(x).
+\end{align*}</script>
+
+<p>Then $v_0$ and $a$ can be solved by</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+v(x) = \frac{1}{2}\left(f_{0\to 1}(x) - f_{0\to -1}(x)\right)\\
+a(x) = \left(f_{0\to 1}(x)(x) + f_{0\to -1}(x)\right).
+\end{align*}</script>
+
+<p>So $f_{0\to t}$ can be expressed as</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+f_{0\to t} = \frac{1}{2}\left(f_{0\to 1} - f_{0\to -1}\right) t + \frac{1}{2}\left(f_{0\to 1} + f_{0\to -1}\right) t^2,
+\end{align*}</script>
+
+<p>which is in constrast to its expression with constant velocity assumption below</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+f_{0\to t} = f_{0\to 1}t,
+\end{align*}</script>
+
+<p>Since $f_{0\to -1}$ can be estimated by $I_0$ and $I_{-1}$, we know that utilizing an additional frame in the past $I_{-1}$ allows us to form a more accurate estimate of $f_{0\to t}$ with second order motion information. Similarly for $f_{1\to t}$ we can take advantage of an additional frame in the future and model it as</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+f_{1\to t} = \frac{1}{2}\left(f_{1\to 0} - f_{1\to 2}\right) t + \frac{1}{2}\left(f_{1\to 0} + f_{1\to 2}\right) t^2,
+\end{align*}</script>
+
+<p>In order to interpolate frame $I_t$ from $I_0$ and $I_1$, we need to have $f_{t\to 0}$ and $f_{t\to 1}$ for backward warping, but so far we only formulated the expression of $f_{0\to t}$ and $f_{1\to 0}$.</p>
+
+<h3 id="flowreversal">Flow Reversal/Projection</h3>
+
+<p>Estimating $f_{v\to u}$ from $f_{u\to v}$ is referred as flow reversal or flow projection. In this paper, the author proposes the following operation</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+f_{v\to u}(x) = \frac{
+\sum_{y + f_{u \to v}(y) \in \mathcal{N}(x)} w\left(\|y+f_{u \to v}(y) - x\|_2\right) \left(-f_{u \to v}(y)\right)
+}
+{
+\sum_{y + f_{u \to v}(y) \in \mathcal{N}(x)} w\left(\|y+f_{u \to v}(y) - u\|_2\right) 
+},
+\end{align*}</script>
+
+<p>where $w(d) = e^{-d^2/\sigma^2}$ is the Gaussian weight for each flow. Note that there are $x$ that does not correspond to any $y+f_{u\to v}(y)$, leaving holes in $f_{v\to u}$, which corresponds to pixels that is visible in $v$ but occluded in $u$.</p>
+
+<h3 id="frame-synthesis-step-1-adapative-flow-filter">Frame Synthesis Step 1: Adapative Flow Filter</h3>
+
+<p>Adaptive flow filter network is a 23-layer U-Net where the encoder is a 12-layer conv net with 5 average pooling.</p>
+
+<ul>
+  <li>Input: a concantenation of $I_0$, $I_1$, $I^t_0$, $I^t_1$, $f_{0\to 1}$, $f_{1\to 0}, $f_{t\to 0}, and $f_{t\to 1}$. Here $I^t_0$ and $I^t_1$ are warped image from $I_0$ and $I_1$ using unfiltered flow.</li>
+  <li>Output: $\delta, r$ where $\delta \in [-k, k]^2$ with $k\text{tanh}$.</li>
+  <li>Flow Filtering:
+<script type="math/tex">\begin{align*}
+f'_{t\to 0 }(x) = f_{t\to 0}(x+\delta(x)) + r(x)
+\end{align*}</script></li>
+  <li>Intuition: spatially-variant and nonlinear refinement of $f_{t\to 0}$, which could be seen as a learnable median filter in spirit.</li>
+</ul>
+
+<h3 id="frame-synthesis-step-2-fusion-mask-prediction">Frame Synthesis Step 2: Fusion Mask Prediction</h3>
+
+<p>Fusion mask prediction network is a three layer CNN</p>
+
+<ul>
+  <li>Input: warped image using filtered flow</li>
+  <li>Output: mask $m$</li>
+</ul>
+
+<h3 id="frame-synthesis-step-3-warping-and-fusion">Frame Synthesis Step 3: Warping and Fusion</h3>
+
+<script type="math/tex; mode=display">\begin{align*}
+\hat{I}_t(x) = 
+\frac{
+(1-t)m(x)I_0(x + f'_{t\to 0}(x)) + t(1-m(x))I_1(x + f'_{t\to 1}(x))
+}
+{
+(1-t)m(x) + t(1-m(x))
+}.
+\end{align*}</script>
+
+<h3 id="loss-function-2">Loss Function</h3>
+
+<script type="math/tex; mode=display">\begin{align*}
+\|\hat{I}_t-I_t\|_1+\lambda \|\phi(\hat{I}_t - \phi(I)_t)\|_2
+\end{align*}</script>
+
+<p>where $\phi(\cdot)$ is extracted from <code class="highlighter-rouge">conv4_3</code> feature extractor of the VGG16 model.</p>
+
+<p><a href="#summary">go back</a></p>
+
+<h2 id="aim2019">AIM2019</h2>
+<p>Andreas Lugmayr, Martin Danelljan, Radu Timofte, Manuel Fritsche, Shuhang Gu, Kuldeep Purohit, Praveen Kandula, Maitreya Suin, A N Rajagopalan, Nam Hyung Joon, Yu Seung Won, Guisik Kim, Dokyeong Kwon, Chih-Chung Hsu, Chia-Hsiang Lin, Yuanfei Huang, Xiaopeng Sun, Wen Lu, Jie Li, Xinbo Gao, Sefi Bell-Kligler, “<em>AIM 2019 Challenge on Real-World Image Super-Resolution: Methods and Results</em>,” ICCVW-2019</p>
+
+<h2 id="summary">Summary</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>Time-specific</th>
+      <th>Extrapolation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="#ac">AdaptConv</a></td>
+      <td>Yes</td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <td><a href="#asc">AdaptSepConv</a></td>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a href="#dvf">DeepVoxFlow</a></td>
+      <td>Yes?</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a href="#ssm">SuperSloMo</a></td>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a href="#pa">PhaseNet</a></td>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><a href="#da">DepthAware</a></td>
+      <td>No</td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <td><a href="#quad">Quadratic</a></td>
+      <td>No</td>
+      <td>No</td>
+    </tr>
+  </tbody>
+</table>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+  
+
+
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fa fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="https://yyang768osu.github.io/tags/#computer-vision" class="page__taxonomy-item" rel="tag">computer vision</a>
+    
+    </span>
+  </p>
+
+
+
+
+      </footer>
+
+      
+
+<section class="page__share">
+  
+    <h4 class="page__share-title">Share on</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=https://yyang768osu.github.io/posts/2020/06/video-frame-synthesis/" class="btn btn--twitter" title="Share on Twitter"><i class="fa fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https://yyang768osu.github.io/posts/2020/06/video-frame-synthesis/" class="btn btn--facebook" title="Share on Facebook"><i class="fa fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://plus.google.com/share?url=https://yyang768osu.github.io/posts/2020/06/video-frame-synthesis/" class="btn btn--google-plus" title="Share on Google Plus"><i class="fa fa-fw fa-google-plus" aria-hidden="true"></i><span> Google+</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https://yyang768osu.github.io/posts/2020/06/video-frame-synthesis/" class="btn btn--linkedin" title="Share on LinkedIn"><i class="fa fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+      
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://yyang768osu-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+
+
+
+      
+
+
+  <nav class="pagination">
+    
+      <a href="https://yyang768osu.github.io/posts/2020/06/asymmetric-numeral-system/" class="pagination--pager" title="Understanding and Implementing Asymmetric Numeral System (ANS)
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+
+
+  
+  
+</div>
+
+
+    </script>
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<a href="/sitemap/">Sitemap</a>
+<!-- end custom footer snippets -->
+
+        
+
+<div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+    
+    
+    
+      <li><a href="http://github.com/yyang768osu"><i class="fa fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+    
+    
+    <li><a href="https://yyang768osu.github.io/feed.xml"><i class="fa fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2020 Yang Yang. Powered by <a href="http://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>, a fork of <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    <script src="https://yyang768osu.github.io/assets/js/main.min.js"></script>
+
+
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-123722738-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-123722738-1');
+</script>
+
+
+
+
+
+
+
+  </body>
+</html>
+

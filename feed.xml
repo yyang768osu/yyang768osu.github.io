@@ -1,4 +1,359 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="https://yyang768osu.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://yyang768osu.github.io/" rel="alternate" type="text/html" /><updated>2020-06-26T23:54:52-07:00</updated><id>https://yyang768osu.github.io/</id><title type="html">Yang Yang</title><subtitle>Engineer at Qualcomm</subtitle><author><name>Yang Yang</name></author><entry><title type="html">Understanding and Implementing Asymmetric Numeral System (ANS)</title><link href="https://yyang768osu.github.io/posts/2020/06/asymmetric-numeral-system/" rel="alternate" type="text/html" title="Understanding and Implementing Asymmetric Numeral System (ANS)" /><published>2020-06-26T00:00:00-07:00</published><updated>2020-06-26T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2020/06/understanding-and-implementing-ans</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2020/06/asymmetric-numeral-system/">&lt;p&gt;Consider a alphabet with $N$ different symbols $\mathcal{A}=\{0, 1, \ldots, N-1\}. $Let us imagine an coding algorithm where a sequence of these symbols are coded into a sequence of bits, represented by an integer $s$, from which we can decode each symbol sequentially by breaking down $s$ into one symbol $x$ and another integer $s’$ capturing the remaining information. In such case, the encoding and decoding operation can be represented by the following &lt;code class=&quot;highlighter-rouge&quot;&gt;push&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;pop&lt;/code&gt; operation:&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="https://yyang768osu.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://yyang768osu.github.io/" rel="alternate" type="text/html" /><updated>2020-06-29T19:49:29-07:00</updated><id>https://yyang768osu.github.io/</id><title type="html">Yang Yang</title><subtitle>Engineer at Qualcomm</subtitle><author><name>Yang Yang</name></author><entry><title type="html">Notes on Video Frame Synthesis</title><link href="https://yyang768osu.github.io/posts/2020/06/video-frame-synthesis/" rel="alternate" type="text/html" title="Notes on Video Frame Synthesis" /><published>2020-06-27T00:00:00-07:00</published><updated>2020-06-27T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2020/06/notes-on-video-frame-synthesis</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2020/06/video-frame-synthesis/">&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Paper&lt;/th&gt;
+      &lt;th&gt;Organization&lt;/th&gt;
+      &lt;th&gt;Conference&lt;/th&gt;
+      &lt;th&gt;Arxiv&lt;/th&gt;
+      &lt;th&gt;Citation&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;#ac&quot;&gt;AdaptConv&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;Portland SU&lt;/td&gt;
+      &lt;td&gt;CVPR-2017&lt;/td&gt;
+      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/pdf/1703.07514&quot;&gt;2017-05-22&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;149&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;#asc&quot;&gt;AdaptSepConv&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;Portland SU&lt;/td&gt;
+      &lt;td&gt;ICCV-2017&lt;/td&gt;
+      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/1708.01692&quot;&gt;2017-08-05&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;209&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;#dvf&quot;&gt;DeepVoxFlow&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;CUHK UIUC PonyAI Google&lt;/td&gt;
+      &lt;td&gt;ICCV-2017&lt;/td&gt;
+      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/pdf/1702.02463&quot;&gt;2017-08-05&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;279&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;#ssm&quot;&gt;SuperSloMo&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;UMass NVIDIA UC-Merced&lt;/td&gt;
+      &lt;td&gt;CVPR-2018&lt;/td&gt;
+      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/1712.00080&quot;&gt;2018-07-13&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;142&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;#pa&quot;&gt;PhaseNet&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;ETH Disney&lt;/td&gt;
+      &lt;td&gt;CVPR-2018&lt;/td&gt;
+      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/1804.00884&quot;&gt;2018-04-03&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;47&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;#da&quot;&gt;DepthAware&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;SJTU UC-Merced Google&lt;/td&gt;
+      &lt;td&gt;CVPR-2019&lt;/td&gt;
+      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/1904.00830&quot;&gt;2019-04-01&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;35&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;#quad&quot;&gt;Quadratic&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;CMU SenseTime BNU UC-Merced&lt;/td&gt;
+      &lt;td&gt;NeurIPS-2019&lt;/td&gt;
+      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/1911.00627&quot;&gt;2019-11-02&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;5&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;#aim2019&quot;&gt;AIM2019&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;ICCVW-2019&lt;/td&gt;
+      &lt;td&gt;ICCVW-2019&lt;/td&gt;
+      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/1911.07783&quot;&gt;2019-11-19&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;22&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Why video frame synthesis is needed?&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;noval view synthesis/interpolation&lt;/li&gt;
+  &lt;li&gt;frame rate up-conversion&lt;/li&gt;
+  &lt;li&gt;slow motion effect&lt;/li&gt;
+  &lt;li&gt;frame recovery in video streaming&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Chanllenging scenarios for video synthesis&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;occlusion&lt;/li&gt;
+  &lt;li&gt;motion blurs&lt;/li&gt;
+  &lt;li&gt;abrupt brightness/lighting change&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;ac&quot;&gt;AdaptConv&lt;/h2&gt;
+&lt;p&gt;Simon Niklaus, Long Mai, Feng Liu, “&lt;em&gt;Video Frame Interpolation via Adaptive Convolution&lt;/em&gt;,” CVPR-2017&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;asc&quot;&gt;AdaptSepConv&lt;/h2&gt;
+&lt;p&gt;Simon Niklaus, Long Mai, Feng Liu, “&lt;em&gt;Video Frame Interpolation via Adaptive Separable Convolution&lt;/em&gt;,” ICCV-2017&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;dvf&quot;&gt;DeepVoxFlow&lt;/h2&gt;
+&lt;p&gt;Ziwei Liu, Raymond A. Yeh, Xiaoou Tang, Yiming Liu, Aseem Agarwala, “&lt;em&gt;Video Frame Synthesis using Deep Voxel Flow&lt;/em&gt;,” ICCV-2017&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;ssm&quot;&gt;SuperSloMo&lt;/h2&gt;
+&lt;p&gt;Huaizu Jiang, Deqing Sun, Varun Jampani, Ming-Hsuan Yang, Erik Learned-Miller, Jan Kautz, “&lt;em&gt;Super SloMo: High Quality Estimation of Multiple Intermediate Frames for Video Interpolation&lt;/em&gt;,” CVPR-2018&lt;/p&gt;
+
+&lt;h3 id=&quot;main-idea&quot;&gt;Main Idea&lt;/h3&gt;
+
+&lt;p&gt;Very crude estimation of $f_{t\to 1}$:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+f_{t\to 1}&amp;\approx (1-t)f_{0\to 1}\\
+f_{t\to 1}&amp;\approx -(1-t)f_{1\to 0}
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;Weighing the two crude estimation by the relative distance to $t$ yields the estimate&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\hat{f}_{t\to 1}&amp;\triangleq (1-t)^2 f_{0\to 1} - t(1-t)f_{1\to 0}\\\
+\hat{f}_{t\to 0}&amp;\triangleq t^2 f_{1\to 1} - t(1-t)f_{0\to 1}
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/frame_synthesis/SuperSloMo.png&quot; alt=&quot;SuperSloMo&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;network-architecture&quot;&gt;Network architecture&lt;/h3&gt;
+&lt;p&gt;Both flow computation and flow interpolation network adopt U-Net architecture. There are 6 hierarchies in the encoder, consisting of two convolutional and one Leaky ReLU (α=0.1) layers. At the end of each hierarchy except the last one, an average pooling layer with a stride of 2 is used to decrease the spatial dimension. There are 5 hierarchies in the decoder part. At the beginning of each hierarchy, a bilinear upsampling layer is used to increase the spatial dimension by a factor of 2, followed by two convolutional and Leaky ReLU layers.&lt;/p&gt;
+
+&lt;p&gt;Emprical observations:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;For flow estimation network it is crucial to have large filters in the first few layers of the encoder to capture long range motion&lt;/li&gt;
+  &lt;li&gt;Concatenating the output of two encoder to the last decoder yields slightly better performance&lt;/li&gt;
+  &lt;li&gt;It is slightly more advantageous to output optical flow residual rather than the refined optical flow&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;loss-function&quot;&gt;Loss Function&lt;/h3&gt;
+
+&lt;p&gt;A combination of reconstruction loss, warping loss, perceptual loss (&lt;code class=&quot;highlighter-rouge&quot;&gt;conv4_3&lt;/code&gt; of VGG16), and smoothness loss&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;pa&quot;&gt;PhaseNet&lt;/h2&gt;
+&lt;p&gt;Simone Meyer, Abdelaziz Djelouah, Brian McWilliams, Alexander Sorkine-Hornung, Markus Gross, Christopher Schroers, “&lt;em&gt;PhaseNet for Video Frame Interpolation&lt;/em&gt;,” CVPR-2018&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;da&quot;&gt;DepthAware&lt;/h2&gt;
+&lt;p&gt;Wenbo Bao, Wei-Sheng Lai, Chao Ma, Xiaoyun Zhang, Zhiyong Gao, Ming-Hsuan Yang, “&lt;em&gt;Depth-Aware Video Frame Interpolation&lt;/em&gt;,” CVPR-2019&lt;/p&gt;
+
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/frame_synthesis/DepthAware.png&quot; alt=&quot;Depth Aware Video Frame Interpolation&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Motivation&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Most existing effort relies on large amount of training data and modeling capacity to implicitly infer the occlusion, which may not be effective to handle a wide variety of scenes in the wild.&lt;/li&gt;
+  &lt;li&gt;The authors propose to explicitly detect occlusion by exploiting the depth information for video frame interpolation&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;depth-aware-flow-projection&quot;&gt;Depth Aware Flow Projection&lt;/h3&gt;
+
+&lt;p&gt;Similar to &lt;a href=&quot;#flowreversal&quot;&gt;flow reversal layer&lt;/a&gt; in &lt;a href=&quot;#quad&quot;&gt;Quadratic Video Interpolation&lt;/a&gt; paper, a flow reversal logic is introduced, with the difference that depth information is used to weigh the contribution from different displayments.&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+f_{v\to u}(x) &amp;= \frac{
+\sum_{y + f_{u \to v}(y) \in \mathcal{N}(x)} w\left(y\right) \left(-f_{u \to v}(y)\right)
+}
+{
+\sum_{y + f_{u \to v}(y) \in \mathcal{N}(x)} w\left(y\right) 
+}, \text{where}\\
+w(y)&amp;=\frac{1}{\text{Depth of }y\text{ at frame $u$}}
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;To fill in the holes of the projected flow, an &lt;em&gt;outside-in strategy&lt;/em&gt; is used&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+f_{v\to u}(x) =&amp; 1/\mathcal{N}(x)\sum_{y\in \mathcal{N}(x)} f_{v\to u}(x), \text{ where}\\
+&amp; \mathcal{N}(x)\text{ is the 4 neighbors of }x.
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;h3 id=&quot;flow-estimation-network&quot;&gt;Flow Estimation Network&lt;/h3&gt;
+&lt;p&gt;PWCNet with pre-trained weight&lt;/p&gt;
+
+&lt;h3 id=&quot;depth-estimation-network&quot;&gt;Depth Estimation Network&lt;/h3&gt;
+&lt;p&gt;Hourglass architecture, &lt;a href=&quot;https://arxiv.org/abs/1804.00607&quot;&gt;Megadepth&lt;/a&gt; model with pre-trained weight&lt;/p&gt;
+
+&lt;h3 id=&quot;context-extraction-network&quot;&gt;Context Extraction Network&lt;/h3&gt;
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/frame_synthesis/DepthAware_contextextractionnetwork.png&quot; alt=&quot;DAIN context extraction network&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;kernel-estimation-network&quot;&gt;Kernel Estimation Network&lt;/h3&gt;
+&lt;p&gt;U-Net architecture to estimate 4×4 local ker- nels for each pixel.&lt;/p&gt;
+
+&lt;h3 id=&quot;adapative-warping&quot;&gt;Adapative Warping&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&quot;https://arxiv.org/pdf/1810.08768&quot;&gt;Combining&lt;/a&gt; kernal based and flow based warping.&lt;/p&gt;
+
+&lt;h3 id=&quot;frame-synthesis-network&quot;&gt;Frame Synthesis Network&lt;/h3&gt;
+&lt;p&gt;Input: warped depth maps, warped contextual features, projected flows, and interpolation kernels.&lt;/p&gt;
+
+&lt;h3 id=&quot;loss-function-1&quot;&gt;Loss Function&lt;/h3&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+\sum_{x}\rho\left(\hat{I}_t(x)-I_t(x)\right)\text{ where }\rho\text{ is the Charbonnier penalty function.}
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;quad&quot;&gt;Quadratic&lt;/h2&gt;
+&lt;p&gt;Xiangyu Xu, Li Siyao, Wenxiu Sun, Qian Yin, Ming-Hsuan Yang, “&lt;em&gt;Quadratic video interpolation&lt;/em&gt;,” NeurIPS-2019&lt;/p&gt;
+
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/frame_synthesis/QuadraticVideoInterpolation.png&quot; alt=&quot;Quadratic Video Interpolation&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;quadratic-flow-prediction&quot;&gt;Quadratic Flow Prediction&lt;/h3&gt;
+
+&lt;p&gt;Consider the motion model of $f_{0\to t}(x) = \int_0^t (v(x) + a(x) \tau)d\tau = v(x) t + \frac{1}{2}a(x) t^2$ where pixel $x$ at time $0$ is moving with instantaneous velocity of $v(x)$ and constant acceleration $a(x)$, we have&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+f_{0\to 1}(x) = v(x) + \frac{1}{2}a(x)\\
+f_{0\to -1}(x) = -v(x) + \frac{1}{2}a(x).
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;Then $v_0$ and $a$ can be solved by&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+v(x) = \frac{1}{2}\left(f_{0\to 1}(x) - f_{0\to -1}(x)\right)\\
+a(x) = \left(f_{0\to 1}(x)(x) + f_{0\to -1}(x)\right).
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;So $f_{0\to t}$ can be expressed as&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+f_{0\to t} = \frac{1}{2}\left(f_{0\to 1} - f_{0\to -1}\right) t + \frac{1}{2}\left(f_{0\to 1} + f_{0\to -1}\right) t^2,
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;which is in constrast to its expression with constant velocity assumption below&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+f_{0\to t} = f_{0\to 1}t,
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;Since $f_{0\to -1}$ can be estimated by $I_0$ and $I_{-1}$, we know that utilizing an additional frame in the past $I_{-1}$ allows us to form a more accurate estimate of $f_{0\to t}$ with second order motion information. Similarly for $f_{1\to t}$ we can take advantage of an additional frame in the future and model it as&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+f_{1\to t} = \frac{1}{2}\left(f_{1\to 0} - f_{1\to 2}\right) t + \frac{1}{2}\left(f_{1\to 0} + f_{1\to 2}\right) t^2,
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;In order to interpolate frame $I_t$ from $I_0$ and $I_1$, we need to have $f_{t\to 0}$ and $f_{t\to 1}$ for backward warping, but so far we only formulated the expression of $f_{0\to t}$ and $f_{1\to 0}$.&lt;/p&gt;
+
+&lt;h3 id=&quot;flowreversal&quot;&gt;Flow Reversal/Projection&lt;/h3&gt;
+
+&lt;p&gt;Estimating $f_{v\to u}$ from $f_{u\to v}$ is referred as flow reversal or flow projection. In this paper, the author proposes the following operation&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+f_{v\to u}(x) = \frac{
+\sum_{y + f_{u \to v}(y) \in \mathcal{N}(x)} w\left(\|y+f_{u \to v}(y) - x\|_2\right) \left(-f_{u \to v}(y)\right)
+}
+{
+\sum_{y + f_{u \to v}(y) \in \mathcal{N}(x)} w\left(\|y+f_{u \to v}(y) - u\|_2\right) 
+},
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;where $w(d) = e^{-d^2/\sigma^2}$ is the Gaussian weight for each flow. Note that there are $x$ that does not correspond to any $y+f_{u\to v}(y)$, leaving holes in $f_{v\to u}$, which corresponds to pixels that is visible in $v$ but occluded in $u$.&lt;/p&gt;
+
+&lt;h3 id=&quot;frame-synthesis-step-1-adapative-flow-filter&quot;&gt;Frame Synthesis Step 1: Adapative Flow Filter&lt;/h3&gt;
+
+&lt;p&gt;Adaptive flow filter network is a 23-layer U-Net where the encoder is a 12-layer conv net with 5 average pooling.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Input: a concantenation of $I_0$, $I_1$, $I^t_0$, $I^t_1$, $f_{0\to 1}$, $f_{1\to 0}, $f_{t\to 0}, and $f_{t\to 1}$. Here $I^t_0$ and $I^t_1$ are warped image from $I_0$ and $I_1$ using unfiltered flow.&lt;/li&gt;
+  &lt;li&gt;Output: $\delta, r$ where $\delta \in [-k, k]^2$ with $k\text{tanh}$.&lt;/li&gt;
+  &lt;li&gt;Flow Filtering:
+&lt;script type=&quot;math/tex&quot;&gt;\begin{align*}
+f'_{t\to 0 }(x) = f_{t\to 0}(x+\delta(x)) + r(x)
+\end{align*}&lt;/script&gt;&lt;/li&gt;
+  &lt;li&gt;Intuition: spatially-variant and nonlinear refinement of $f_{t\to 0}$, which could be seen as a learnable median filter in spirit.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;frame-synthesis-step-2-fusion-mask-prediction&quot;&gt;Frame Synthesis Step 2: Fusion Mask Prediction&lt;/h3&gt;
+
+&lt;p&gt;Fusion mask prediction network is a three layer CNN&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Input: warped image using filtered flow&lt;/li&gt;
+  &lt;li&gt;Output: mask $m$&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;frame-synthesis-step-3-warping-and-fusion&quot;&gt;Frame Synthesis Step 3: Warping and Fusion&lt;/h3&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+\hat{I}_t(x) = 
+\frac{
+(1-t)m(x)I_0(x + f'_{t\to 0}(x)) + t(1-m(x))I_1(x + f'_{t\to 1}(x))
+}
+{
+(1-t)m(x) + t(1-m(x))
+}.
+\end{align*}&lt;/script&gt;
+
+&lt;h3 id=&quot;loss-function-2&quot;&gt;Loss Function&lt;/h3&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+\|\hat{I}_t-I_t\|_1+\lambda \|\phi(\hat{I}_t - \phi(I)_t)\|_2
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;where $\phi(\cdot)$ is extracted from &lt;code class=&quot;highlighter-rouge&quot;&gt;conv4_3&lt;/code&gt; feature extractor of the VGG16 model.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;aim2019&quot;&gt;AIM2019&lt;/h2&gt;
+&lt;p&gt;Andreas Lugmayr, Martin Danelljan, Radu Timofte, Manuel Fritsche, Shuhang Gu, Kuldeep Purohit, Praveen Kandula, Maitreya Suin, A N Rajagopalan, Nam Hyung Joon, Yu Seung Won, Guisik Kim, Dokyeong Kwon, Chih-Chung Hsu, Chia-Hsiang Lin, Yuanfei Huang, Xiaopeng Sun, Wen Lu, Jie Li, Xinbo Gao, Sefi Bell-Kligler, “&lt;em&gt;AIM 2019 Challenge on Real-World Image Super-Resolution: Methods and Results&lt;/em&gt;,” ICCVW-2019&lt;/p&gt;
+
+&lt;h2 id=&quot;summary&quot;&gt;Summary&lt;/h2&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Model&lt;/th&gt;
+      &lt;th&gt;Time-specific&lt;/th&gt;
+      &lt;th&gt;Extrapolation&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;#ac&quot;&gt;AdaptConv&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;Yes&lt;/td&gt;
+      &lt;td&gt;No&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;#asc&quot;&gt;AdaptSepConv&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;#dvf&quot;&gt;DeepVoxFlow&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;Yes?&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;#ssm&quot;&gt;SuperSloMo&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;#pa&quot;&gt;PhaseNet&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;#da&quot;&gt;DepthAware&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;No&lt;/td&gt;
+      &lt;td&gt;No&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;#quad&quot;&gt;Quadratic&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;No&lt;/td&gt;
+      &lt;td&gt;No&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;</content><author><name>Yang Yang</name></author><category term="computer vision" /><summary type="html">Paper Organization Conference Arxiv Citation AdaptConv Portland SU CVPR-2017 2017-05-22 149 AdaptSepConv Portland SU ICCV-2017 2017-08-05 209 DeepVoxFlow CUHK UIUC PonyAI Google ICCV-2017 2017-08-05 279 SuperSloMo UMass NVIDIA UC-Merced CVPR-2018 2018-07-13 142 PhaseNet ETH Disney CVPR-2018 2018-04-03 47 DepthAware SJTU UC-Merced Google CVPR-2019 2019-04-01 35 Quadratic CMU SenseTime BNU UC-Merced NeurIPS-2019 2019-11-02 5 AIM2019 ICCVW-2019 ICCVW-2019 2019-11-19 22</summary></entry><entry><title type="html">Understanding and Implementing Asymmetric Numeral System (ANS)</title><link href="https://yyang768osu.github.io/posts/2020/06/asymmetric-numeral-system/" rel="alternate" type="text/html" title="Understanding and Implementing Asymmetric Numeral System (ANS)" /><published>2020-06-26T00:00:00-07:00</published><updated>2020-06-26T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2020/06/understanding-and-implementing-ans</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2020/06/asymmetric-numeral-system/">&lt;p&gt;Consider a alphabet with $N$ different symbols $\mathcal{A}=\{0, 1, \ldots, N-1\}. $Let us imagine an coding algorithm where a sequence of these symbols are coded into a sequence of bits, represented by an integer $s$, from which we can decode each symbol sequentially by breaking down $s$ into one symbol $x$ and another integer $s’$ capturing the remaining information. In such case, the encoding and decoding operation can be represented by the following &lt;code class=&quot;highlighter-rouge&quot;&gt;push&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;pop&lt;/code&gt; operation:&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{align*}
@@ -94,7 +449,7 @@ e(s', x) =&amp; 2^r \times (s'//p(x)) + (s'\text{ mod }p(x) + c(x))
     &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;reversed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;decoded_symbols&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;Running this encoder decoder pair through tests, we soon realize that there is a small issue with our encoder and decoder function $e$ and $d$. Specifically, if both $s’$ and $x$ are $0$, then $s=e(0, 0)=0$. This means that any frontloaded $0$-sequence will be just be coded into $0$, and decoder has no ways of knowing how many $0$ symbols are there in the front of the sequence, if any! To solve this issue, we need to additionaly guarantee that $e$ results in strictly increasing integer. A fixed version is provided in the next section.&lt;/p&gt;
+&lt;p&gt;Running this encoder decoder pair through tests, one will realize that there is a small issue with the encoder and decoder function $e$ and $d$. Specifically, if both $s’$ and $x$ are $0$, then $s=e(0, 0)=0$. This means that any frontloaded $0$-sequence will be just be coded into $0$, and decoder has no ways of knowing how many $0$ symbols are there in the front of the sequence, if any! To solve this issue, we need to additionaly guarantee that $e$ results in strictly increasing integer. A fixed version is provided in the next section.&lt;/p&gt;
 
 &lt;h2 id=&quot;ans-without-rescaling-correct-version&quot;&gt;ANS without rescaling (correct version)&lt;/h2&gt;
 
@@ -119,7 +474,7 @@ e(s', x) =&amp; 2^r \times (s'//p(x)) + (s'\text{ mod }p(x) + c(x))
     Warnings
     --------
     int type for all the input arguments should be python int type,
-    which does not overflow (yes, search it)
+    which has aribitrary precision
 
     Returns
     -------
@@ -155,7 +510,7 @@ e(s', x) =&amp; 2^r \times (s'//p(x)) + (s'\text{ mod }p(x) + c(x))
     Warnings
     --------
     int type for all the input arguments should be python int type,
-    which does not overflow (yes, search it)
+    which has arbitrary precision
 
     Returns
     -------
@@ -219,6 +574,181 @@ e(s', x) =&amp; 2^r \times (s'//p(x)) + (s'\text{ mod }p(x) + c(x))
 
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;encoded&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;integer&lt;/span&gt;        &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;125621967822099623663819958660494947377946858741001513589&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;average&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bits&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;per&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;symbol&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;1.86357&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bits&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;symbol&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;source&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;entropy&lt;/span&gt;    &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;1.79865&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bits&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;symbol&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;ans-with-rescaling&quot;&gt;ANS with rescaling&lt;/h2&gt;
+
+&lt;p&gt;The above ANS implementation takes advantage of the fact that python integer has arbitrary precision, which allows us to encode a sequence that is arbitrarily long without overflowing. This poses a complexity issue: the encoding operation gets increasingly hard to compute as integer $s$ gets larger. Without resolving this reliance on infinite precision integer arithmetic, we cannot implement it using lower-level language with more hardware friendly instructions.&lt;/p&gt;
+
+&lt;p&gt;One immediate idea is to limit the range of $s$, say with a maximum bit-width of $r_s$. Since the encoding process will necessary increase the valu of $s$, we then need to scale down its value before additional encoding, to a point where we can avoid overflow. In other words, before carrying out the encoding operation os $e(s’, x)$, $s’$ should satisfy&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+&amp;&amp;2^r\times (s'//p(x)) + (s'\text{ mod }p(x) + c(x)) &amp;&lt; 2^{r_s}\\
+\Longleftrightarrow&amp;&amp; s'//p(x) + \underbrace{(s'\text{ mod }p(x) + c(x)) / 2^r}_{&lt;1}&amp;&lt; 2^{r_s-r}\\
+\Longleftrightarrow&amp;&amp; s'//p(x) &amp;&lt; 2^{r_s-r}\\
+\Longleftrightarrow&amp;&amp; s' &amp;&lt; (2^{r_s-r}+1)\times p(x)
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;In the rescaling implemenetation, scaling down is achieved by extracting $r_t$ least significant bits, packing these bits into an integer $t$, and saving this integer to a stack $t_\text{stack}$, achieved through the following logic&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;**&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r_s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]:&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;**&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r_t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r_t&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;t_stack&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now we have guaranteed that encoder output will be an integer $s&amp;lt;2^{r_s}$ accompanied by a stack of integers $t&amp;lt;2^{r_t}$, the next question is, how to perform decoding? An easy answer would be to do the exact inverse of encoding, but to do that we need to know exactly when to perform up-scaling. The key is to realize that after the above loop is performed, it is guaranteed that $e(s’, x)$ is always larger than or equal to $2^{r_s-r_t}$ (assuming $r_t &amp;gt; r$), and thus during decoding we just need to upscale $s$ whenever it falls below $2^{r_s-r_t}$.&lt;/p&gt;
+
+&lt;p&gt;After the while loop terminates, we have&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+&amp;&amp; 2^{r_t} s' + (2^{r_t}-1) &amp;\geq (2^{r_s-r}+1) p(x)\\
+\Longleftrightarrow &amp;&amp; 2^{r_t}s' + 2^{r_t} &amp;&gt; (2^{r_s-r}+1)p(x)\\
+\Longleftrightarrow &amp;&amp; 2^{r_t}s'&amp;&gt; 2^{r_s-r}p(x) + p(x) - 2^{r_t}\\
+\Longleftrightarrow &amp;&amp;        s'&amp;&gt; 2^{r_s-r-r_t}p(x) + \underbrace{p(x)/2^{r_t}}_{&lt;1} - 1\\
+\Longleftrightarrow &amp;&amp;        s'&amp;\geq 2^{r_s-r-r_t}p(x)
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;Plugging in the above inequality to $e(s’, x)$, we have&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+e(s', x) \geq 2^{r_s -r_t}.
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;Now we are ready to implement ANS with rescaling.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;ans_encoder&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;symbols&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r_s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r_t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot; ANS encoder
+
+    Parameters
+    ----------
+    symbols : list of int
+        list of input symbols represented by index
+        value should not be larger than len(p)
+    p : list of int
+        quantized pmf of all input alphabet, sum(p) == 2 ** r
+    c : list of int
+        quantized cdf of all input alphabet, len(c) = len(p)
+        c[0] = 0, and c[-1] = sum(p[:-1])
+    r : int
+        bit-width precision of the quantized pmf
+        sum(p) == 2 ** r
+    r_s : int
+        bit-width precision of encoded integer s
+    r_t : int
+        bit-width precision of integers in stack t_stack
+
+    Returns
+    -------
+    s : int
+        s &amp;lt; 2 ** r_s
+    t_stack : list of int
+        each int &amp;lt; 2 ** r_t
+
+    &quot;&quot;&quot;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;t_stack&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;symbols&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]:&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;**&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r_s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]:&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;**&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r_t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r_t&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;t_stack&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;**&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;//&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; \
+            &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t_stack&lt;/span&gt;
+
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;ans_decoder&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t_stack&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r_s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r_t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot; ANS encoder
+
+    Parameters
+    ----------
+    s : int
+        (s, t_stack) together represent the encoded message; s &amp;lt; 2 ** r_s
+    t_stack : list of int
+        (s, t_stack) together represent the encoded message; t &amp;lt; 2 ** r_t
+    p : list of int
+        quantized pmf of all input alphabet, sum(p) == 2 ** r
+    c : list of int
+        quantized cdf of all input alphabet, len(c) = len(p)
+        c[0] = 0, and c[-1] = sum(p[:-1])
+    r : int
+        bit-width precision of the quantized pmf
+        sum(p) == 2 ** r
+    r_s : int
+        bit-width precision of encoded integer s
+    r_t : int
+        bit-width precision of integers in stack t_stack
+
+    Returns
+    -------
+    decoded_symbols : list of int
+        list of decoded symbols
+
+    &quot;&quot;&quot;&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;**&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;
+        &lt;span class=&quot;c&quot;&gt;# this loop can be improved by binary search&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;reversed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))):&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]:&lt;/span&gt;
+                &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;decoded_symbols&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;decoded_symbols&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;//&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;**&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; \
+            &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;**&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]:&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;**&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r_s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r_t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t_stack&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t_stack&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pop&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r_t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;reversed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;decoded_symbols&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+
+&lt;span class=&quot;c&quot;&gt;## Test code&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;random&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;math&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# initialize data distribution and input length&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;50&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;80&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;106&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;70&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;150&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;r&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;r_s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;32&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;r_t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;16&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;sequence_length&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10000&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# randomly sample input&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;seed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;symbols&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;choices&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;weights&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sequence_length&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# encode&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t_stack&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ans_encoder&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;symbols&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r_s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r_t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# decode&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;decoded_symbols&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ans_decoder&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t_stack&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r_s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r_t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# statistics&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;average_bps&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r_s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t_stack&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r_t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sequence_length&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;entropy&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;**&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;math&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;log2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;**&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# sanity check&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;all&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;zip&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;decoded_symbols&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;symbols&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# display results&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;average bits per symbol: {average_bps:.5f} bits/symbol&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;data source entropy    : {entropy:.5f} bits/symbol&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;test-results&quot;&gt;Test results&lt;/h3&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;average&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bits&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;per&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;symbol&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;1.80960&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bits&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;symbol&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;source&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;entropy&lt;/span&gt;    &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;1.79865&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bits&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;symbol&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Yang Yang</name></author><category term="compression" /><summary type="html">Consider a alphabet with $N$ different symbols $\mathcal{A}=\{0, 1, \ldots, N-1\}. $Let us imagine an coding algorithm where a sequence of these symbols are coded into a sequence of bits, represented by an integer $s$, from which we can decode each symbol sequentially by breaking down $s$ into one symbol $x$ and another integer $s’$ capturing the remaining information. In such case, the encoding and decoding operation can be represented by the following push and pop operation:</summary></entry><entry><title type="html">Understanding and Implementing Arithmetic Coding (AC)</title><link href="https://yyang768osu.github.io/posts/2020/06/arithmetic-coding/" rel="alternate" type="text/html" title="Understanding and Implementing Arithmetic Coding (AC)" /><published>2020-06-24T00:00:00-07:00</published><updated>2020-06-24T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2020/06/understanding-and-implementing-ac</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2020/06/arithmetic-coding/">&lt;h2 id=&quot;arithmetic-encoder-infinite-precision&quot;&gt;Arithmetic Encoder (infinite precision)&lt;/h2&gt;
 
@@ -1961,8 +2491,4 @@ f((a+\Delta x_1, b))=&amp;(f_1(a+\Delta x_1,b), f_2(a+\Delta x_1,b))  \\
 &lt;h2 id=&quot;sequence-discriminative-training&quot;&gt;Sequence discriminative training&lt;/h2&gt;
 &lt;p&gt;To bridge the aforementioned discrepancy, several other training targets are proposed.&lt;/p&gt;
 
-&lt;p&gt;to be continued…&lt;/p&gt;</content><author><name>Yang Yang</name></author><category term="ASR" /><category term="HMM" /><summary type="html">Conventional HMM-based ASR system assumes a generative model comprised of a language model, a lexicon (e.g., pronunciation dictionary), and an acoustic model, as illustrated below. Here $\theta$ denotes the parameters to be learned and it comprises of the HMM state transition probabilities and GMM/DNN parameters.</summary></entry><entry><title type="html">Comparison of end-to-end ASR models</title><link href="https://yyang768osu.github.io/posts/2018/11/end_to_end_asr_models/" rel="alternate" type="text/html" title="Comparison of end-to-end ASR models" /><published>2018-11-13T00:00:00-08:00</published><updated>2018-11-13T00:00:00-08:00</updated><id>https://yyang768osu.github.io/posts/2018/11/comparison-of-end-2-end-asr-models</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2018/11/end_to_end_asr_models/">&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/end2end.png&quot; alt=&quot;End-to-end ASR model derivation&quot; /&gt;&lt;/p&gt;
-
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/transcription_model.png&quot; alt=&quot;Sentence model for CTC, RNN-T, and Attention&quot; /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;language-model-integration&quot;&gt;Language model integration&lt;/h2&gt;</content><author><name>Yang Yang</name></author><category term="ASR" /><summary type="html"></summary></entry></feed>
+&lt;p&gt;to be continued…&lt;/p&gt;</content><author><name>Yang Yang</name></author><category term="ASR" /><category term="HMM" /><summary type="html">Conventional HMM-based ASR system assumes a generative model comprised of a language model, a lexicon (e.g., pronunciation dictionary), and an acoustic model, as illustrated below. Here $\theta$ denotes the parameters to be learned and it comprises of the HMM state transition probabilities and GMM/DNN parameters.</summary></entry></feed>

@@ -251,7 +251,7 @@
 
 
   
-	  6 minute read
+	  12 minute read
 	
 </p>
           
@@ -364,7 +364,7 @@ e(s', x) =& 2^r \times (s'//p(x)) + (s'\text{ mod }p(x) + c(x))
     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">decoded_symbols</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p>Running this encoder decoder pair through tests, we soon realize that there is a small issue with our encoder and decoder function $e$ and $d$. Specifically, if both $s’$ and $x$ are $0$, then $s=e(0, 0)=0$. This means that any frontloaded $0$-sequence will be just be coded into $0$, and decoder has no ways of knowing how many $0$ symbols are there in the front of the sequence, if any! To solve this issue, we need to additionaly guarantee that $e$ results in strictly increasing integer. A fixed version is provided in the next section.</p>
+<p>Running this encoder decoder pair through tests, one will realize that there is a small issue with the encoder and decoder function $e$ and $d$. Specifically, if both $s’$ and $x$ are $0$, then $s=e(0, 0)=0$. This means that any frontloaded $0$-sequence will be just be coded into $0$, and decoder has no ways of knowing how many $0$ symbols are there in the front of the sequence, if any! To solve this issue, we need to additionaly guarantee that $e$ results in strictly increasing integer. A fixed version is provided in the next section.</p>
 
 <h2 id="ans-without-rescaling-correct-version">ANS without rescaling (correct version)</h2>
 
@@ -389,7 +389,7 @@ e(s', x) =& 2^r \times (s'//p(x)) + (s'\text{ mod }p(x) + c(x))
     Warnings
     --------
     int type for all the input arguments should be python int type,
-    which does not overflow (yes, search it)
+    which has aribitrary precision
 
     Returns
     -------
@@ -425,7 +425,7 @@ e(s', x) =& 2^r \times (s'//p(x)) + (s'\text{ mod }p(x) + c(x))
     Warnings
     --------
     int type for all the input arguments should be python int type,
-    which does not overflow (yes, search it)
+    which has arbitrary precision
 
     Returns
     -------
@@ -489,6 +489,181 @@ e(s', x) =& 2^r \times (s'//p(x)) + (s'\text{ mod }p(x) + c(x))
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">encoded</span> <span class="n">integer</span>        <span class="p">:</span> <span class="mi">125621967822099623663819958660494947377946858741001513589</span>
 <span class="n">average</span> <span class="n">bits</span> <span class="n">per</span> <span class="n">symbol</span><span class="p">:</span> <span class="mf">1.86357</span> <span class="n">bits</span><span class="o">/</span><span class="n">symbol</span>
+<span class="n">data</span> <span class="n">source</span> <span class="n">entropy</span>    <span class="p">:</span> <span class="mf">1.79865</span> <span class="n">bits</span><span class="o">/</span><span class="n">symbol</span>
+</code></pre></div></div>
+
+<h2 id="ans-with-rescaling">ANS with rescaling</h2>
+
+<p>The above ANS implementation takes advantage of the fact that python integer has arbitrary precision, which allows us to encode a sequence that is arbitrarily long without overflowing. This poses a complexity issue: the encoding operation gets increasingly hard to compute as integer $s$ gets larger. Without resolving this reliance on infinite precision integer arithmetic, we cannot implement it using lower-level language with more hardware friendly instructions.</p>
+
+<p>One immediate idea is to limit the range of $s$, say with a maximum bit-width of $r_s$. Since the encoding process will necessary increase the valu of $s$, we then need to scale down its value before additional encoding, to a point where we can avoid overflow. In other words, before carrying out the encoding operation os $e(s’, x)$, $s’$ should satisfy</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+&&2^r\times (s'//p(x)) + (s'\text{ mod }p(x) + c(x)) &< 2^{r_s}\\
+\Longleftrightarrow&& s'//p(x) + \underbrace{(s'\text{ mod }p(x) + c(x)) / 2^r}_{<1}&< 2^{r_s-r}\\
+\Longleftrightarrow&& s'//p(x) &< 2^{r_s-r}\\
+\Longleftrightarrow&& s' &< (2^{r_s-r}+1)\times p(x)
+\end{align*} %]]></script>
+
+<p>In the rescaling implemenetation, scaling down is achieved by extracting $r_t$ least significant bits, packing these bits into an integer $t$, and saving this integer to a stack $t_\text{stack}$, achieved through the following logic</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">while</span> <span class="n">s</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">r_s</span> <span class="o">-</span> <span class="n">r</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="n">x</span><span class="p">]:</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="n">s</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">r_t</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">&gt;&gt;=</span> <span class="n">r_t</span>
+    <span class="n">t_stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Now we have guaranteed that encoder output will be an integer $s&lt;2^{r_s}$ accompanied by a stack of integers $t&lt;2^{r_t}$, the next question is, how to perform decoding? An easy answer would be to do the exact inverse of encoding, but to do that we need to know exactly when to perform up-scaling. The key is to realize that after the above loop is performed, it is guaranteed that $e(s’, x)$ is always larger than or equal to $2^{r_s-r_t}$ (assuming $r_t &gt; r$), and thus during decoding we just need to upscale $s$ whenever it falls below $2^{r_s-r_t}$.</p>
+
+<p>After the while loop terminates, we have</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+&& 2^{r_t} s' + (2^{r_t}-1) &\geq (2^{r_s-r}+1) p(x)\\
+\Longleftrightarrow && 2^{r_t}s' + 2^{r_t} &> (2^{r_s-r}+1)p(x)\\
+\Longleftrightarrow && 2^{r_t}s'&> 2^{r_s-r}p(x) + p(x) - 2^{r_t}\\
+\Longleftrightarrow &&        s'&> 2^{r_s-r-r_t}p(x) + \underbrace{p(x)/2^{r_t}}_{<1} - 1\\
+\Longleftrightarrow &&        s'&\geq 2^{r_s-r-r_t}p(x)
+\end{align*} %]]></script>
+
+<p>Plugging in the above inequality to $e(s’, x)$, we have</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+e(s', x) \geq 2^{r_s -r_t}.
+\end{align*}</script>
+
+<p>Now we are ready to implement ANS with rescaling.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">ans_encoder</span><span class="p">(</span><span class="n">symbols</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">r_s</span><span class="p">,</span> <span class="n">r_t</span><span class="p">):</span>
+    <span class="s">""" ANS encoder
+
+    Parameters
+    ----------
+    symbols : list of int
+        list of input symbols represented by index
+        value should not be larger than len(p)
+    p : list of int
+        quantized pmf of all input alphabet, sum(p) == 2 ** r
+    c : list of int
+        quantized cdf of all input alphabet, len(c) = len(p)
+        c[0] = 0, and c[-1] = sum(p[:-1])
+    r : int
+        bit-width precision of the quantized pmf
+        sum(p) == 2 ** r
+    r_s : int
+        bit-width precision of encoded integer s
+    r_t : int
+        bit-width precision of integers in stack t_stack
+
+    Returns
+    -------
+    s : int
+        s &lt; 2 ** r_s
+    t_stack : list of int
+        each int &lt; 2 ** r_t
+
+    """</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">t_stack</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">symbols</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">s</span> <span class="o">&lt;</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">while</span> <span class="n">s</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">r_s</span> <span class="o">-</span> <span class="n">r</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="n">x</span><span class="p">]:</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">s</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">r_t</span><span class="p">)</span>
+            <span class="n">s</span> <span class="o">&gt;&gt;=</span> <span class="n">r_t</span>
+            <span class="n">t_stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">r</span> <span class="o">*</span> <span class="p">(</span><span class="n">s</span> <span class="o">//</span> <span class="n">p</span><span class="p">[</span><span class="n">x</span><span class="p">])</span> <span class="o">+</span> \
+            <span class="n">s</span> <span class="o">%</span> <span class="n">p</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">+</span> <span class="n">c</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">s</span><span class="p">,</span> <span class="n">t_stack</span>
+
+
+<span class="k">def</span> <span class="nf">ans_decoder</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">t_stack</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">r_s</span><span class="p">,</span> <span class="n">r_t</span><span class="p">):</span>
+    <span class="s">""" ANS encoder
+
+    Parameters
+    ----------
+    s : int
+        (s, t_stack) together represent the encoded message; s &lt; 2 ** r_s
+    t_stack : list of int
+        (s, t_stack) together represent the encoded message; t &lt; 2 ** r_t
+    p : list of int
+        quantized pmf of all input alphabet, sum(p) == 2 ** r
+    c : list of int
+        quantized cdf of all input alphabet, len(c) = len(p)
+        c[0] = 0, and c[-1] = sum(p[:-1])
+    r : int
+        bit-width precision of the quantized pmf
+        sum(p) == 2 ** r
+    r_s : int
+        bit-width precision of encoded integer s
+    r_t : int
+        bit-width precision of integers in stack t_stack
+
+    Returns
+    -------
+    decoded_symbols : list of int
+        list of decoded symbols
+
+    """</span>
+
+    <span class="k">def</span> <span class="nf">h</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">s</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">r</span>
+        <span class="c"># this loop can be improved by binary search</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">))):</span>
+            <span class="k">if</span> <span class="n">s</span> <span class="o">&gt;=</span> <span class="n">c</span><span class="p">[</span><span class="n">a</span><span class="p">]:</span>
+                <span class="k">return</span> <span class="n">a</span>
+
+    <span class="n">decoded_symbols</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">while</span> <span class="n">s</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">h</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="n">decoded_symbols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">s</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">r</span><span class="p">)</span> <span class="o">+</span> \
+            <span class="n">s</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">r</span><span class="p">)</span> <span class="o">-</span> <span class="n">c</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">s</span> <span class="o">&lt;</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">s</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="k">while</span> <span class="n">s</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">r_s</span> <span class="o">-</span> <span class="n">r_t</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">t_stack</span><span class="p">):</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">t_stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="p">(</span><span class="n">s</span> <span class="o">&lt;&lt;</span> <span class="n">r_t</span><span class="p">)</span> <span class="o">+</span> <span class="n">t</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">decoded_symbols</span><span class="p">))</span>
+
+
+<span class="c">## Test code</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">math</span>
+
+<span class="c"># initialize data distribution and input length</span>
+<span class="n">p</span> <span class="o">=</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">106</span><span class="p">]</span>
+<span class="n">c</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">70</span><span class="p">,</span> <span class="mi">150</span><span class="p">]</span>
+<span class="n">r</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="n">r_s</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="n">r_t</span> <span class="o">=</span> <span class="mi">16</span>
+<span class="n">sequence_length</span> <span class="o">=</span> <span class="mi">10000</span>
+
+<span class="c"># randomly sample input</span>
+<span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">symbols</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choices</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)),</span> <span class="n">weights</span><span class="o">=</span><span class="n">p</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">sequence_length</span><span class="p">)</span>
+
+<span class="c"># encode</span>
+<span class="n">s</span><span class="p">,</span> <span class="n">t_stack</span> <span class="o">=</span> <span class="n">ans_encoder</span><span class="p">(</span><span class="n">symbols</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">r_s</span><span class="p">,</span> <span class="n">r_t</span><span class="p">)</span>
+
+<span class="c"># decode</span>
+<span class="n">decoded_symbols</span> <span class="o">=</span> <span class="n">ans_decoder</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">t_stack</span><span class="p">[:],</span> <span class="n">p</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">r_s</span><span class="p">,</span> <span class="n">r_t</span><span class="p">)</span>
+
+<span class="c"># statistics</span>
+<span class="n">average_bps</span> <span class="o">=</span> <span class="p">(</span><span class="n">r_s</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">t_stack</span><span class="p">)</span> <span class="o">*</span> <span class="n">r_t</span><span class="p">)</span> <span class="o">/</span> <span class="n">sequence_length</span>
+<span class="n">entropy</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="o">-</span><span class="n">i</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">r</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">i</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">p</span><span class="p">)</span>
+
+<span class="c"># sanity check</span>
+<span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="n">y</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">decoded_symbols</span><span class="p">,</span> <span class="n">symbols</span><span class="p">))</span>
+
+<span class="c"># display results</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"average bits per symbol: {average_bps:.5f} bits/symbol"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"data source entropy    : {entropy:.5f} bits/symbol"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="test-results">Test results</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">average</span> <span class="n">bits</span> <span class="n">per</span> <span class="n">symbol</span><span class="p">:</span> <span class="mf">1.80960</span> <span class="n">bits</span><span class="o">/</span><span class="n">symbol</span>
 <span class="n">data</span> <span class="n">source</span> <span class="n">entropy</span>    <span class="p">:</span> <span class="mf">1.79865</span> <span class="n">bits</span><span class="o">/</span><span class="n">symbol</span>
 </code></pre></div></div>
 
@@ -572,7 +747,8 @@ s.setAttribute('data-timestamp', +new Date());
 ">Previous</a>
     
     
-      <a href="#" class="pagination--pager disabled">Next</a>
+      <a href="https://yyang768osu.github.io/posts/2020/06/video-frame-synthesis/" class="pagination--pager" title="Notes on Video Frame Synthesis
+">Next</a>
     
   </nav>
 
