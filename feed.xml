@@ -1,359 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="https://yyang768osu.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://yyang768osu.github.io/" rel="alternate" type="text/html" /><updated>2020-06-29T19:49:29-07:00</updated><id>https://yyang768osu.github.io/</id><title type="html">Yang Yang</title><subtitle>Engineer at Qualcomm</subtitle><author><name>Yang Yang</name></author><entry><title type="html">Notes on Video Frame Synthesis</title><link href="https://yyang768osu.github.io/posts/2020/06/video-frame-synthesis/" rel="alternate" type="text/html" title="Notes on Video Frame Synthesis" /><published>2020-06-27T00:00:00-07:00</published><updated>2020-06-27T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2020/06/notes-on-video-frame-synthesis</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2020/06/video-frame-synthesis/">&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th&gt;Paper&lt;/th&gt;
-      &lt;th&gt;Organization&lt;/th&gt;
-      &lt;th&gt;Conference&lt;/th&gt;
-      &lt;th&gt;Arxiv&lt;/th&gt;
-      &lt;th&gt;Citation&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#ac&quot;&gt;AdaptConv&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;Portland SU&lt;/td&gt;
-      &lt;td&gt;CVPR-2017&lt;/td&gt;
-      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/pdf/1703.07514&quot;&gt;2017-05-22&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;149&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#asc&quot;&gt;AdaptSepConv&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;Portland SU&lt;/td&gt;
-      &lt;td&gt;ICCV-2017&lt;/td&gt;
-      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/1708.01692&quot;&gt;2017-08-05&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;209&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#dvf&quot;&gt;DeepVoxFlow&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;CUHK UIUC PonyAI Google&lt;/td&gt;
-      &lt;td&gt;ICCV-2017&lt;/td&gt;
-      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/pdf/1702.02463&quot;&gt;2017-08-05&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;279&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#ssm&quot;&gt;SuperSloMo&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;UMass NVIDIA UC-Merced&lt;/td&gt;
-      &lt;td&gt;CVPR-2018&lt;/td&gt;
-      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/1712.00080&quot;&gt;2018-07-13&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;142&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#pa&quot;&gt;PhaseNet&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;ETH Disney&lt;/td&gt;
-      &lt;td&gt;CVPR-2018&lt;/td&gt;
-      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/1804.00884&quot;&gt;2018-04-03&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;47&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#da&quot;&gt;DepthAware&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;SJTU UC-Merced Google&lt;/td&gt;
-      &lt;td&gt;CVPR-2019&lt;/td&gt;
-      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/1904.00830&quot;&gt;2019-04-01&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;35&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#quad&quot;&gt;Quadratic&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;CMU SenseTime BNU UC-Merced&lt;/td&gt;
-      &lt;td&gt;NeurIPS-2019&lt;/td&gt;
-      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/1911.00627&quot;&gt;2019-11-02&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;5&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#aim2019&quot;&gt;AIM2019&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;ICCVW-2019&lt;/td&gt;
-      &lt;td&gt;ICCVW-2019&lt;/td&gt;
-      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/1911.07783&quot;&gt;2019-11-19&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;22&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;Why video frame synthesis is needed?&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;noval view synthesis/interpolation&lt;/li&gt;
-  &lt;li&gt;frame rate up-conversion&lt;/li&gt;
-  &lt;li&gt;slow motion effect&lt;/li&gt;
-  &lt;li&gt;frame recovery in video streaming&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Chanllenging scenarios for video synthesis&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;occlusion&lt;/li&gt;
-  &lt;li&gt;motion blurs&lt;/li&gt;
-  &lt;li&gt;abrupt brightness/lighting change&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;ac&quot;&gt;AdaptConv&lt;/h2&gt;
-&lt;p&gt;Simon Niklaus, Long Mai, Feng Liu, “&lt;em&gt;Video Frame Interpolation via Adaptive Convolution&lt;/em&gt;,” CVPR-2017&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;asc&quot;&gt;AdaptSepConv&lt;/h2&gt;
-&lt;p&gt;Simon Niklaus, Long Mai, Feng Liu, “&lt;em&gt;Video Frame Interpolation via Adaptive Separable Convolution&lt;/em&gt;,” ICCV-2017&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;dvf&quot;&gt;DeepVoxFlow&lt;/h2&gt;
-&lt;p&gt;Ziwei Liu, Raymond A. Yeh, Xiaoou Tang, Yiming Liu, Aseem Agarwala, “&lt;em&gt;Video Frame Synthesis using Deep Voxel Flow&lt;/em&gt;,” ICCV-2017&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;ssm&quot;&gt;SuperSloMo&lt;/h2&gt;
-&lt;p&gt;Huaizu Jiang, Deqing Sun, Varun Jampani, Ming-Hsuan Yang, Erik Learned-Miller, Jan Kautz, “&lt;em&gt;Super SloMo: High Quality Estimation of Multiple Intermediate Frames for Video Interpolation&lt;/em&gt;,” CVPR-2018&lt;/p&gt;
-
-&lt;h3 id=&quot;main-idea&quot;&gt;Main Idea&lt;/h3&gt;
-
-&lt;p&gt;Very crude estimation of $f_{t\to 1}$:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-\begin{align*}
-f_{t\to 1}&amp;\approx (1-t)f_{0\to 1}\\
-f_{t\to 1}&amp;\approx -(1-t)f_{1\to 0}
-\end{align*} %]]&gt;&lt;/script&gt;
-
-&lt;p&gt;Weighing the two crude estimation by the relative distance to $t$ yields the estimate&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-\begin{align*}
-\hat{f}_{t\to 1}&amp;\triangleq (1-t)^2 f_{0\to 1} - t(1-t)f_{1\to 0}\\\
-\hat{f}_{t\to 0}&amp;\triangleq t^2 f_{1\to 1} - t(1-t)f_{0\to 1}
-\end{align*} %]]&gt;&lt;/script&gt;
-
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/frame_synthesis/SuperSloMo.png&quot; alt=&quot;SuperSloMo&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;network-architecture&quot;&gt;Network architecture&lt;/h3&gt;
-&lt;p&gt;Both flow computation and flow interpolation network adopt U-Net architecture. There are 6 hierarchies in the encoder, consisting of two convolutional and one Leaky ReLU (α=0.1) layers. At the end of each hierarchy except the last one, an average pooling layer with a stride of 2 is used to decrease the spatial dimension. There are 5 hierarchies in the decoder part. At the beginning of each hierarchy, a bilinear upsampling layer is used to increase the spatial dimension by a factor of 2, followed by two convolutional and Leaky ReLU layers.&lt;/p&gt;
-
-&lt;p&gt;Emprical observations:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;For flow estimation network it is crucial to have large filters in the first few layers of the encoder to capture long range motion&lt;/li&gt;
-  &lt;li&gt;Concatenating the output of two encoder to the last decoder yields slightly better performance&lt;/li&gt;
-  &lt;li&gt;It is slightly more advantageous to output optical flow residual rather than the refined optical flow&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;loss-function&quot;&gt;Loss Function&lt;/h3&gt;
-
-&lt;p&gt;A combination of reconstruction loss, warping loss, perceptual loss (&lt;code class=&quot;highlighter-rouge&quot;&gt;conv4_3&lt;/code&gt; of VGG16), and smoothness loss&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;pa&quot;&gt;PhaseNet&lt;/h2&gt;
-&lt;p&gt;Simone Meyer, Abdelaziz Djelouah, Brian McWilliams, Alexander Sorkine-Hornung, Markus Gross, Christopher Schroers, “&lt;em&gt;PhaseNet for Video Frame Interpolation&lt;/em&gt;,” CVPR-2018&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;da&quot;&gt;DepthAware&lt;/h2&gt;
-&lt;p&gt;Wenbo Bao, Wei-Sheng Lai, Chao Ma, Xiaoyun Zhang, Zhiyong Gao, Ming-Hsuan Yang, “&lt;em&gt;Depth-Aware Video Frame Interpolation&lt;/em&gt;,” CVPR-2019&lt;/p&gt;
-
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/frame_synthesis/DepthAware.png&quot; alt=&quot;Depth Aware Video Frame Interpolation&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Motivation&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Most existing effort relies on large amount of training data and modeling capacity to implicitly infer the occlusion, which may not be effective to handle a wide variety of scenes in the wild.&lt;/li&gt;
-  &lt;li&gt;The authors propose to explicitly detect occlusion by exploiting the depth information for video frame interpolation&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;depth-aware-flow-projection&quot;&gt;Depth Aware Flow Projection&lt;/h3&gt;
-
-&lt;p&gt;Similar to &lt;a href=&quot;#flowreversal&quot;&gt;flow reversal layer&lt;/a&gt; in &lt;a href=&quot;#quad&quot;&gt;Quadratic Video Interpolation&lt;/a&gt; paper, a flow reversal logic is introduced, with the difference that depth information is used to weigh the contribution from different displayments.&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-\begin{align*}
-f_{v\to u}(x) &amp;= \frac{
-\sum_{y + f_{u \to v}(y) \in \mathcal{N}(x)} w\left(y\right) \left(-f_{u \to v}(y)\right)
-}
-{
-\sum_{y + f_{u \to v}(y) \in \mathcal{N}(x)} w\left(y\right) 
-}, \text{where}\\
-w(y)&amp;=\frac{1}{\text{Depth of }y\text{ at frame $u$}}
-\end{align*} %]]&gt;&lt;/script&gt;
-
-&lt;p&gt;To fill in the holes of the projected flow, an &lt;em&gt;outside-in strategy&lt;/em&gt; is used&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-\begin{align*}
-f_{v\to u}(x) =&amp; 1/\mathcal{N}(x)\sum_{y\in \mathcal{N}(x)} f_{v\to u}(x), \text{ where}\\
-&amp; \mathcal{N}(x)\text{ is the 4 neighbors of }x.
-\end{align*} %]]&gt;&lt;/script&gt;
-
-&lt;h3 id=&quot;flow-estimation-network&quot;&gt;Flow Estimation Network&lt;/h3&gt;
-&lt;p&gt;PWCNet with pre-trained weight&lt;/p&gt;
-
-&lt;h3 id=&quot;depth-estimation-network&quot;&gt;Depth Estimation Network&lt;/h3&gt;
-&lt;p&gt;Hourglass architecture, &lt;a href=&quot;https://arxiv.org/abs/1804.00607&quot;&gt;Megadepth&lt;/a&gt; model with pre-trained weight&lt;/p&gt;
-
-&lt;h3 id=&quot;context-extraction-network&quot;&gt;Context Extraction Network&lt;/h3&gt;
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/frame_synthesis/DepthAware_contextextractionnetwork.png&quot; alt=&quot;DAIN context extraction network&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;kernel-estimation-network&quot;&gt;Kernel Estimation Network&lt;/h3&gt;
-&lt;p&gt;U-Net architecture to estimate 4×4 local ker- nels for each pixel.&lt;/p&gt;
-
-&lt;h3 id=&quot;adapative-warping&quot;&gt;Adapative Warping&lt;/h3&gt;
-&lt;p&gt;&lt;a href=&quot;https://arxiv.org/pdf/1810.08768&quot;&gt;Combining&lt;/a&gt; kernal based and flow based warping.&lt;/p&gt;
-
-&lt;h3 id=&quot;frame-synthesis-network&quot;&gt;Frame Synthesis Network&lt;/h3&gt;
-&lt;p&gt;Input: warped depth maps, warped contextual features, projected flows, and interpolation kernels.&lt;/p&gt;
-
-&lt;h3 id=&quot;loss-function-1&quot;&gt;Loss Function&lt;/h3&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
-\sum_{x}\rho\left(\hat{I}_t(x)-I_t(x)\right)\text{ where }\rho\text{ is the Charbonnier penalty function.}
-\end{align*}&lt;/script&gt;
-
-&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;quad&quot;&gt;Quadratic&lt;/h2&gt;
-&lt;p&gt;Xiangyu Xu, Li Siyao, Wenxiu Sun, Qian Yin, Ming-Hsuan Yang, “&lt;em&gt;Quadratic video interpolation&lt;/em&gt;,” NeurIPS-2019&lt;/p&gt;
-
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/frame_synthesis/QuadraticVideoInterpolation.png&quot; alt=&quot;Quadratic Video Interpolation&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;quadratic-flow-prediction&quot;&gt;Quadratic Flow Prediction&lt;/h3&gt;
-
-&lt;p&gt;Consider the motion model of $f_{0\to t}(x) = \int_0^t (v(x) + a(x) \tau)d\tau = v(x) t + \frac{1}{2}a(x) t^2$ where pixel $x$ at time $0$ is moving with instantaneous velocity of $v(x)$ and constant acceleration $a(x)$, we have&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
-f_{0\to 1}(x) = v(x) + \frac{1}{2}a(x)\\
-f_{0\to -1}(x) = -v(x) + \frac{1}{2}a(x).
-\end{align*}&lt;/script&gt;
-
-&lt;p&gt;Then $v_0$ and $a$ can be solved by&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
-v(x) = \frac{1}{2}\left(f_{0\to 1}(x) - f_{0\to -1}(x)\right)\\
-a(x) = \left(f_{0\to 1}(x)(x) + f_{0\to -1}(x)\right).
-\end{align*}&lt;/script&gt;
-
-&lt;p&gt;So $f_{0\to t}$ can be expressed as&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
-f_{0\to t} = \frac{1}{2}\left(f_{0\to 1} - f_{0\to -1}\right) t + \frac{1}{2}\left(f_{0\to 1} + f_{0\to -1}\right) t^2,
-\end{align*}&lt;/script&gt;
-
-&lt;p&gt;which is in constrast to its expression with constant velocity assumption below&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
-f_{0\to t} = f_{0\to 1}t,
-\end{align*}&lt;/script&gt;
-
-&lt;p&gt;Since $f_{0\to -1}$ can be estimated by $I_0$ and $I_{-1}$, we know that utilizing an additional frame in the past $I_{-1}$ allows us to form a more accurate estimate of $f_{0\to t}$ with second order motion information. Similarly for $f_{1\to t}$ we can take advantage of an additional frame in the future and model it as&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
-f_{1\to t} = \frac{1}{2}\left(f_{1\to 0} - f_{1\to 2}\right) t + \frac{1}{2}\left(f_{1\to 0} + f_{1\to 2}\right) t^2,
-\end{align*}&lt;/script&gt;
-
-&lt;p&gt;In order to interpolate frame $I_t$ from $I_0$ and $I_1$, we need to have $f_{t\to 0}$ and $f_{t\to 1}$ for backward warping, but so far we only formulated the expression of $f_{0\to t}$ and $f_{1\to 0}$.&lt;/p&gt;
-
-&lt;h3 id=&quot;flowreversal&quot;&gt;Flow Reversal/Projection&lt;/h3&gt;
-
-&lt;p&gt;Estimating $f_{v\to u}$ from $f_{u\to v}$ is referred as flow reversal or flow projection. In this paper, the author proposes the following operation&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
-f_{v\to u}(x) = \frac{
-\sum_{y + f_{u \to v}(y) \in \mathcal{N}(x)} w\left(\|y+f_{u \to v}(y) - x\|_2\right) \left(-f_{u \to v}(y)\right)
-}
-{
-\sum_{y + f_{u \to v}(y) \in \mathcal{N}(x)} w\left(\|y+f_{u \to v}(y) - u\|_2\right) 
-},
-\end{align*}&lt;/script&gt;
-
-&lt;p&gt;where $w(d) = e^{-d^2/\sigma^2}$ is the Gaussian weight for each flow. Note that there are $x$ that does not correspond to any $y+f_{u\to v}(y)$, leaving holes in $f_{v\to u}$, which corresponds to pixels that is visible in $v$ but occluded in $u$.&lt;/p&gt;
-
-&lt;h3 id=&quot;frame-synthesis-step-1-adapative-flow-filter&quot;&gt;Frame Synthesis Step 1: Adapative Flow Filter&lt;/h3&gt;
-
-&lt;p&gt;Adaptive flow filter network is a 23-layer U-Net where the encoder is a 12-layer conv net with 5 average pooling.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Input: a concantenation of $I_0$, $I_1$, $I^t_0$, $I^t_1$, $f_{0\to 1}$, $f_{1\to 0}, $f_{t\to 0}, and $f_{t\to 1}$. Here $I^t_0$ and $I^t_1$ are warped image from $I_0$ and $I_1$ using unfiltered flow.&lt;/li&gt;
-  &lt;li&gt;Output: $\delta, r$ where $\delta \in [-k, k]^2$ with $k\text{tanh}$.&lt;/li&gt;
-  &lt;li&gt;Flow Filtering:
-&lt;script type=&quot;math/tex&quot;&gt;\begin{align*}
-f'_{t\to 0 }(x) = f_{t\to 0}(x+\delta(x)) + r(x)
-\end{align*}&lt;/script&gt;&lt;/li&gt;
-  &lt;li&gt;Intuition: spatially-variant and nonlinear refinement of $f_{t\to 0}$, which could be seen as a learnable median filter in spirit.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;frame-synthesis-step-2-fusion-mask-prediction&quot;&gt;Frame Synthesis Step 2: Fusion Mask Prediction&lt;/h3&gt;
-
-&lt;p&gt;Fusion mask prediction network is a three layer CNN&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Input: warped image using filtered flow&lt;/li&gt;
-  &lt;li&gt;Output: mask $m$&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;frame-synthesis-step-3-warping-and-fusion&quot;&gt;Frame Synthesis Step 3: Warping and Fusion&lt;/h3&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
-\hat{I}_t(x) = 
-\frac{
-(1-t)m(x)I_0(x + f'_{t\to 0}(x)) + t(1-m(x))I_1(x + f'_{t\to 1}(x))
-}
-{
-(1-t)m(x) + t(1-m(x))
-}.
-\end{align*}&lt;/script&gt;
-
-&lt;h3 id=&quot;loss-function-2&quot;&gt;Loss Function&lt;/h3&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
-\|\hat{I}_t-I_t\|_1+\lambda \|\phi(\hat{I}_t - \phi(I)_t)\|_2
-\end{align*}&lt;/script&gt;
-
-&lt;p&gt;where $\phi(\cdot)$ is extracted from &lt;code class=&quot;highlighter-rouge&quot;&gt;conv4_3&lt;/code&gt; feature extractor of the VGG16 model.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;aim2019&quot;&gt;AIM2019&lt;/h2&gt;
-&lt;p&gt;Andreas Lugmayr, Martin Danelljan, Radu Timofte, Manuel Fritsche, Shuhang Gu, Kuldeep Purohit, Praveen Kandula, Maitreya Suin, A N Rajagopalan, Nam Hyung Joon, Yu Seung Won, Guisik Kim, Dokyeong Kwon, Chih-Chung Hsu, Chia-Hsiang Lin, Yuanfei Huang, Xiaopeng Sun, Wen Lu, Jie Li, Xinbo Gao, Sefi Bell-Kligler, “&lt;em&gt;AIM 2019 Challenge on Real-World Image Super-Resolution: Methods and Results&lt;/em&gt;,” ICCVW-2019&lt;/p&gt;
-
-&lt;h2 id=&quot;summary&quot;&gt;Summary&lt;/h2&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th&gt;Model&lt;/th&gt;
-      &lt;th&gt;Time-specific&lt;/th&gt;
-      &lt;th&gt;Extrapolation&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#ac&quot;&gt;AdaptConv&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;Yes&lt;/td&gt;
-      &lt;td&gt;No&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#asc&quot;&gt;AdaptSepConv&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt; &lt;/td&gt;
-      &lt;td&gt; &lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#dvf&quot;&gt;DeepVoxFlow&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;Yes?&lt;/td&gt;
-      &lt;td&gt; &lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#ssm&quot;&gt;SuperSloMo&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt; &lt;/td&gt;
-      &lt;td&gt; &lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#pa&quot;&gt;PhaseNet&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt; &lt;/td&gt;
-      &lt;td&gt; &lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#da&quot;&gt;DepthAware&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;No&lt;/td&gt;
-      &lt;td&gt;No&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#quad&quot;&gt;Quadratic&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;No&lt;/td&gt;
-      &lt;td&gt;No&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;</content><author><name>Yang Yang</name></author><category term="computer vision" /><summary type="html">Paper Organization Conference Arxiv Citation AdaptConv Portland SU CVPR-2017 2017-05-22 149 AdaptSepConv Portland SU ICCV-2017 2017-08-05 209 DeepVoxFlow CUHK UIUC PonyAI Google ICCV-2017 2017-08-05 279 SuperSloMo UMass NVIDIA UC-Merced CVPR-2018 2018-07-13 142 PhaseNet ETH Disney CVPR-2018 2018-04-03 47 DepthAware SJTU UC-Merced Google CVPR-2019 2019-04-01 35 Quadratic CMU SenseTime BNU UC-Merced NeurIPS-2019 2019-11-02 5 AIM2019 ICCVW-2019 ICCVW-2019 2019-11-19 22</summary></entry><entry><title type="html">Understanding and Implementing Asymmetric Numeral System (ANS)</title><link href="https://yyang768osu.github.io/posts/2020/06/asymmetric-numeral-system/" rel="alternate" type="text/html" title="Understanding and Implementing Asymmetric Numeral System (ANS)" /><published>2020-06-26T00:00:00-07:00</published><updated>2020-06-26T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2020/06/understanding-and-implementing-ans</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2020/06/asymmetric-numeral-system/">&lt;p&gt;Consider a alphabet with $N$ different symbols $\mathcal{A}=\{0, 1, \ldots, N-1\}. $Let us imagine an coding algorithm where a sequence of these symbols are coded into a sequence of bits, represented by an integer $s$, from which we can decode each symbol sequentially by breaking down $s$ into one symbol $x$ and another integer $s’$ capturing the remaining information. In such case, the encoding and decoding operation can be represented by the following &lt;code class=&quot;highlighter-rouge&quot;&gt;push&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;pop&lt;/code&gt; operation:&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="https://yyang768osu.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://yyang768osu.github.io/" rel="alternate" type="text/html" /><updated>2020-07-03T15:19:44-07:00</updated><id>https://yyang768osu.github.io/</id><title type="html">Yang Yang</title><subtitle>Engineer at Qualcomm</subtitle><author><name>Yang Yang</name></author><entry><title type="html">Understanding and Implementing Asymmetric Numeral System (ANS)</title><link href="https://yyang768osu.github.io/posts/2020/06/asymmetric-numeral-system/" rel="alternate" type="text/html" title="Understanding and Implementing Asymmetric Numeral System (ANS)" /><published>2020-06-26T00:00:00-07:00</published><updated>2020-06-26T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2020/06/understanding-and-implementing-ans</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2020/06/asymmetric-numeral-system/">&lt;p&gt;Consider a alphabet with $N$ different symbols $\mathcal{A}=\{0, 1, \ldots, N-1\}. $Let us imagine an coding algorithm where a sequence of these symbols are coded into a sequence of bits, represented by an integer $s$, from which we can decode each symbol sequentially by breaking down $s$ into one symbol $x$ and another integer $s’$ capturing the remaining information. In such case, the encoding and decoding operation can be represented by the following &lt;code class=&quot;highlighter-rouge&quot;&gt;push&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;pop&lt;/code&gt; operation:&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{align*}
@@ -949,646 +594,7 @@ e(s', x) \geq 2^{r_s -r_t}.
             &lt;span class=&quot;n&quot;&gt;next_bit_index&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
         &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
             &lt;span class=&quot;n&quot;&gt;z_gap&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Yang Yang</name></author><category term="compression" /><summary type="html">Arithmetic Encoder (infinite precision)</summary></entry><entry><title type="html">Variable Bitrate Method for End-to-End Lossy Compression</title><link href="https://yyang768osu.github.io/posts/2020/06/variable-bitrate/" rel="alternate" type="text/html" title="Variable Bitrate Method for End-to-End Lossy Compression" /><published>2020-06-23T00:00:00-07:00</published><updated>2020-06-23T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2020/06/variable-bit-rate-end-to-end-lossy-compression</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2020/06/variable-bitrate/">&lt;table id=&quot;summary&quot;&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th&gt;Paper&lt;/th&gt;
-      &lt;th&gt;Organization&lt;/th&gt;
-      &lt;th&gt;Conference&lt;/th&gt;
-      &lt;th&gt;Arxiv&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#vbr&quot;&gt;VariableBitrateRNN&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;Google&lt;/td&gt;
-      &lt;td&gt;ICLR-2016&lt;/td&gt;
-      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/1511.06085&quot;&gt;2016-05-01&lt;/a&gt;&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#psa&quot;&gt;PrimingSpatialAdapt&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;Google&lt;/td&gt;
-      &lt;td&gt;CVPR-2018&lt;/td&gt;
-      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/1703.10114&quot;&gt;2017-05-29&lt;/a&gt;&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#cae&quot;&gt;ConditionlAE&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;Samsung&lt;/td&gt;
-      &lt;td&gt;ICCV-2019&lt;/td&gt;
-      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/1909.04802&quot;&gt;2019-09-11&lt;/a&gt;&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#ca&quot;&gt;ContentAdapt&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;Huawei&lt;/td&gt;
-      &lt;td&gt;CVPRW-2020&lt;/td&gt;
-      &lt;td&gt;&lt;a href=&quot;https://bit.ly/3etV3L0&quot;&gt;non-arxiv&lt;/a&gt;&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#dz&quot;&gt;DeadZone&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;Fujitsu&lt;/td&gt;
-      &lt;td&gt;CVPRW-2020&lt;/td&gt;
-      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/2004.05855&quot;&gt;2020-04-26&lt;/a&gt;&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#qsf&quot;&gt;QualityScalingFactor&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;NanjingU&lt;/td&gt;
-      &lt;td&gt;ICASSP-2020&lt;/td&gt;
-      &lt;td&gt;&lt;a href=&quot;https://bit.ly/2Z19UpD&quot;&gt;non-arxiv&lt;/a&gt;&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#bac&quot;&gt;BayesianAC&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;UCI&lt;/td&gt;
-      &lt;td&gt;ICML-2020&lt;/td&gt;
-      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/2002.08158&quot;&gt;2020-02-18&lt;/a&gt;&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#yoto&quot;&gt;YOTO&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;Google Brain&lt;/td&gt;
-      &lt;td&gt;ICLR-2020&lt;/td&gt;
-      &lt;td&gt;&lt;a href=&quot;https://openreview.net/forum?id=HyxY6JHKwr&quot;&gt;non-arxiv&lt;/a&gt;&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;h2 id=&quot;vbr&quot;&gt;VariableBitrateRNN&lt;/h2&gt;
-&lt;p&gt;George Toderici, Sean M. O’Malley, Sung Jin Hwang, Damien Vincent, David Minnen, Shumeet Baluja, Michele Covell, Rahul Sukthankar, “&lt;em&gt;Variable Rate Image Compression with Recurrent Neural Networks&lt;/em&gt;, “ ICLR-2016&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;psa&quot;&gt;PrimingSpatialAdapt&lt;/h2&gt;
-&lt;p&gt;Nick Johnston, Damien Vincent, David Minnen, Michele Covell, Saurabh Singh, Troy Chinen, Sung Jin Hwang, Joel Shor, George Toderici, “&lt;em&gt;Improved Lossy Image Compression with Priming and Spatially Adaptive Bit Rates for Recurrent Networks,&lt;/em&gt;”, CVPR-2018&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;cae&quot;&gt;ConditionalAE&lt;/h2&gt;
-&lt;p&gt;Yoojin Choi, Mostafa El-Khamy, Jungwon Lee, “&lt;em&gt;Variable Rate Deep Image Compression With a Conditional Autoencoder&lt;/em&gt;,” ICCV-2019&lt;/p&gt;
-
-&lt;p&gt;Introduce two rate control parameters&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;Lagrangian multiplier $\lambda$ (coarse rate adaptation)
-    &lt;ul&gt;
-      &lt;li&gt;$\lambda$ is chosen from a predefined &lt;em&gt;finite set&lt;/em&gt; of values.&lt;/li&gt;
-      &lt;li&gt;It is injected to the network through conditional convolution block (for both encoder, decoder and prior model). During training $\lambda$ is randomly sampled&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Quantization bin size $\Delta$ (fine rate adaptation)
-    &lt;ul&gt;
-      &lt;li&gt;Only the quantizer and prior probability evaluation take $\Delta$ as input&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Remarks&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Main idea is to solve multiple objectives using one conditional network, instead of solving them individually using separate non-conditional networks.&lt;/li&gt;
-  &lt;li&gt;Since both $\lambda$ and $\Delta$ are parameters to the decoding process, they need to be included as part of the bitstream and decoded first.&lt;/li&gt;
-  &lt;li&gt;Universal quantization with dithering is applied instead of adding uniform noise to approximate quantization noise during training, and all latent are dithered with a single uniform random variable. Authors reported better performance with this dithering based universal quantization, but no intuition/reasoning is provided.&lt;/li&gt;
-  &lt;li&gt;Single model performs on par with JointARHP and ContextAdapt in the &lt;a href=&quot;/posts/2020/06/e2e_lossy_image_compression/&quot;&gt;End-to-End image compression post&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/variable_bitrate/ConditionalAE_conditionalconvolution.png&quot; alt=&quot;Conditional convolution&quot; /&gt;&lt;/p&gt;
-&lt;p&gt;$\lambda$-dependent channel-wise scaling and offset&lt;/p&gt;
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/variable_bitrate/ConditionalAE_plot.png&quot; alt=&quot;Performance&quot; /&gt;&lt;/p&gt;
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/variable_bitrate/ConditionalAE_architecture.png&quot; alt=&quot;Network architecture&quot; /&gt;&lt;/p&gt;
-&lt;p&gt;CConv stands for conditional convolution. Context model is used for both prior and hyper-prior.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;ca&quot;&gt;ContentAdapt&lt;/h2&gt;
-&lt;p&gt;Tiansheng Guo, Jing Wang, Ze Cui, Yihui Feng, Yunying Ge, Bo Bai, “&lt;em&gt;Variable Rate Image Compression with Content Adaptive Optimization&lt;/em&gt;,” CVPRW-2020&lt;/p&gt;
-
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/variable_bitrate/ContentAdapt.png&quot; alt=&quot;Network architecture&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;dz&quot;&gt;DeadZone&lt;/h2&gt;
-&lt;p&gt;Jing Zhou, Akira Nakagawa, Keizo Kato, Sihan Wen, Kimihiko Kazui, Zhiming Tan, “&lt;em&gt;Variable Rate Image Compression Method with Dead-zone Quantizer&lt;/em&gt;,” CVPRW-2020&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;qsf&quot;&gt;QualityScalingFactor&lt;/h2&gt;
-&lt;p&gt;Tong Chen, Zhan Ma, “&lt;em&gt;Variable Bitrate Image Compression with Quality Scaling Factors&lt;/em&gt;”, ICASSP-2020&lt;/p&gt;
-
-&lt;p&gt;Motivating experiment/observation&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;First train a simple VAE network similiar to at a high bitrate, and retrained this network to get multiple models at different but lower bitrates.&lt;/li&gt;
-  &lt;li&gt;An interesting observation is that similar but scaled patterns are retained for feature maps at a specific channel across a variety of bit rates, leading to a reasonable conclusion that we could apply the scaling after the identical convolutions without resorting to the complete retraining (see right figure below).&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/variable_bitrate/QualityScalingFactor.png&quot; alt=&quot;Quality Scaling Factor&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Idea/Remarks&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Finetune per-channel quantization steps for each R-D point. Encoder, decoder, prior model are fixed.&lt;/li&gt;
-  &lt;li&gt;Per-channel quantization steps need to be transmitted to the decoder as well (not mentioned in the paper).&lt;/li&gt;
-  &lt;li&gt;This scheme is similar to setting $\Delta$ in &lt;a href=&quot;#cae&quot;&gt;ConditionalAE&lt;/a&gt;.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;bac&quot;&gt;BayesianAC&lt;/h2&gt;
-&lt;p&gt;Yibo Yang, Robert Bamler, Stephan Mandt, “&lt;em&gt;Variable-Bitrate Neural Compression via Bayesian Arithmetic Coding&lt;/em&gt;,” ICML-2020&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;yoto&quot;&gt;YOTO&lt;/h2&gt;
-&lt;p&gt;Alexey Dosovitskiy, Josip Djolonga, “&lt;em&gt;You Only Train Once: Loss-Conditional Training of Deep Networks&lt;/em&gt;,” ICLR-2020&lt;/p&gt;
-
-&lt;p&gt;Similar idea as &lt;a href=&quot;#cae&quot;&gt;ConditionalAE&lt;/a&gt; – $\lambda$ serves as conditional input to the convolutional layers (channel-wise scale and offset, obtained using a MLP). $\lambda$ is sampled from a log-normal distribution (not sure why).&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;</content><author><name>Yang Yang</name></author><category term="compression" /><summary type="html">Paper Organization Conference Arxiv VariableBitrateRNN Google ICLR-2016 2016-05-01 PrimingSpatialAdapt Google CVPR-2018 2017-05-29 ConditionlAE Samsung ICCV-2019 2019-09-11 ContentAdapt Huawei CVPRW-2020 non-arxiv DeadZone Fujitsu CVPRW-2020 2020-04-26 QualityScalingFactor NanjingU ICASSP-2020 non-arxiv BayesianAC UCI ICML-2020 2020-02-18 YOTO Google Brain ICLR-2020 non-arxiv</summary></entry><entry><title type="html">End-to-End Lossy Image Compression</title><link href="https://yyang768osu.github.io/posts/2020/06/e2e_lossy_image_compression/" rel="alternate" type="text/html" title="End-to-End Lossy Image Compression" /><published>2020-06-18T00:00:00-07:00</published><updated>2020-06-18T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2020/06/notes-on-end-to-end-lossy-image-compression</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2020/06/e2e_lossy_image_compression/">&lt;table id=&quot;summary&quot;&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th&gt;Paper&lt;/th&gt;
-      &lt;th&gt;Organization&lt;/th&gt;
-      &lt;th&gt;Conference&lt;/th&gt;
-      &lt;th&gt;Arxiv&lt;/th&gt;
-      &lt;th&gt;Citation&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#e2e&quot;&gt;End2End&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;NYU&lt;/td&gt;
-      &lt;td&gt;ICLR-2017&lt;/td&gt;
-      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/1611.01704&quot;&gt;2017-03-03&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;336&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#cpm&quot;&gt;CondProbMod&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;ETH&lt;/td&gt;
-      &lt;td&gt;CVPR-2018&lt;/td&gt;
-      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/1801.04260&quot;&gt;2019-06-04&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;128&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#hp&quot;&gt;Hyperprior&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;google&lt;/td&gt;
-      &lt;td&gt;ICLR-2018&lt;/td&gt;
-      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/1802.01436&quot;&gt;2018-05-01&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;181&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#ms&quot;&gt;MultiScale&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;UTokyo&lt;/td&gt;
-      &lt;td&gt;ACCV-2018&lt;/td&gt;
-      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/1805.06386&quot;&gt;2018-05-16&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;9&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#jarhp&quot;&gt;JointARHP&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;google&lt;/td&gt;
-      &lt;td&gt;NeurIPS-2018&lt;/td&gt;
-      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/1809.02736&quot;&gt;2018-09-08&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;104&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#nlaic&quot;&gt;NLAIC&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;NanjingU&amp;amp;NYU&lt;/td&gt;
-      &lt;td&gt;-&lt;/td&gt;
-      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/1904.09757&quot;&gt;2019-04-22&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;11&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#ca&quot;&gt;ContentAdapt&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;Disney&lt;/td&gt;
-      &lt;td&gt;CVPRW-2019&lt;/td&gt;
-      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/1906.01223&quot;&gt;2019-06-05&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#ce&quot;&gt;ComputeEff&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;google&lt;/td&gt;
-      &lt;td&gt;-&lt;/td&gt;
-      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/1912.08771&quot;&gt;2019-12-18&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;1&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#ilvm&quot;&gt;IntegerLVM&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;google&lt;/td&gt;
-      &lt;td&gt;ICLR-2019&lt;/td&gt;
-      &lt;td&gt;&lt;a href=&quot;https://bit.ly/30Q4fW2&quot;&gt;non-arxiv&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;2&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#ctxa&quot;&gt;ContextAdapt&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;ETRI&lt;/td&gt;
-      &lt;td&gt;ICLR-2019&lt;/td&gt;
-      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/1809.10452&quot;&gt;2019-05-06&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;43&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#bm&quot;&gt;Benchmark&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;PKU&lt;/td&gt;
-      &lt;td&gt;-&lt;/td&gt;
-      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/2002.03711&quot;&gt;2020-02-19&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;1&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#att&quot;&gt;Attention&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;Waseda&lt;/td&gt;
-      &lt;td&gt;CVPR-2020&lt;/td&gt;
-      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/2001.01568&quot;&gt;2020-03-30&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;2&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#car&quot;&gt;ChannelAR&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;google&lt;/td&gt;
-      &lt;td&gt;ICIP-2020&lt;/td&gt;
-      &lt;td&gt;&lt;a href=&quot;https://bit.ly/2zOei2Q&quot;&gt;non-arxiv&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;a href=&quot;#ii&quot;&gt;ImproveInference&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;UCI&lt;/td&gt;
-      &lt;td&gt;-&lt;/td&gt;
-      &lt;td&gt;&lt;a href=&quot;https://arxiv.org/abs/2006.04240&quot;&gt;2020-06-09&lt;/a&gt;&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;h2 id=&quot;e2e&quot;&gt;End2End&lt;/h2&gt;
-&lt;p&gt;Johannes Ballé, Valero Laparra, Eero P. Simoncelli, “&lt;em&gt;End-to-end Optimized Image Compression&lt;/em&gt;,” ICLR-2018&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;In traditional &lt;em&gt;transform coding&lt;/em&gt;, transform, quantizer, and entropy code are separately optimized.&lt;/li&gt;
-  &lt;li&gt;This work propose a framework for end-to-end optimization of an image compression model with
-    &lt;ol&gt;
-      &lt;li&gt;GDN (Generalized divisive normalization) as nonlinear transform which is proven effective in Gaussianizing image density&lt;/li&gt;
-      &lt;li&gt;Uniform scalar quantization, modeled by adding uniform noise for gradient computation&lt;/li&gt;
-      &lt;li&gt;Continous prior distribution
-        &lt;ul&gt;
-          &lt;li&gt;With a continous latent pdf of $p_y$, the quantized latent pmf can be modelled with $p_y\circledast\text{uniform-pdf}$ evaluated at quantized points&lt;/li&gt;
-          &lt;li&gt;$p_y\circledast\text{uniform-pdf}(y_i) = \text{CDF}_y(y_i+1/2) - \text{CDF}_y(y_i-1/2)$.&lt;/li&gt;
-          &lt;li&gt;In this work, $p_y$ is modeled by a piecewise linear function (linear spline)&lt;/li&gt;
-          &lt;li&gt;Entropy coding is achieved using CABAC with a tree context and exponential Golomb code (for value outside of the max/min range)&lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-    &lt;/ol&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Connection to variational autoencoder (denote $p$ as the generative distribution, $q$ as the variational distribution)
-&lt;script type=&quot;math/tex&quot;&gt;% &lt;![CDATA[
-\begin{align*}
-D_\text{KL}(q_{y|x}||p_{y|x}) =&amp; \mathbb{E}_{y\sim q}\log q(y|x) - \mathbb{E}_{y\sim q}\log p(y|x)\notag\\
-=&amp;\mathbb{E}_{y\sim q}\log q(y|x) - \mathbb{E}_{y\sim q}\log \frac{p(y)p(x|y)}{p(x)}\notag\\
-=&amp;\underbrace{\mathbb{E}_{y\sim q}\log q(y|x)}_{\text{constant}} - \underbrace{\mathbb{E}_{y\sim q}\log p(y)}_{\text{rate term}} - \underbrace{\mathbb{E}_{y\sim q}\log p(x|y)}_{\text{distortion term}} + \underbrace{\log p(x)}_{\text{constant}}.
-\end{align*} %]]&gt;&lt;/script&gt;&lt;/li&gt;
-  &lt;li&gt;Provisional study shows that GDN/IGDN can be replaced by ReLU at the cost of substantially larger number of parameters/layers&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;cpm&quot;&gt;CondProbMod&lt;/h2&gt;
-&lt;p&gt;Fabian Mentzer, Eirikur Agustsson, Michael Tschannen, Radu Timofte, Luc Van Gool, “&lt;em&gt;Conditional Probability Models for Deep Image Compression&lt;/em&gt;,” CVPR-2018&lt;/p&gt;
-
-&lt;h3 id=&quot;quantization-method&quot;&gt;Quantization method&lt;/h3&gt;
-&lt;p&gt;For a set of centers $\{c_1, c_2, \ldots, c_L\}$
-&lt;script type=&quot;math/tex&quot;&gt;\begin{align*}
-\text{forward: }\hat{z_i} \triangleq Q(z_i) \triangleq \arg\min_j ||z_i-c_j||\text{ }\text{ }\text{ }
-\text{backward: }\tilde{z_i} \triangleq \sum_{j=1}^L\frac{\exp(\sigma||z_i - c_j||)}{\sum_{l=1}^L \exp(\sigma ||z_i-c_l||)}c_j
-\end{align*}&lt;/script&gt;&lt;/p&gt;
-&lt;h3 id=&quot;entropy-model&quot;&gt;Entropy model&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;3D extension to PixelCNN with fully factorized latents.&lt;/li&gt;
-  &lt;li&gt;They find it beneficial to learn an importance map to help the CNN attend to different re- gions of the image with different amounts of bits. While&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;training-methodology&quot;&gt;Training methodology&lt;/h3&gt;
-&lt;p&gt;Iterate between the following two steps&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;Take a gradient step for encoder, decoder, and quantizer w.r.t. loss of $\text{distortion} + \lambda\times\text{rate-on-masked-latent}$&lt;/li&gt;
-  &lt;li&gt;Take a gradient step for entropy model w.r.t. loss of $\text{distortion} + \lambda\times\text{rate-on-all-latent}$
-    &lt;ul&gt;
-      &lt;li&gt;Use hinge loss on rate term&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/CondProbMod.png&quot; alt=&quot;Conditional Probablity Model for Deep Image Compression&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;hp&quot;&gt;Hyperprior&lt;/h2&gt;
-&lt;p&gt;Johannes Ballé, David Minnen, Saurabh Singh, Sung Jin Hwang, Nick Johnston, “&lt;em&gt;Variational Image Compression With a Scale Hyperprior,&lt;/em&gt;” ICLR-2018&lt;/p&gt;
-
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/Hyperprior.png&quot; alt=&quot;HyperPrior&quot; /&gt;&lt;/p&gt;
-&lt;p&gt;($N=128, M=192$ for 5 lower values; $N=192, M=320$ for 3 higher values)&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Two interpretations of hyperprior/hyper-latent
-    &lt;ul&gt;
-      &lt;li&gt;hyper-latent can be viewed as side information that signal modifications to the entropy model so that it fits better to a specific data sample instead of using a fixed entropy model that is fit to an ensemble of data. The amount of side information can be small compared to the reduction in codelength achieved by matching entropy model more closely to a particular image.&lt;/li&gt;
-      &lt;li&gt;hyper-prior can be viewed as hierarchical latent variable model where the distribution of latent $\hat{y}$ is model by another latent variable model
-        &lt;ul&gt;
-          &lt;li&gt;Small caveat: for the proposed scheme to truly be a hierarchical latent variable model, the input to the hyper-encoder should be $\hat{y}$, instead of $y$.
-  $ &lt;a href=&quot;#ii&quot;&gt;ImprovedInference&lt;/a&gt; mentioned that changing the input to the hyper encoder from $y$ to $\hat{y}$ hurt performance (more than what bits-back can save for lossless compression of $\hat{y}$).&lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Probablistic modelling of latent $y$ and hyper-latent $z$
-    &lt;ul&gt;
-      &lt;li&gt;Distribution of latent $y$ is modelled by a Gaussian distribution, whose standard deviation (subsequently referred to as &lt;code class=&quot;highlighter-rouge&quot;&gt;scale&lt;/code&gt;) is given as the output of the hyper-decoder. Each element (across spatial and channel dimension) could have a different scale. The pmf of the quantized latent $\hat{y}$ is then &lt;script type=&quot;math/tex&quot;&gt;\text{CDF}_{\text{Gaussian}}\left(\frac{\hat{y}+1/2}{\text{scale}}\right) - \text{CDF}_{\text{Gaussian}}\left(\frac{\hat{y}-1/2}{\text{scale}}\right)&lt;/script&gt;.
-        &lt;ul&gt;
-          &lt;li&gt;Inactive latent will be $0$ accompanied by a super small scale (so that the pmf of $0$ is close to $1.0$)&lt;/li&gt;
-          &lt;li&gt;Marginalized latent distribution is a Gaussian scale mixture (GSM)&lt;/li&gt;
-          &lt;li&gt;Compared with &lt;a href=&quot;#e2e&quot;&gt;End2End&lt;/a&gt;, the entropy model is image-dependent and spatial adaptive&lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-      &lt;li&gt;Distribution of hyper-latent $z$ is modelled by a non-parametric, fully factorized, univariant density model. The density is defined by its CDF $f_K\circ f_{K-1} \circ \ldots \circ f_1$ with $f_{K}(x)=\text{sigmoid}(H_Kx+b_K)$ and $f_k(x)=H_kx+b_k + a_k\odot \text{tanh}(H_k x + b_k)$. $\{(H_k, b_k)\}_k$ are enforced to be positive using &lt;code class=&quot;highlighter-rouge&quot;&gt;softplus&lt;/code&gt; and $\{a_k\}_k$ are enforced to be larger than $-1$ using &lt;code class=&quot;highlighter-rouge&quot;&gt;tanh&lt;/code&gt; (to make sure that $c$ is a monotonic increasing function)&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;ms&quot;&gt;MultiScale&lt;/h2&gt;
-&lt;p&gt;Ken Nakanishi, Shin-ichi Maeda, Takeru Miyato, Daisuke Okanohara, “&lt;em&gt;Neural Multi-scale Image Compression&lt;/em&gt;,” ACCV-2018&lt;/p&gt;
-
-&lt;p&gt;Key ideas:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Multi-scale lossy autoencoder
-    &lt;ul&gt;
-      &lt;li&gt;Latent is formed by quantizing feature maps at different resolution/scale&lt;/li&gt;
-      &lt;li&gt;Densest latent is factored out first; coarest scale is factored out the last&lt;/li&gt;
-      &lt;li&gt;Multi-scale latent are unpooled to have the same resolution as the densest feature map and then concatenated&lt;/li&gt;
-      &lt;li&gt;space-to-depth and depth-to-space are used instead of strided convolution and transposed convolution&lt;/li&gt;
-      &lt;li&gt;Quantization scheme is the same as that in &lt;a href=&quot;#cpm&quot;&gt;CondProbMod&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Parallel multi-scale entropy model
-    &lt;ul&gt;
-      &lt;li&gt;Block based auto-regressive entropy model, where each block is defined as spatially subsampled latent (last figure below). The rationale is that spatial correlation between pixels decreases as the pixels are distant from each other.&lt;/li&gt;
-      &lt;li&gt;This can be viewed as channel autoregressive prior model if there is a space-to-depth reshaping upfront.&lt;/li&gt;
-      &lt;li&gt;Entropy model is separately optimized after training the auto-encoder (due to memory and computation constraint of training)&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/MultiScale.png&quot; alt=&quot;MultiScale&quot; /&gt;&lt;/p&gt;
-
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/MultiScale_network.png&quot; alt=&quot;MultiScale network architecture&quot; /&gt;&lt;/p&gt;
-
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/MultiScale_prior.png&quot; alt=&quot;MultiScale prior architecture&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;jarhp&quot;&gt;JointARHP&lt;/h2&gt;
-&lt;p&gt;David Minnen, Johannes Ballé, George Toderici, “&lt;em&gt;Joint Autoregressive and Hierarchical Priors for Learned Image Compression&lt;/em&gt;,” NeurIPS-2018&lt;/p&gt;
-
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/JointARHP.png&quot; alt=&quot;Joint AutoRegressive and Hyperprior&quot; /&gt;&lt;/p&gt;
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/JointARHP_network.png&quot; alt=&quot;Network architecture of Joint AutoRegressive and Hyperprior&quot; /&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;First learning based approach to outperform BPG on both PSNR and MS-SSIM.
-    &lt;ul&gt;
-      &lt;li&gt;Even the model trained with MSE outperform BPG on MS-SSIM&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Extend the GSM(Gaussian scale mixture)-based entropy model to GMM(Gaussian mixture model)-based one, by having hyper-decoder generate both scale and mean. This change itself leads to performance better than BPG.
-    &lt;ul&gt;
-      &lt;li&gt;Exchanging Gaussian distribution to Logistic distribution has almost no effect&lt;/li&gt;
-      &lt;li&gt;Exchanging Gaussian distribution to Laplacian decreases performance more substantially&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Empirically, $\hat{z}$ comprises only a very small percentage of the total file size, so AR model is not applied to hyper latent.&lt;/li&gt;
-  &lt;li&gt;&lt;em&gt;Entropy Parameter&lt;/em&gt; network uses 1x1 convolution to avoid information leakage (prior of a latent depending on undecoded ones)&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/JointARHP_latent.png&quot; alt=&quot;Latent analysis&quot; /&gt;&lt;/p&gt;
-&lt;p&gt;Latents for the channel with the higest entropy&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;nlaic&quot;&gt;NLAIC&lt;/h2&gt;
-&lt;p&gt;Haojie Liu, Tong Chen, Peiyao Guo, Qiu Shen, Xun Cao, Yao Wang, Zhan Ma, “&lt;em&gt;Non-local Attention Optimized Deep Image Compression&lt;/em&gt;, “ 2019-04-22 Arxiv&lt;/p&gt;
-
-&lt;p&gt;Two contributions (on top of &lt;a href=&quot;#jarhp&quot;&gt;JointARHP&lt;/a&gt;):&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Introduce a non-local attention module for analysis and synthesis transform&lt;/li&gt;
-  &lt;li&gt;Adopt 3D masked convolution to exploit correlation across channels (&lt;a href=&quot;#jarhp&quot;&gt;JointARHP&lt;/a&gt; used 2D masked convolution)
-    &lt;ul&gt;
-      &lt;li&gt;This part is the same as &lt;a href=&quot;#cpm&quot;&gt;CondProbMod&lt;/a&gt; though&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;It is observed that the percentage of bits spent on hyper-latent $\hat{z}$ decreases as overall rate increases.&lt;/p&gt;
-
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/NLAIC.png&quot; alt=&quot;NLAIC&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;ca&quot;&gt;ContentAdapt&lt;/h2&gt;
-&lt;p&gt;Joaquim Campos, Simon Meierhans, Abdelaziz Djelouah, Christopher Schroers, “&lt;em&gt;Content Adaptive Optimization for Neural Image Compression&lt;/em&gt;,” CVPRW-2019&lt;/p&gt;
-
-&lt;p&gt;Key idea&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Optimize the latent representation &lt;em&gt;individually&lt;/em&gt; on a per image basis, during encoding process
-    &lt;ul&gt;
-      &lt;li&gt;The key benefit of the proposed solution lies in the ability to achieve an improved compression performance while the neural compression network and the predictive model are kept fixed and the computing time on the decoder side remains unchanged. This is particularly beneficial in situations such as streaming, where the encoding complexity is not the limiting factor when compared to the transmission and decoding.&lt;/li&gt;
-      &lt;li&gt;Optimize for rate distortion metric on a single image over the latent&lt;/li&gt;
-      &lt;li&gt;Results are obtained with 1500 training steps, which takes 5 mins per HD image on a Titan Xp GPU&lt;/li&gt;
-      &lt;li&gt;About 0.5dB improvement on Tecnick dataset at the same bitrate&lt;/li&gt;
-      &lt;li&gt;Experiments are based on &lt;a href=&quot;#jarhp&quot;&gt;JointARHP&lt;/a&gt; model and &lt;a href=&quot;#e2e&quot;&gt;End2End&lt;/a&gt; model&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Compare with two other adaptation method that requires model update (1) Fine-tune the entire model (2) Fine-tune only the entropy model
-    &lt;ul&gt;
-      &lt;li&gt;Fine-tune on entropy model only leads to small gains&lt;/li&gt;
-      &lt;li&gt;Per image latent adaptation sometimes can be as competitive as model fine-tuned on specific sequences.&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Note that &lt;em&gt;content adaptive&lt;/em&gt; is different from &lt;em&gt;context adaptive&lt;/em&gt;, the latter describes an entropy model where the distribution of a latent depends on some previously decoded latents (i.e., auto-regressive entropy model).&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;ce&quot;&gt;ComputeEff&lt;/h2&gt;
-&lt;p&gt;Nick Johnston, Elad Eban, Ariel Gordon, Johannes Ballé, “&lt;em&gt;Computationally Efficient Neural Image Compression&lt;/em&gt;,” 2019-12-18 Arxiv&lt;/p&gt;
-
-&lt;p&gt;Two contributions:&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;Simplify generalized divisive normalization (GDN) module
-    &lt;ul&gt;
-      &lt;li&gt;GDN in full flexible form
-&lt;script type=&quot;math/tex&quot;&gt;\begin{align*}
-z_i  = x_i/{\big (}\beta_i + \sum_j \gamma_{ij}|x_j|^{\alpha_{ij}}{\big )}^{\epsilon_i}
-\end{align*}&lt;/script&gt;&lt;/li&gt;
-      &lt;li&gt;GDN used in prior image compression works ($\alpha_{ij}=2$ and $\epsilon_i=0.5$)&lt;/li&gt;
-      &lt;li&gt;More implementation friendly GDN with no performance loss ($\alpha_{ij}=1$ and $\epsilon_i=1$)&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Apply automatic network optimization techniques to reduce the computation complexity of the mean-scale architecture (&lt;a href=&quot;#hp&quot;&gt;Hyperprior&lt;/a&gt; + mean estimate from hyper-decoder)&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;ilvm&quot;&gt;IntegerLVM&lt;/h2&gt;
-&lt;p&gt;Johannes Ballé, Nick Johnston, David Minnen, “&lt;em&gt;Integer Networks for Data Compression with Latent-Variable Models&lt;/em&gt;,” ICLR-2019&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Range coding can fail catastrophically if the computation of prior differs slightly from between the transmitter and receiver, which is common scenario when floating point math is used and sender and receiver operates on different hardware or software platform, as &lt;em&gt;numerical round-off&lt;/em&gt; is platform dependent.&lt;/li&gt;
-  &lt;li&gt;This work proposes to use integer arithmetic in prior modeling NNs by restricting all data types to be integral and all operations implementated using either basic arithmetic or lookup tables, in order to prevent computational non-determinism in computation of prior.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;The operation at a single layer is abstracted as 
-&lt;script type=&quot;math/tex&quot;&gt;\begin{align*}
-v = (Hx + b)\oslash c\text{ and }
-w = g(v)
-\end{align*}&lt;/script&gt;
-with $b, v, c$ share the same bitwidth (bitwidth of the accumulator) and $H, w$ share the same bitwidth. Some details on how these integer numbers are parametrized:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-\begin{align*}
-&amp;H = \left[
-\begin{array}{c}
-Q(h_1'\times s(h_1'))\\
-\cdots\\
-Q(h_N'\times s(h_N'))\\
-\end{array}
-\right],
-s(h') = \max\left\{0, \min\left\{\frac{2^{K-1}-1}{\max h_i}, \frac{-2^{K-1}}{\min h_i}, 1/\epsilon\right\}\right\}\\
-&amp;b = Q(2^K b'), c=Q(2^K r(c'))
-\end{align*} %]]&gt;&lt;/script&gt;
-
-&lt;p&gt;For backward propagation, it is proposed to use straight through gradient for quantization operation $Q(\cdot)$, gradient of division for rounding division, and gradient of a scaled accumulative of a generalized Gaussian for ReLU.&lt;/p&gt;
-
-&lt;p&gt;In NN based prior modeling, NN generates parameters of a certain distribution family. In case of &lt;a href=&quot;#hp&quot;&gt;Hyperprior&lt;/a&gt;, the distribution is zero-mean Gaussian and the parameter is the scale of the Gaussian. Here one only need to make sure the parameter generation part is deterministic. If the parametrized pmf itself cannot be computed deterministically (as is the case for Gaussian), one can precompute all possible values and express it as a look up table over discrete latent values and the discrete parameters.&lt;/p&gt;
-
-&lt;p&gt;For the scale of Gaussian, the discretization is chosen to be logarithmic, which minimizes redundancy for a given number of quantiazation levels.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;ctxa&quot;&gt;ContextAdapt&lt;/h2&gt;
-&lt;p&gt;Jooyoung Lee, Seunghyun Cho, Seung-Kwon Beack, “&lt;em&gt;Context-adaptive Entropy Model for End-to-end Optimized Image Compression&lt;/em&gt;,” ICLR-2019&lt;/p&gt;
-
-&lt;p&gt;Technical wise this paper is almost identical to &lt;a href=&quot;#jarhp&quot;&gt;JointARHP&lt;/a&gt; work. One difference is that latent $y$ is split into two parts, one modelled with proposed joint auto-regressive and hyper-prior model, the other with a simple entropy model. Please refer to &lt;a href=&quot;https://openreview.net/forum?id=HyxKIiAqYQ&quot;&gt;open review&lt;/a&gt; for more insight.&lt;/p&gt;
-
-&lt;p&gt;Hyper-prior is referred to as &lt;em&gt;bit-consuming context&lt;/em&gt; and auto-regressive part is referred to as &lt;em&gt;bit-free context&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;bm&quot;&gt;Benchmark&lt;/h2&gt;
-&lt;p&gt;Yueyu Hu, Wenhan Yang, Zhan Ma, Jiaying Liu, “&lt;em&gt;Learning End-to-End Lossy Image Compression: A Benchmark&lt;/em&gt;,” 2020-02-19 Arxiv&lt;/p&gt;
-
-&lt;p&gt;Key contributions&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Provide a comprehensive overview of existing end-to-end learned image compression methods (up to &lt;a href=&quot;#ca&quot;&gt;ContextAdapt&lt;/a&gt;)
-    &lt;ul&gt;
-      &lt;li&gt;Summary of test results on Kodak, Tecnick, and CLIC across many different solutions&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Propose a method with one more hierarchy of latent on top of the hyperprior architecture and aggregate latents from all levels as input to the synthesis network&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/Benchmark.png&quot; alt=&quot;Benchmark&quot; /&gt;&lt;/p&gt;
-
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/Benchmark_aggregation.png&quot; alt=&quot;Benchmark Aggregation&quot; /&gt;&lt;/p&gt;
-
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/Benchmark_Kodak.png&quot; alt=&quot;Benchmark Kodak&quot; /&gt;&lt;/p&gt;
-
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/Benchmark_Tecnick.png&quot; alt=&quot;Benchmark Tecnick&quot; /&gt;&lt;/p&gt;
-
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/Benchmark_CLIC.png&quot; alt=&quot;Benchmark CLIC&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;att&quot;&gt;Attention&lt;/h2&gt;
-&lt;p&gt;Zhengxue Cheng, Heming Sun, Masaru Takeuchi, Jiro Katto, “&lt;em&gt;Learned Image Compression with Discretized Gaussian Mixture Likelihoods and Attention Modules&lt;/em&gt;,” CVPR-2020&lt;/p&gt;
-
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/Attention.png&quot; alt=&quot;Learned Image Compression with Discretized Gaussian Mixture Likelihoods and Attention Modules&quot; /&gt;&lt;/p&gt;
-&lt;p&gt;(a) &lt;a href=&quot;#e2e&quot;&gt;End2End&lt;/a&gt; (b) &lt;a href=&quot;#hp&quot;&gt;Hyperprior&lt;/a&gt; (c) &lt;a href=&quot;#jarhp&quot;&gt;JointARHP&lt;/a&gt;/&lt;a href=&quot;#ctxa&quot;&gt;ContextAdapt&lt;/a&gt; (d) &lt;a href=&quot;#att&quot;&gt;Attention&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;This paper builds on top of &lt;a href=&quot;#jarhp&quot;&gt;JointARHP&lt;/a&gt; with the following key contributions&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;Use discretized Gaussian mixture model to parametrize $p(\hat{y}|\hat{z})$
-    &lt;ul&gt;
-      &lt;li&gt;Ablation study shows no gain beyond $K=3$ ($K$ denotes the number of mixture components)&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Adopt a simplified attention module into the analysis and synthesis transform
-    &lt;ul&gt;
-      &lt;li&gt;No non-local block&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Make some architecture changes on top of &lt;a href=&quot;#jarhp&quot;&gt;JointARHP&lt;/a&gt;
-    &lt;ul&gt;
-      &lt;li&gt;Use subpixel convolution (aka &lt;code class=&quot;highlighter-rouge&quot;&gt;torch.pixelshuffle&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;depth_to_space&lt;/code&gt;) instead of transposed convolution&lt;/li&gt;
-      &lt;li&gt;Use four 3x3 convolution with residual connection as replacement of the 5x5 convolution&lt;/li&gt;
-      &lt;li&gt;Pad image height and width to a multiple of 64 using reflect padding before feeding into the learned network ($y$ is downsampled by 16, $z$ is additionally downsampled by 4)&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;It claimed to be the first work that achieves comparable performance with VVC&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;VTM 5.2 is used; RGB is first converted to 8-bit YUV444, and then fed into VTM. QP={22, 27, 32, 37, 42, 47}&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/Attention_network.png&quot; alt=&quot;Network architecture&quot; /&gt;&lt;/p&gt;
-&lt;p&gt;Detailed network structure&lt;/p&gt;
-
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/Attention_simplified_attention.png&quot; alt=&quot;Simplified attention module&quot; /&gt;&lt;/p&gt;
-&lt;p&gt;Simplified attention module (no non-local block; just multiplicative operation)&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;car&quot;&gt;ChannelAR&lt;/h2&gt;
-&lt;p&gt;David Minnen, Saurabh Singh, “&lt;em&gt;Channel-wise AutoregRessive Entropy Models for Learned Image Compression&lt;/em&gt;” ICIP-2020&lt;/p&gt;
-
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/ChannelAR.png&quot; alt=&quot;Channel-wise autoregressive entropy models for learned image compression&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Three contributions&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;Channel Conditioning (CC)
-    &lt;ul&gt;
-      &lt;li&gt;Split latent tensor along the channel dimension and condition the entropy parameters for each slice on previously decoded slices.&lt;/li&gt;
-      &lt;li&gt;In a model with $N$ slices, each slice contains $H\times W\times C/N$ values&lt;/li&gt;
-      &lt;li&gt;Increasing the number of splits from 0 to 4 yields significant gains, while moving from 5 to 10 splits yields relatively little additional savings.&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Latent Residual Prediction (LRP)
-    &lt;ul&gt;
-      &lt;li&gt;Unclear how it is done&lt;/li&gt;
-      &lt;li&gt;LRP has almost no benefit for models that do not use channel-conditioning&lt;/li&gt;
-      &lt;li&gt;Regardless of the number of CC splits, LRP slightly reduces RD performance at high bit rates. At low bit rates, the benefit of LRP increases with the number of CC splits.&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Rounding based training
-    &lt;ul&gt;
-      &lt;li&gt;The mixed approach uses the same uniform noise for learning entropy models but replaces the noisy tensor with a rounded one whenever the quantized tensor is passed to a synthesis transform.&lt;/li&gt;
-      &lt;li&gt;The benefit is minimal at higher quality levels but becomes significant at lower bit rates.&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Best model achieves an average BD rate saving of 13.9% over BPG and 6.7% over &lt;a href=&quot;#hp&quot;&gt;Hyperprior&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;ii&quot;&gt;ImproveInference&lt;/h2&gt;
-&lt;p&gt;Yibo Yang, Robert Bamler, Stephan Mandt, “&lt;em&gt;Improving Inference for Neural Image Compression&lt;/em&gt;,” 2020-06-09 Arxiv&lt;/p&gt;
-
-&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/image_compression/ImproveInference.png&quot; alt=&quot;Improve Inference&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Propose an algorithm with the following steps:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;(a) A fixed generative model (decoder) with hyper-latent, latent, and output as $z$, $y$ and $x$ respectively&lt;/li&gt;
-  &lt;li&gt;(b) Conventional amortized inference based encoding&lt;/li&gt;
-  &lt;li&gt;(d) &lt;a href=&quot;#ca&quot;&gt;Content adapative&lt;/a&gt; procedure: both latent and hyper-latent are finetuned for a specific image&lt;/li&gt;
-  &lt;li&gt;(e) Finetune $y$ with the following loss: assuming $z$ follows a Gaussian posterior (with parameter $\mu_z$ and $\sigma_z$ that are jointly finetuned) with rate of $y$ characterized by NELBO.
-    &lt;ul&gt;
-      &lt;li&gt;Can we stop here? no, because $\mu_z$ and $\sigma_z$ cannot be derived at the decoder side so NELBO cannot be fulfilled with bits-back&lt;/li&gt;
-      &lt;li&gt;$\hat{y}$ is fixed now.&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;(f) With a fixed random seed, finetune $\mu_z$ and $\sigma_z$ to minimize NELBO with a fixed $\hat{y}$. This finetuning procedure is reproducible at the decoder side so that we can get back number of bits correponds to the entropy of discrete Gaussian with parameter $\mu_z$ and $\sigma_z$.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a href=&quot;#summary&quot;&gt;go back&lt;/a&gt;&lt;/p&gt;</content><author><name>Yang Yang</name></author><category term="compression" /><summary type="html">Paper Organization Conference Arxiv Citation End2End NYU ICLR-2017 2017-03-03 336 CondProbMod ETH CVPR-2018 2019-06-04 128 Hyperprior google ICLR-2018 2018-05-01 181 MultiScale UTokyo ACCV-2018 2018-05-16 9 JointARHP google NeurIPS-2018 2018-09-08 104 NLAIC NanjingU&amp;amp;NYU - 2019-04-22 11 ContentAdapt Disney CVPRW-2019 2019-06-05 0 ComputeEff google - 2019-12-18 1 IntegerLVM google ICLR-2019 non-arxiv 2 ContextAdapt ETRI ICLR-2019 2019-05-06 43 Benchmark PKU - 2020-02-19 1 Attention Waseda CVPR-2020 2020-03-30 2 ChannelAR google ICIP-2020 non-arxiv 0 ImproveInference UCI - 2020-06-09 0</summary></entry><entry><title type="html">Notes on Optical Flow</title><link href="https://yyang768osu.github.io/posts/2020/06/optical_flow/" rel="alternate" type="text/html" title="Notes on Optical Flow" /><published>2020-06-16T00:00:00-07:00</published><updated>2020-06-16T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2020/06/notes-on-optical-flow</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2020/06/optical_flow/">&lt;ul id=&quot;markdown-toc&quot;&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Yang Yang</name></author><category term="compression" /><summary type="html">Arithmetic Encoder (infinite precision)</summary></entry><entry><title type="html">Optical Flow – An Overview</title><link href="https://yyang768osu.github.io/posts/2020/06/optical_flow/" rel="alternate" type="text/html" title="Optical Flow -- An Overview" /><published>2020-06-16T00:00:00-07:00</published><updated>2020-06-16T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2020/06/optical-flow-an-overview</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2020/06/optical_flow/">&lt;ul id=&quot;markdown-toc&quot;&gt;
   &lt;li&gt;&lt;a href=&quot;#definition-of-optical-flow&quot; id=&quot;markdown-toc-definition-of-optical-flow&quot;&gt;Definition of Optical Flow&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#useful-resources&quot; id=&quot;markdown-toc-useful-resources&quot;&gt;Useful Resources&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#traditional-approach&quot; id=&quot;markdown-toc-traditional-approach&quot;&gt;Traditional Approach&lt;/a&gt;    &lt;ul&gt;
@@ -2063,98 +1069,7 @@ E_s(i, j) = \frac{1}{4}\left[(u(i,j)-u(i+1,j))^2, (u(i,j)-u(i,j+1))^2, (v(i,j)-v
 &lt;p&gt;Key idea:&lt;/p&gt;
 &lt;ul&gt;
   &lt;li&gt;Incorporates a learnable occlusion mask that filters occluded areas immediately after feature warping without any explicit supervision.&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Yang Yang</name></author><category term="computer vision" /><summary type="html"></summary></entry><entry><title type="html">Notes on Abstract Algebra</title><link href="https://yyang768osu.github.io/posts/2019/08/abstract_algebra/" rel="alternate" type="text/html" title="Notes on Abstract Algebra" /><published>2019-08-01T00:00:00-07:00</published><updated>2019-08-01T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2019/08/notes-on-abstract-algebra</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2019/08/abstract_algebra/">&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=VdLhQs_y_E8&quot;&gt;lecture 1&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Group $(G, \bullet)$ is a set $G$ equipped with a binary operation (often called a product operation) $\bullet$ that satisfies four conditions: closure, associativity, identity and invertibility, together called group axiom. The one that further satisfies commutativity is called Abelian group. One immediate property of group is that every element’s inverse is unique.&lt;/p&gt;
-
-&lt;p&gt;One example is generalized linear group $G=GL_n(\mathbb{R})\subset M_n(\mathbb{R})$, with $\bullet$ being matrix multiplication. Note that there is no addition defined in $GL_n(\mathbb{R})$.&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
-GL_n(\mathbb{R}) = \{A_{n\times n}: \det(A)\not=0\} = \{A_{n\times n}:\text{ there is an inverse matrix }A^{-1}\}
-\end{align*}&lt;/script&gt;
-
-&lt;p&gt;To prove that it is closed under matrix multiplication, we need to show that $A\bullet B$ is invertible if $A$ and $B$ are invertible. Two proofs: (1) $A\bullet B\bullet (B^{-1}\bullet A^{-1}) = I$ (2) $\det(A\bullet B)=\det{A}\det{B}$. Since matrix multiplication is not commutative, $GL_n(\mathbb{R})$ is non-Abelian.&lt;/p&gt;
-
-&lt;p&gt;Another example is integer $\mathbb{Z}$ with $\bullet$ being integer addition. It is an Abelian group.&lt;/p&gt;
-
-&lt;p&gt;Another example is vector space $V$ with vector addition. It is also an Abelian group.&lt;/p&gt;
-
-&lt;p&gt;For any set $T$, the set of all bijections (one-to-one and onto, aka injection and surjection) also forms a group with $\bullet$ being composition of maps. This is THE most general group. ALL groups arise by putting extra conditioning on this invertible bijection.&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
-G=\left\{\text{all bijections } g:T\to T\right\} = \text{Sym}\{T\}
-\end{align*}&lt;/script&gt;
-
-&lt;p&gt;In particular, as a famous group, for a finite set $T={1,2,\ldots, n}$, we note the symmetry group of $T$, $\text{Sym}{T}$ as symmetry group $S_n$. This is a finite group of order $n!$ that contains all permutations of a set with $n$ elements, and is non-Abelian once $n\geq 3$.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=e-a8auViFM0&amp;amp;list=PLelIK3uylPMGzHBuR3hLMHrYfMqWWsmx5&amp;amp;index=2&quot;&gt;lecture 2&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Auto-morphism is same as bijection. $\text{Sym}(T)$ is also noted $\text{AA}(T)$, with $AA$ being All Auto-morphism.&lt;/p&gt;
-
-&lt;p&gt;A subgroup $H\subset G$ is a subset that is closed under $\bullet$, contains the identity, and contains the inverses. Two trivial subgroups $G$ and ${e}$.&lt;/p&gt;
-
-&lt;p&gt;$GL_n(\mathbb{R}) \subset \text{Sym}(\mathbb{R}^n)$ are bijections in $\mathbb{R}^n$ that preserve linear structure.&lt;/p&gt;
-
-&lt;p&gt;$S_n=\text{Sym}\{1,2,\ldots, n\}$ is called permutation group of size $n$. $|S_n| = n!$.&lt;/p&gt;
-
-&lt;p&gt;$S_3 = \{e, \tau, \tau’, \tau’’, \sigma, \sigma’\}$. $\tau$ is called transposition and $\sigma$ is rotation. Since $S_3$ is non-Abelian, $S_n$ for $n&amp;gt;3$ is definitely non-Abelian given $S_3$ is a subgroup of $S_n$.&lt;/p&gt;
-
-&lt;p&gt;Proposition: The subgroup of $(\mathbb{Z}, +)$ are precisely given by $(b\mathbb{Z}, +)$ where $b$ is a fixed integer.&lt;/p&gt;
-
-&lt;p&gt;For any group $G$, and any element $g\in G$, there is a natural subgroup $H=\langle g\rangle$, called cyclic subgroup, generated by $g$, consists of all product of $g$ with itself. It is the smallest subgroup containing the element $g$. $\langle g\rangle=\{e, g, g^{-1}, g^2, g^{-2}, \ldots\}$, it is certainly closed under product and has inverse. Do not necessary think that those powers are distinct!&lt;/p&gt;
-
-&lt;p&gt;If $g^m=e$ and $m$ is the smallest such power, we say $m$ is the order of $g\in G$. If no power $g^m=e$, we say that $g$ has infinite order.&lt;/p&gt;
-
-&lt;p&gt;Big theorem: In a finite group, every element has finite order, and the order divides the order of the group. In infinite group, element can either has finite or infinite order.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=mwcNETa0KFI&amp;amp;list=PLelIK3uylPMGzHBuR3hLMHrYfMqWWsmx5&amp;amp;index=3&quot;&gt;lecture 3&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Examples of groups: $GL_n(\mathbb{R})$, symmetric group on $n$ letters $S_n$, group of integer under addition.&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;All groups arise as a structure-preserving bijection of something.&lt;/li&gt;
-  &lt;li&gt;Making new groups out of old&lt;/li&gt;
-  &lt;li&gt;Subgraph structure of a group&lt;/li&gt;
-  &lt;li&gt;Cyclic subgraph&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Isomorphism&lt;/p&gt;
-
-&lt;p&gt;Consider the following groups:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;$G_1=\{1, -1, i, -i\}\subset \mathbb{C}^*\triangleq(\mathbb{C}\backslash \{0\}, \times)$.&lt;/li&gt;
-  &lt;li&gt;$G_2$: cyclic subgroup of $S_4$ (special group on four letters) generated by $\rho$, which cycles $(1,2,3,4)$ to $(2,3,4,1)$.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;$G_1$ and $G_2$ have the same multiplication table, but with different labeling.&lt;/p&gt;
-
-&lt;p&gt;Formalization&lt;/p&gt;
-
-&lt;p&gt;Isomorphism is a map $f$ between two groups which is bijective $G_1\to G_2$ such that it preserves the multiplication operations $f(x\bullet_{G_1}y) = f(x)\bullet_{G_2}f(y)$. $f$ is telling us how to relabel things.&lt;/p&gt;
-
-&lt;p&gt;Fact&lt;/p&gt;
-
-&lt;p&gt;Every two cyclic groups of order $n$ are isomorphic.&lt;/p&gt;
-
-&lt;p&gt;Definition: a cyclic group is a group generated by some element. $G_1$ and $G_2$ are isomorphic if there is an isomorphism $f: G_1\to G_2$ between them.&lt;/p&gt;
-
-&lt;p&gt;$(\mathbb{R}, +)$ and $(\mathbb{R}_{&amp;gt;0}, \times)$ are isomorphic with the isomorphic $f(x)=exp(x)$. They are non-finite and non-cyclic.&lt;/p&gt;
-
-&lt;p&gt;Example for finite groups that are not cyclic. Klein-4 group. Two ways to write it.&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;$G_1:\{e, \tau_1=((1,2)(3,4)), \tau_2=((1,3),(2,4)), \tau_1\tau_2=((1,4),(2,3))\}$.&lt;/li&gt;
-  &lt;li&gt;$G_2: \{I, (-1,0; 0, 1), (1, 0; 0, -1), (-1,0;0;-1)\}$.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Is Klein-4 group isomorphic to $\{1, -1, i, -i\}$. No, the former does not have elements of order 4 whereas $i$ and $-i$ are with order $4$.&lt;/p&gt;
-
-&lt;p&gt;Some properties to test whether groups are isomorphic:&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;$|G_1|=|G_2|$&lt;/li&gt;
-  &lt;li&gt;$G_1$ abelian $\Leftrightarrow$ $G_2$ abelian&lt;/li&gt;
-  &lt;li&gt;$G_1$ and $G_2$ have the same number of elements of every order.&lt;/li&gt;
-&lt;/ol&gt;</content><author><name>Yang Yang</name></author><category term="algebra" /><summary type="html">lecture 1</summary></entry><entry><title type="html">Markov Chain Monte Carlo: Gibbs, Metropolis-Hasting, and Hamiltonian</title><link href="https://yyang768osu.github.io/posts/2019/07/mcmc/" rel="alternate" type="text/html" title="Markov Chain Monte Carlo: Gibbs, Metropolis-Hasting, and Hamiltonian" /><published>2019-07-06T00:00:00-07:00</published><updated>2019-07-06T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2019/07/markov-chain-monte-carlo</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2019/07/mcmc/">&lt;p&gt;A fundamental problem in statistical learning is to compute the expectation with respect to some target probability distribution $\pi$&lt;/p&gt;
+&lt;/ul&gt;</content><author><name>Yang Yang</name></author><category term="computer vision" /><summary type="html"></summary></entry><entry><title type="html">Markov Chain Monte Carlo: Gibbs, Metropolis-Hasting, and Hamiltonian</title><link href="https://yyang768osu.github.io/posts/2019/07/mcmc/" rel="alternate" type="text/html" title="Markov Chain Monte Carlo: Gibbs, Metropolis-Hasting, and Hamiltonian" /><published>2019-07-06T00:00:00-07:00</published><updated>2019-07-06T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2019/07/markov-chain-monte-carlo</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2019/07/mcmc/">&lt;p&gt;A fundamental problem in statistical learning is to compute the expectation with respect to some target probability distribution $\pi$&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
 \mathbb{E}_\pi\left[f\right] \triangleq \int \pi(x) f(x) dx.
@@ -2491,4 +1406,530 @@ f((a+\Delta x_1, b))=&amp;(f_1(a+\Delta x_1,b), f_2(a+\Delta x_1,b))  \\
 &lt;h2 id=&quot;sequence-discriminative-training&quot;&gt;Sequence discriminative training&lt;/h2&gt;
 &lt;p&gt;To bridge the aforementioned discrepancy, several other training targets are proposed.&lt;/p&gt;
 
-&lt;p&gt;to be continued…&lt;/p&gt;</content><author><name>Yang Yang</name></author><category term="ASR" /><category term="HMM" /><summary type="html">Conventional HMM-based ASR system assumes a generative model comprised of a language model, a lexicon (e.g., pronunciation dictionary), and an acoustic model, as illustrated below. Here $\theta$ denotes the parameters to be learned and it comprises of the HMM state transition probabilities and GMM/DNN parameters.</summary></entry></feed>
+&lt;p&gt;to be continued…&lt;/p&gt;</content><author><name>Yang Yang</name></author><category term="ASR" /><category term="HMM" /><summary type="html">Conventional HMM-based ASR system assumes a generative model comprised of a language model, a lexicon (e.g., pronunciation dictionary), and an acoustic model, as illustrated below. Here $\theta$ denotes the parameters to be learned and it comprises of the HMM state transition probabilities and GMM/DNN parameters.</summary></entry><entry><title type="html">Comparison of end-to-end ASR models</title><link href="https://yyang768osu.github.io/posts/2018/11/end_to_end_asr_models/" rel="alternate" type="text/html" title="Comparison of end-to-end ASR models" /><published>2018-11-13T00:00:00-08:00</published><updated>2018-11-13T00:00:00-08:00</updated><id>https://yyang768osu.github.io/posts/2018/11/comparison-of-end-2-end-asr-models</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2018/11/end_to_end_asr_models/">&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/end2end.png&quot; alt=&quot;End-to-end ASR model derivation&quot; /&gt;&lt;/p&gt;
+
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/transcription_model.png&quot; alt=&quot;Sentence model for CTC, RNN-T, and Attention&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;language-model-integration&quot;&gt;Language model integration&lt;/h2&gt;</content><author><name>Yang Yang</name></author><category term="ASR" /><summary type="html"></summary></entry><entry><title type="html">Gumbel max and Gumbel softmax</title><link href="https://yyang768osu.github.io/posts/2018/11/gumbel_max_and_gumbel_softmax/" rel="alternate" type="text/html" title="Gumbel max and Gumbel softmax" /><published>2018-11-05T00:00:00-08:00</published><updated>2018-11-05T00:00:00-08:00</updated><id>https://yyang768osu.github.io/posts/2018/11/gumbel-max-and-gumbel-softmax</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2018/11/gumbel_max_and_gumbel_softmax/">&lt;p&gt;Before we talk about Gumbel distribution, let’s refresh our knowledge on exponential distribution. It is well-known that the exponential distribution is min-stable: the min of $n$ I.I.D. exponential random variables  $X_i\sim \text{Exp}(\lambda_i), i=1,2,\ldots, n$ is also exponentially distributed with decay rate $\sum_{1\leq i\leq n} \lambda_i$, as can be seen from the equation below.&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+P(\min_{1\leq i \leq n} X_i &gt; x) &amp;= \prod_{1\leq i\leq n} P(X_i&gt;x) = e^{-\sum_{1\leq i\leq n}\lambda_i x}
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;A lesser known property is that the arg-min of exponential variables is a multinomial distribution with event probabilities $\left(\frac{\lambda_1}{\sum_{i}\lambda_i}, \ldots, \frac{\lambda_n}{\sum_{i}\lambda_i}\right)$:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+&amp;P(\arg\min_{1\leq i\leq n}X_i =k)\\
+=&amp;\int_0^\infty P(\arg\min_{1\leq i\leq n} X_i = x | X_k=x)f(X_k = x)dx\\
+=&amp;\int_0^\infty \prod_{i=1\to n, i\not=k} e^{-\lambda_i x} \lambda_k e^{-\lambda_k x} dx\\
+=&amp;\frac{\lambda_k}{\sum_{i=1\to n} \lambda_i}.
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;As we will see shortly, this property directly leads to the Gumbel max trick.&lt;/p&gt;
+
+&lt;h2 id=&quot;gumbel-max-trick&quot;&gt;Gumbel max trick&lt;/h2&gt;
+
+&lt;p&gt;Assume that we are given a multinomial (a.k.a. categorical) distribution with unnormalized event probabilities $\lambda_i, i=1\to n$ (i.e., $\sum_{i=1}^n\lambda_i\not=1$), the above property provides us a way to sample from the distribution without the need for normalization:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;draw $n$ samples from an exponential distributions with decay rate of $1$&lt;/li&gt;
+  &lt;li&gt;scale the value of these $n$ samples with $1/\lambda_i$ for $i=1\to n$.&lt;/li&gt;
+  &lt;li&gt;take the index of the minimum of the scaled samples&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;To be more precise, we are utilizing the fact that&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+&amp;\arg\min_{1\leq i\leq n} \left(\frac{1}{\lambda_i}s_i\right) \sim \text{Multinomial}\left(\frac{\lambda_1}{\sum_{i}\lambda_i}, \ldots, \frac{\lambda_n}{\sum_{i}\lambda_i}\right)\\
+&amp;\text{where } s_i\sim \text{Exp}(1), \forall i.
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;For the case of soft-max operation, we have direct access to the log of the unnormalized probabilities $\alpha_i=\log \lambda_i$ (multinomial logit), instead of the unnormalized probabilities itself. In this case, we can modify the above equation as below&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+&amp;\arg\min_{1\leq i\leq n} \left(\frac{1}{e^{\alpha_i}}s_i\right) \sim \text{Multinomial}\left(\frac{e^{\alpha_1}}{\sum_{i}e^{\alpha_i}}, \ldots, \frac{e^{\alpha_n}}{\sum_{i}e^{\alpha_i}}\right)\\
+&amp;\text{where } s_i\sim \text{Exp}(1), \forall i.
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;One observation is that the left hand side of the above equation is invariant to any linear transform. The Gumbel-max trick is obtained by taking $-\log(\cdot)$ operation to the right-hand-side, in which case $-\log(\text{Exp}(1))$ is a standard Gumbel distribution, leading to the equation below&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+&amp;\arg\max_{1\leq i\leq n} \left(\alpha_i+g_i\right) \sim \text{Multinomial}\left(\frac{e^{\alpha_1}}{\sum_{i}e^{\alpha_i}}, \ldots, \frac{e^{\alpha_n}}{\sum_{i}e^{\alpha_i}}\right)\\
+&amp;\text{where } g_i\sim \text{Gumbel}(\text{location}=0, \text{scale}=1), \forall i.
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;This provides us a way to obtain samples directly from the logits without going through the exponentiate-and-normalization step&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;draw $n$ samples from a standard Gumbel distributions with location of $0$ and scale of $1$.&lt;/li&gt;
+  &lt;li&gt;add the values of the $n$ samples to the logits.&lt;/li&gt;
+  &lt;li&gt;take the index of the minimum of the $n$ summations.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Essentially, &lt;em&gt;the Gumbel max trick converts the sampling operation from a categorical/multinomial distribution into an argmax operation&lt;/em&gt;. The sampling process can be expedited if we pre-calculate and store a stream of Gumbel samples.&lt;/p&gt;
+
+&lt;h2 id=&quot;gumbel-softmax&quot;&gt;Gumbel softmax&lt;/h2&gt;
+
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/gumbel.png&quot; alt=&quot;Gumbel softmax&quot; /&gt;&lt;/p&gt;</content><author><name>Yang Yang</name></author><category term="gumble" /><summary type="html">Before we talk about Gumbel distribution, let’s refresh our knowledge on exponential distribution. It is well-known that the exponential distribution is min-stable: the min of $n$ I.I.D. exponential random variables $X_i\sim \text{Exp}(\lambda_i), i=1,2,\ldots, n$ is also exponentially distributed with decay rate $\sum_{1\leq i\leq n} \lambda_i$, as can be seen from the equation below.</summary></entry><entry><title type="html">An introduction to Kalman filter and particle filter</title><link href="https://yyang768osu.github.io/posts/2018/08/kalman_filter_particle_filter/" rel="alternate" type="text/html" title="An introduction to Kalman filter and particle filter" /><published>2018-08-20T00:00:00-07:00</published><updated>2018-08-20T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2018/08/kalman-filter-and-particle-filter</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2018/08/kalman_filter_particle_filter/">&lt;p&gt;Kalman filter and particle filter are concepts that are intimidating for new learners due to its involved mathmatical discription, and are straightforward once you grasp the main idea and get used to Gaussian distributions. The goal of this post is to take a journey to Kalman filter by dissecting its idea and operation into pieces that are easy to absorb, and then assemble them together to give the whole picture. As a last step, we will see that particle filter achieves the same goal for non-Gaussian system resorting to Monte Carlo sampling.&lt;/p&gt;
+
+&lt;p&gt;Below let’s walk through three simple problems and their solutions stemming from Gaussian distributions, and then stitching them together to form the problem that Kalman filter tries to solve and present its solution.&lt;/p&gt;
+
+&lt;h2 id=&quot;a-conditional-gaussian-distribution&quot;&gt;A. Conditional Gaussian distribution&lt;/h2&gt;
+
+&lt;p&gt;Here I assume you have a basic knowledge regarding multi-variant Gaussian distribution. A multi-variant Gaussian distribution is captured by its mean vector and covariance matrix, often denoted as $\mu$ and $\Sigma$. Below let us consider the bi-variant Gaussian vector $[z,x]^T$, with the following general notation:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\left[
+\begin{array}{c}
+z\\
+x
+\end{array}
+\right]
+\sim
+\mathcal{N}
+\left(
+\left[
+\begin{array}{c}
+\mu_z\\
+\mu_x
+\end{array}
+\right],
+\left[\begin{array}{cc}
+\Sigma_z &amp; \Sigma_{zx} \\
+\Sigma_{xz} &amp; \Sigma_{x}
+\end{array}\right]
+\right)\notag
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;The covariance matrix is formally defined as&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\left[\begin{array}{cc}
+\Sigma_z &amp; \Sigma_{zx} \\
+\Sigma_{xz} &amp; \Sigma_{x}
+\end{array}\right]
+=&amp;
+\mathbb{E}\left[
+\left[
+\begin{array}{c}
+z-\mu_z\\
+x-\mu_x
+\end{array}
+\right]
+\left[
+\begin{array}{c}
+z-\mu_z\\
+x-\mu_x
+\end{array}
+\right]^T
+\right]\notag\\
+=&amp;
+\left[
+\begin{array}{cc}
+\mathbb{E}[(z-\mu_z)(z-\mu_z)^T] &amp; \mathbb{E}[(z-\mu_z)(x-\mu_x)^T]\\
+\mathbb{E}[(x-\mu_x)(z-\mu_z)^T] &amp; \mathbb{E}[(x-\mu_x)(x-\mu_x)^T]
+\end{array}
+\right]\notag.
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;The off-diagonal term represents the cross covariance between the two random variables $x$ and $z$, which, by checking the definition above, satisfies $\Sigma_{xz}=\Sigma^T_{zx}$. The larger the cross covariance, the more correlated the two random variables are. For correlated random variables, knowing the value of one would help us in guessing the value of the other. Let us take a look at the figure below for a concrete example.&lt;/p&gt;
+
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/bivariant_normal.png&quot; alt=&quot;Bivariant Gaussian&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The figure above illustrates the joint distribution of a bivariant Gaussian distribution with $\mu_z=\mu_x=0$, $\Sigma_z=\Sigma_x=1$, and $\Sigma_{zx}=\Sigma_{xz}=0.8$. The marginal distributions of both $x$ and $z$ are $\mathcal{N}(0,1)$. The contour of the distribution forms a thin ellipse, reflecting the strong covariance $\Sigma_{zx}=\Sigma_{xz}=0.8$ between the two random variables $x$ and $z$. To testify the claim that knowing one variable would help us estimating the other,  let us take a look at the the conditional distribution of $z$ given $x=1$, and compare it with the marginal distribution of $z$. As can be seen from the figure above, the distribution of $z|x=1$ has much narrow span than $z$ with a shift in the mean. The reduction of variance of $z$ after observing $x=1$ is an evident that the observation of $x$ narrows down the potential values of $z$.&lt;/p&gt;
+
+&lt;p&gt;An important fact here is that the conditional distribution of a joint-Gaussian distribution is also Gaussian&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+p(z|x) = p(x,z)/p(x)\sim\mathcal{N}\left(\mu_{z|x}, \Sigma_{z|x}\right)\notag.
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;Below are two identities on the general expressions of the conditional distribution, here let us accept them as they are without bothering with any proof.&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\mu_{z|x} &amp;= \mu_z + \Sigma_{zx}\Sigma_{xx}^{-1}(x-\mu_x)\notag\\ 
+\Sigma_{z|x} &amp;= \Sigma_{z} - \Sigma_{zx}\Sigma_x^{-1}\Sigma_{xz} \text{ } \left(\preccurlyeq \Sigma_{z}\right)  \notag
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;The above two equations are very important, and lies in the core of many concepts such as MMSE estimator, Wiener filter and of course, Kalman filter. To see that knowing $x$ would reduce the uncertainty in $z$, here let’s just point out that the entropy (measure of uncertainty) of a Gaussian random vector is an increasing function of the determinant of the covariance-matrix, and that $\Sigma_{z|x}$ always &lt;a href=&quot;https://math.stackexchange.com/questions/466158/on-the-difference-of-two-positive-semi-definite-matrices&quot;&gt;has a smaller determinant&lt;/a&gt; than $\Sigma_z$ for any non-zero cross covariance $\Sigma_{zx}$, followed from the second equation with the fact that $\Sigma_{z}-\Sigma_{z|x}$ $=\Sigma_{zx}\Sigma_x^{-1}\Sigma_{xz}\succcurlyeq 0$ is a semi-positive-definite matrix.&lt;/p&gt;
+
+&lt;p&gt;These two equations will become useful when we visit part C, and we will come back to them.&lt;/p&gt;
+
+&lt;h2 id=&quot;b-gaussian-distribution-with-linear-transformation&quot;&gt;B. Gaussian distribution with linear transformation&lt;/h2&gt;
+
+&lt;p&gt;In the first section we looked at the case of obtaining the conditional distribution from a joint Gaussian distribution, here let’s look at the distribution of a Gaussian vector going through a linear transform. More precisely, let us define a random variable $z_n$ as obtained from the following transform&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+z_{n-1}&amp;\sim\mathbb{N}(\mu_{n-1}, V_{n-1})\notag\\
+z_n |z_{n-1}&amp;\sim A z_{n-1}+a+\mathcal{N}(0,\Gamma)= \mathbb{N}(Az_{n-1}+a, \Gamma)\notag
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;One typical example for the above problem setup is the following: consider the problem of tracking the location and velocity of an object traveling in a strict line. Let us label $z_n=[\text{loc}_n, \text{vel}_n]^T$ as the location-velocity state of the object in time-step $n$. To model the estimation inaccuracy, assume that $z_n$ is a random variable with mean $\mu_{n-1}$ and variance $V_{n-1}$. Here the mean value reflect the estimated value and the variance can be viewed as capturing the amount of and the structure of the uncertainty in the estimate. The location-velocity estimate in the time-step $n$ can be modeled by&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\left[
+\begin{array}{c}
+\text{loc}_{n}\\
+\text{vel}_{n}
+\end{array}
+\right]=
+\underbrace{
+\left[
+\begin{array}{cc}
+1 &amp; 1\notag\\
+0 &amp; 1\notag
+\end{array}
+\right]}_{
+\text{loc}_{n} = \text{loc}_{n-1}+\text{vel}_{n-1}
+}
+\times
+\left[
+\begin{array}{c}
+\text{loc}_{n-1}\\
+\text{vel}_{n-1}
+\end{array}
+\right]
++
+\underbrace{
+\left[
+\begin{array}{c}
+a_\text{loc}\notag\\
+a_\text{vel}\notag
+\end{array}
+\right]}_{\substack{
+\text{external known}\\\text{change}
+}
+}
++
+\underbrace{
+\left[
+\begin{array}{c}
+\text{noise}_\text{loc}\notag\\
+\text{noise}_\text{vel}\notag
+\end{array}
+\right]}_{\substack{
+\text{additional noise}\\\text{in the system}
+}
+}
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;with a one-to-one correspondence to the conditional probability $z_n|z_{n-1}$ restated above.&lt;/p&gt;
+
+&lt;p&gt;The problem of interest here is to characterize the distribution of $z_n$, given that it is obtained from a linear transformation of a previous estimate with additional Gaussian noise. Precisely, what we want to solve is&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+p(z_n) =&amp; \int p(z_{n}|z_{n-1})p(z_{n-1})dz_{n-1}\notag.
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;Here is another important property of Gaussian distribution: any linear transformation of Gaussian variable is still Gaussian. With this property given, we can calculate the mean and variance of the updated state $z_n$, as shown below, which fully captures its distribution.&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\mu_{z_n} =&amp;\mathbb{E}[Az_{n-1}+a]= A\mu_{n-1}+a\notag\\
+\Sigma_{z_n} =&amp;\mathbb{E}[(Az_{n-1}-A\mu_{n-1})(Az_{n-1}-A\mu_{n-1})^T]+\Gamma\notag\\
+=&amp; AV_{n-1}A^T + \Gamma\notag,
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;which leads to the following solution&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+z_n \sim \mathcal{N}\left(A\mu_{n-1}+a, AV_{n-1}A^T + \Gamma\right).
+\end{align*}&lt;/script&gt;
+
+&lt;h2 id=&quot;c-bayes-theorem-for-gaussian&quot;&gt;C. Bayes’ theorem for Gaussian&lt;/h2&gt;
+
+&lt;p&gt;In part A, we provide the equation for calculating the conditional distribution from a joint Gaussian distribution, i.e., for a given joint-Gaussian probability $p(x,z)$, the conditional distribution of $p(z|x)$ is also Gaussian and it can be expressed in closed-form.&lt;/p&gt;
+
+&lt;p&gt;In this part, we consider a slightly more complex problem, whereby we are given Gaussian distributions $p(x|z)$ and $p(z)$,&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+z&amp;\sim \mathcal{N}(\nu, P),\notag\\
+x|z&amp;\sim \mathcal{N}(Cz+c,\Pi) = Cz+c+\mathcal{N}(0, \Pi),\notag
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;and the problem is find the posterior distribution $p(z|x)$, which can be expressed using $p(x|z)$ and $p(z)$ by Bayes’ rule:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+p(z|x) = \frac{p(z)p(x|z)}{p(x)}  \propto p(z)p(x|z).\notag
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;Here’s a typical application for this problem: let us consider the task of estimating the temperature and humidity of a room (denoted as vector $z$). We are given two sources of information: (1) prior knowledge on the distribution from history data and, e.g., $p(z)$ (2) the reading from a thermometer with some known accuracy $p(x|z)$. Intuitively, a good estimate should be obtained by fusing these two informations. Indeed, this is evident from the Bayes’ rule, where the posterior probability of $z$ given $x$ is proportional to the product of the two distributions $p(z)p(x|z)$.&lt;/p&gt;
+
+&lt;p&gt;Since part A taught us how to obtain a conditional distribution from a joint distribution. We can solve this problem by obtaining the joint distribution $p(z,x)=p(z)p(x|z)$ first and then plugin the solution presented in part A.&lt;/p&gt;
+
+&lt;p&gt;For Gaussian, the multi-variant joint distribution is fully captured by the marginalized mean/variance together with the cross-variance among all factors, which, in our case, can be expressed as&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\mu_{x} &amp;= \mathbb{E}[Cz+c+\mathcal{N}(0, \Sigma)] = C\nu+c\notag\\
+\Sigma_{x} &amp;= \mathbb{E}[xx^T] = \mathbb{E}[(Cz-C\nu)(Cz-C\nu)^T]+\Sigma=C P C^T + \Pi\notag\\
+\Sigma_{zx} &amp;= \mathbb{E}[z(Cz-C\mu)^T]=P C^T  \notag
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;Accordingly, the joint distribution of $z$ and $x$ can be written as&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\left[
+\begin{array}{c}
+z\\
+x
+\end{array}
+\right]
+\sim
+\mathcal{N}
+\left(
+\left[
+\begin{array}{c}
+\nu\\
+C\nu+c
+\end{array}
+\right],
+\left[\begin{array}{cc}
+P &amp;P C^T \\
+CP &amp; C P C^T + \Pi
+\end{array}\right]
+\right)\notag.
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;Now, by plugging in the solution in part A, we can obtain below the expression of the mean and variance of the posterior probability $p(z|x)$.&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\mu_{z|x} &amp;= \nu + PC^T (CPC^T+\Pi)^{-1}(x-C\nu-c)\notag\\
+\Sigma_{z|x} &amp;= P - PC^T (CPC^T+\Pi)^{-1}CP\notag 
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;To simplify the expression as well as to gain some insights into the expression, it is necessary to group some of the terms in $K$ below and substitute the corresponding terms.&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+K\triangleq PC^T(CPC^T+\Pi)^{-1},\notag
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;resulting in the rewritten form below:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\mu_{z|x} &amp;= {\color{red}\nu} + K(x-C\nu-c)\notag\\
+\Sigma_{z|x} &amp;= {\color{red}P}-KCP =(I-KC)P.\notag
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;It is interesting to observe that the highlighted term in the expression above is the mean and the variance of the prior distribution $p(z)$ without taking $p(x|z)$ into account. The effect of the $p(x|z)$ can be thought of as a correction to the prior distribution: the mean is shifted by $K(x-Cv-c)$ and the covariance matrix is reduced by $KCP$ (or shrunk by $(I-KC)$), leading to a refined posterior distribution $p(z|x)$. Here $K$ can be considered as a &lt;em&gt;gain&lt;/em&gt; factor, as it shifts the mean towards that dictated by $x$ and it shrinks the covariance matrix, leading to a more concentrated distributed with less amount of uncertainty.&lt;/p&gt;
+
+&lt;p&gt;Next we will see that Kalman filter is just a repeated (or sequential) application of this Bayes’ rule on Gaussian distribution.&lt;/p&gt;
+
+&lt;h2 id=&quot;kalman-filter&quot;&gt;Kalman filter&lt;/h2&gt;
+
+&lt;p&gt;It’s time to assemble what we learnt from the previous parts. Let’s consider following an evolving system, where the system state $z_n$ follows linear evolving over time, whose true value is hidden from us. Every time instance, we obtain a noisy observation $x_n$ of the system state. The noisy observation $x_n$ may not be directly the state itself, but is in general an linear function of the state of interest, with added Gaussian noise. The task is to keep updating the belief on the system state, based on all the noisy observations, and the knowledge on the system evolution itself. In the degenerated case where the system does not evolve, then the problem amount to the sequential application of Bayes’ rule on the same hidden variable to fuse all the instances of noisy observations.&lt;/p&gt;
+
+&lt;p style=&quot;text-align: center;&quot;&gt;&lt;img src=&quot;/images/linear_dynamic_system.png&quot; alt=&quot;Bivariant Gaussian&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;To devise a sequence update rule on the brief of the system state based on all observations $p(z_n| x_1^n)$, let us look at the atomic case when $p(z_{n-1}|x_1^{n-1})$ — the prior belief of the previous state, and $p(x_n|z_n)$ — the noisy observation based on the current state, are given, and the task is to find $p(z_n|x_1^{n})$ — the posterior belief of the current state.&lt;/p&gt;
+
+&lt;p&gt;In other words, we want to find an iterative procedure that update the belief on the system state, based on linear system evolution and noisy state observation. Precisely, we need to solve the following problem&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+\underset{\substack{\\\mathcal{N}(\mu_{n-1}, V_{n-1})}}{p(z_{n-1}|x_1^{n-1})}
+\underset{\text{ }}{\xrightarrow{\substack{\text{system evolution }\\p(z_n|z_{n-1})}}}  
+\underset{\substack{\\\mathcal{N}(\nu_{n-1}, P_{n-1})}}{p(z_n|x_1^{n-1}) }
+\underset{\text{ }}{\xrightarrow{\substack{\text{noisy observation }\\p(x_n|z_{n})}}}  
+\underset{\substack{\\\mathcal{N}(\mu_{n}, V_{n})}}{p(z_{n}|x_1^{n})}
+\end{align*}&lt;/script&gt;
+
+&lt;!---
+Here we assume that the noisy observations $x$ are independent given the underlying system state $z$ (this assumption is actually encoded in the graphic model above), then $p(z_{n-1}\|x_1^{n-1})$  captures all the information regarding $x_1^{n-1}$, and we can simply drop them from the expression. 
+--&gt;
+
+&lt;p&gt;The decomposed two sub-problem above correspond to part B and part C respectively, for which we can get the following solution&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;$p(z_n|x_1^{n-1}) = \int p(z_n|z_{n-1}) p(z_{n-1}|x_1^{n-1})dz_{n-1}$&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\text{Input: }&amp;\notag\\
+z_{n-1}|x_1^{n-1}\sim&amp;\mathcal{N}(\mu_{n-1}, V_{n-1})\notag\\
+z_n|z_{n-1} \sim&amp; \mathcal{N}(Az_{n-1}+a, \Gamma)\notag
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\text{Solution: }&amp;\notag\\
+z_n|x_1^{n-1}\sim&amp; \mathcal{N}(\nu_{n-1}, P_{n-1})\notag\\
+\nu_{n-1}=&amp;  A\mu_{n-1}+a\notag\\
+P_{n-1}=&amp; AV_{n-1}A^T+\Gamma\notag
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;$p(z_n|x_1^n)\propto p(x_n|z_n)p(z_n|x_1^{n-1})$&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\text{Input: }&amp;\notag\\
+z_n|x_1^{n-1}\sim&amp; \mathcal{N}(\nu_{n-1},P_{n-1})\notag\\
+x_n|z_n\sim&amp; \mathcal{N}(Cz_n+c,\Pi)\notag
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\text{Solution: }&amp;\notag\\
+z_n|x_1^n \sim&amp;\mathcal{N}(\mu_n, V_n)\notag\\ 
+\mu_n =&amp; \nu_{n-1} + K_n(x_n-C\nu_{n-1}-c)\notag\\
+V_n =&amp; (I-K_nC)P_{n-1}\notag
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+K_n\triangleq P_{n-1}C^T(CP_{n-1}C^T+\Pi)^{-1}\notag
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;The final solution above is the Kalman filter equation, and $K_n$ is referred to as the Kalman gain.&lt;/p&gt;
+
+&lt;h2 id=&quot;particle-filter&quot;&gt;Particle filter&lt;/h2&gt;
+
+&lt;p&gt;One biggest constraint for the application of Kalman filter is that it assumes a linear dynamic system where the state transition and noisy observations are linear processes, which is evident from the probabilistic-graphic-model diagram shown before. The linear assumption is necessary to make sure that all the distributions involved in the system are Gaussian, which is easy to characterize and analytically tractable.&lt;/p&gt;
+
+&lt;p&gt;In general cases, seldom do we have a system being linear. Even with a linear system, the distribution may not be Gaussian. The most cited example for the explanation of particle filter is localization. We can fit in the problem of localization as a dynamic system with hidden variables and heterogeneous system evolutions. Here the location of the system at time-step $n$ is modeled by the hidden variable $z_n$, and any observations made by accelerometer, GPS, and various other type of sensors are captured in $x_n$. Since $z_n$ represent the belief of the system’s location in a map, it can hardly be described by a Gaussian distribution and may not even have a tractable form. On top of that, the observations made by the sensors may not be a linear function of the system location.&lt;/p&gt;
+
+&lt;p&gt;In this type of systems, instead of trying to deriving the exact distributions of hidden variables, it is more practical to characterize them using sets of samples. The sample update are achieved by a scheme often referred to as sequential Monte Carlo sampling, which we will introduce next.&lt;/p&gt;
+
+&lt;p&gt;Again we emphasis that the problem at hand is the inference of hidden variables in a non-linear dynamic system. The goal is to characterize the posterior probability of the system state $z_n$ given all previous observations $x_1^n\triangleq x_1,x_2,\ldots x_n$. Specifically, we want to have an iterative procedure that update the system belief at time-slot $n$: $p(z_n|x_1^n)$ from the belief in the previous time instance $n-1$ ($p(z_{n-1}|x_1^{n-1}$) by considering both the system evolution $p(z_n|z_{n-1)}$ and the updated noisy observations $p(x_n|z_n)$.&lt;/p&gt;
+
+&lt;p&gt;Drawing similarity to Kalman filter, we can represent the problem as the following:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+\underset{\substack{\\\text{weighted samples}}}{p(z_{n-1}|x_1^{n-1})}
+\underset{\text{sampling}}{\xrightarrow{\substack{\text{system evolution }\\p(z_n|z_{n-1})}}}  
+\underset{\substack{\\\text{samples}}}{p(z_n|x_1^{n-1}) }
+\underset{\text{importance weighting}}{\xrightarrow{\substack{\text{noisy observation }\\p(x_n|z_{n})}}}  
+\underset{\substack{\\\text{weighted samples}}}{p(z_{n}|x_1^{n})}
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;The plan of attack, as suggested by the annotations in the above equation, is to get samples from the potentially intractable probabilities. Let’s start by assuming that we have a set of samples $\{\color{red}{z_n^{(s)}}, s=1,\ldots, S\}$ that represent the distribution of $p(z_n|x_1^{n-1})$, and the task is to generate a new set of sample $\{\color{blue}{z_{n+1}^{(s)}}, s=1,\ldots, S\}$ representing the distribution of $p(z_{n+1}|x_1^n)$.&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+p(z_n| x_1^n) \propto&amp;\text{ }  p(x_n | z_n) \color{red}{p(z_n | x_1^{n-1})}\notag\\
+\color{blue}{p(z_{n+1}|x_1^n)} =&amp; \int p(z_n| x_1^n) p(z_{n+1}|z_n) dz_n\notag
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;Since the evaluation of $\color{blue}{p(z_{n+1}|x_1^n)}$ involves taking the expectation, a corresponding sampling approach would be to approximate it using sampling from  $\color{red}{p(z_n | x_1^{n-1})}$ together with the technique of importance sampling to bridge the gap between the $p(z_n| x_1^n)$ and $\color{red}{p(z_n | x_1^{n-1})}$, resulting in the derivation below&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\color{blue}{p(z_{n+1}|x_1^n)} =&amp; \int p(z_n| x_1^n) p(z_{n+1}|z_n) dz_n\notag\\
+=&amp;\int  \color{red}{p(z_n| x_1^{n-1})} \frac{p(z_n| x_1^n)}{\color{red}{p(z_n| x_1^{n-1})}}  p(z_{n+1}|z_n) dz_n\notag\\
+=&amp; \frac{ \int \color{red}{p(z_n| x_1^{n-1})}   p(x_n|z_n)  p(z_{n+1}|z_n) dz_n}{
+\int \color{red}{p(z_n| x_1^{n-1})}   p(x_n|z_n)   dz_n
+},
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;which leads to the following Monte Carlo approximation&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\color{blue}{p(z_{n+1}|x_1^n)} \approx&amp;\sum_{s=1}^S \frac{p(x_n|z_n^{(s)})}{\sum_{l=1}^S p(x_n|z_n^{(l)})}p(z_{n+1}|z_n^{(s)})\notag\\
+&amp;\sum_{s=1}^S w_n^{(s)}p(z_{n+1}|z_n^{(s)})\notag
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;Comparing the above equation with the one before, one can realize that the probability $p(z_n|x_1^n)$ is basically represented by a set of weighted samples, where the samples $z_n^{(s)}$ are drawn from $\color{red}{p(z_n|x_1^{n-1})}$ and the weights are defined as $w_n^{(s)}\triangleq \frac{p(x_n|z_n^{(s)})}{\sum_{l=1}^S p(x_n|z_n^{(l)})}$.&lt;/p&gt;
+
+&lt;p&gt;Eventually, according to the above equation, to obtain samples $\color{blue}{\{x_{n+1}^{(s)}, s=1,\ldots, S\}}$ from $\color{blue}{p(z_{n+1}|x_1^n)}$, one can equivalently draw samples from $\sum_{s=1}^S w_n^{(s)}p(z_{n+1}|z_n^{(s)})$, which is itself a weighted sum of $p(z_{n+1}|z_n^{(s)})$ for each sample in $\color{red}{\{x_{n}^{(s)}, s=1,\ldots, S\}}$.&lt;/p&gt;
+
+&lt;p&gt;With this we complete the derivation of the particle filter. In essence, it can be viewed as the sampling counterpart of Kalman filter, that generalizes to non-linear systems. The sequential Monte Carlo method is also referred to as sampling-importance-resampling in the literature.&lt;/p&gt;
+
+&lt;p&gt;To link the math with a specific example, i recommend &lt;a href=&quot;https://www.youtube.com/watch?v=aUkBa1zMKv4&quot;&gt;this video&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;bigger-picture&quot;&gt;Bigger picture&lt;/h2&gt;
+
+&lt;p&gt;Looking from a wider angle, both Kalman filter and Particle filter are inference algorithms in hidden Markov models with continuous random variables. Specifically, the formulation we went through corresponds to the forward procedure in HMM inference, and one can generalize it for the backward procedure as well.&lt;/p&gt;
+
+&lt;p&gt;The forward-backward algorithm itself is a special realization of belief-propagation or message-passing-algorithm applied in a HMM system, whose probabilistic graphic model is a tree.&lt;/p&gt;
+
+&lt;p&gt;The HMM model and the forward-backward procedure has manifestation in different areas:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;BCJR algorithm in the decoding of convolutional/Turbo code in communication systems&lt;/li&gt;
+  &lt;li&gt;Baum-Welch algorithm, commonly used in speech recognition systems with discrete HMM models&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>Yang Yang</name></author><category term="kalman filter" /><summary type="html">Kalman filter and particle filter are concepts that are intimidating for new learners due to its involved mathmatical discription, and are straightforward once you grasp the main idea and get used to Gaussian distributions. The goal of this post is to take a journey to Kalman filter by dissecting its idea and operation into pieces that are easy to absorb, and then assemble them together to give the whole picture. As a last step, we will see that particle filter achieves the same goal for non-Gaussian system resorting to Monte Carlo sampling.</summary></entry><entry><title type="html">Griffin-Lim algorithm for waveform reconstruction</title><link href="https://yyang768osu.github.io/posts/2018/08/griffin-lim/" rel="alternate" type="text/html" title="Griffin-Lim algorithm for waveform reconstruction" /><published>2018-08-12T00:00:00-07:00</published><updated>2018-08-12T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2018/08/griffin-lim-algorithm-for-waveform-reconstruction</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2018/08/griffin-lim/">&lt;p&gt;Here’s the problem: we are given some &lt;em&gt;modified&lt;/em&gt; short-time-Fourier-transform (STFT) or &lt;em&gt;modified&lt;/em&gt; spectrogram (magnitude of STFT). The STFT/spectrogram is called &lt;em&gt;modified&lt;/em&gt; to stress the fact that it in general does not corresponds to any valid time-domain signal: it may be obtained by modifying a STFT/spectrogram of some real signal, or it may simply be generated by a neural network. The task here is to synthesize a time-domain signal from this target STFT/spectrogram, such that the STFT/spectrogram of the synthesized signal is as close to the target as possible.&lt;/p&gt;
+
+&lt;p&gt;Let us denote the target STFT as $Y_w[mS,k]$, where $m$ is the index of the time-window, and $k$ represents the frequency axis. Here $S$ denote the step size of the time-domain window, and $mS$ can be viewed as the center of the sliding time windows. Correspondingly, if we are talking about spectrogram, the target can be denoted as  $|Y_w(mS,\omega)|$, to emphasis that there is no phase information.&lt;/p&gt;
+
+&lt;p&gt;First, let’s align the definition and notation of the STFT/spectrogram. For a given time-domain signal $x[n]$, it is masked by a finite length window function $w$, yielding $x_w[mS,n]\triangleq w[n-mS]x[n]$, with $mS$ denoting the offset of the window from the original, and $m$ being the index of time-domain slice. The STFT $X_w[mS,k]$ is obtained by taking the DFT of each windowed signal $x_w[mS, n]$ with respect to time-index $n$: $X_w[mS,k]=\text{DFT}(x_w[mS, n])$.&lt;/p&gt;
+
+&lt;p&gt;The objective is then to find a time domain signal $x[n]$ such that its STFT $X_w[mS,k]$ is as close to the target $Y_w[mS,k]$ as possible. Note, again, that the target $Y_w[mS,k]$ in general does not correspond to any valid time-domain signal. In other words, there is no time-domain signal that produces $Y_w[mS,k]$ as its STFT. Going back to the objective, a natural way to define the closeness is simply the sum squared distance, expressed as below&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+D\left(X_w, Y_w\right) = \frac{1}{N}\sum_{m=-\infty}^{\infty}\sum_{k=0}^{N-1}|X_w[mS,k]-Y_w[mS,k]|^2\notag,
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;where $N$ denote the window-length (and correspondingly the DFT size). By Parseval’s theorem we have&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+D\left(X_w, Y_w\right) =&amp;\sum_{m=-\infty}^{\infty}\sum_{l=-\infty}^{\infty}|x_w[mS,l]-y_w[mS,l]|^2\notag\\
+=&amp;\sum_{m=-\infty}^{\infty}\sum_{l=-\infty}^{\infty}|w[n-mS]x[n]-y_w[mS,l]|^2\notag,
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;where $y_w[mS,l]$ is the IDFT of $Y_w[mS,k]$.&lt;/p&gt;
+
+&lt;p&gt;This is just the least-square problem, where the solution of $x[n]$ can be obtained by taking the derivative with respect to $D\left(X_w, Y_w\right)$ and enforce it to be zero, yielding the following solution:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+x[n]=\frac{  \sum_{m=-\infty}^\infty w[n-Sm]y_w[mS,n]  }{  \sum_{m=-\infty}^\infty w^2[n-Sm]  }\notag,
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;With carefully designed window function, we can make the denominator to be $1$, resulting in a form where the reconstructed signal $x$ is simply the sum of the IDFT of the target STFT, weighted by the window function $w$. Two such window functions are: (1) Rectangular window $w_r$ with length $L$ being an integer multiple of the sliding step-size $S$ (2) Sinusoidal window&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+w_s[n] = \frac{2w_r[n]}{\sqrt{4a^2+2b^2}}\left[a+b\cos\left(\frac{2\pi n}{L}+\phi\right)\right]\notag.
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;with length $L$ being a multiple of four times the window shift $S$.&lt;/p&gt;
+
+&lt;p&gt;Now that we have introduced the reconstruction of modified STFT with a least-square error estimate (LSEE) criterion, let us look at the corresponding reconstruction of the modified spectrogram. Without phase information, the least-square optimization problem is modified to&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+D\left(X_w, Y_w\right) = \frac{1}{N}\sum_{m=-\infty}^{\infty}\sum_{k=0}^{N-1}\left(|X_w[mS,k]|-|Y_w[mS,k]|\right)^2\notag,
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;It can be showed that the following iterative algorithm reduces the error function above after each iteration:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;Start with initial estimate of $x^{(t)}[n]$&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Obtain its STFT $X_w^{(t)}[mS, k]$&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Replace the magnitude of $X_w^{(t)}[mS, k]$ with the target spectrogram $|Y_w[mS, k]|$ and preserve the phase. More precisely, obtain $\widehat{X}_w^{(t)}[mS, k]$&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+\widehat{X}_w^{(t)}[mS, k]=|Y_w[mS, k]|\frac{X_w^{(t)}[mS, k]}{|X_w^{(t)}[mS, k]|}\notag.
+\end{align*}&lt;/script&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Get an updated estimate of $x^{(t+1)}[n]$ by running the LSEE algorithm with target STFT of $\widehat{X}_w^{(t)}[mS, k]$&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+x^{(t+1)}[n]=\frac{  \sum_{m=-\infty}^\infty w[n-Sm]\text{IDFT}\left(\widehat{X}_w^{(t)}[mS, k]\right) }{  \sum_{m=-\infty}^\infty w^2[n-Sm]  }\notag,
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;and go back to step 1.&lt;/p&gt;
+
+&lt;p&gt;https://pdfs.semanticscholar.org/ade8/d1511a61d78948bb0d43e207593389935421.pdf&lt;/p&gt;</content><author><name>Yang Yang</name></author><category term="text to speech" /><summary type="html">Here’s the problem: we are given some modified short-time-Fourier-transform (STFT) or modified spectrogram (magnitude of STFT). The STFT/spectrogram is called modified to stress the fact that it in general does not corresponds to any valid time-domain signal: it may be obtained by modifying a STFT/spectrogram of some real signal, or it may simply be generated by a neural network. The task here is to synthesize a time-domain signal from this target STFT/spectrogram, such that the STFT/spectrogram of the synthesized signal is as close to the target as possible.</summary></entry></feed>
