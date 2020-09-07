@@ -1,4 +1,205 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="https://yyang768osu.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://yyang768osu.github.io/" rel="alternate" type="text/html" /><updated>2020-08-16T20:47:24-07:00</updated><id>https://yyang768osu.github.io/</id><title type="html">Yang Yang</title><subtitle>Engineer at Qualcomm</subtitle><author><name>Yang Yang</name></author><entry><title type="html">Understanding and Implementing Asymmetric Numeral System (ANS)</title><link href="https://yyang768osu.github.io/posts/2020/06/asymmetric-numeral-system/" rel="alternate" type="text/html" title="Understanding and Implementing Asymmetric Numeral System (ANS)" /><published>2020-06-26T00:00:00-07:00</published><updated>2020-06-26T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2020/06/understanding-and-implementing-ans</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2020/06/asymmetric-numeral-system/">&lt;p&gt;Consider a alphabet with $N$ different symbols $\mathcal{A}=\{0, 1, \ldots, N-1\}. $Let us imagine an coding algorithm where a sequence of these symbols are coded into a sequence of bits, represented by an integer $s$, from which we can decode each symbol sequentially by breaking down $s$ into one symbol $x$ and another integer $s’$ capturing the remaining information. In such case, the encoding and decoding operation can be represented by the following &lt;code class=&quot;highlighter-rouge&quot;&gt;push&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;pop&lt;/code&gt; operation:&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="https://yyang768osu.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://yyang768osu.github.io/" rel="alternate" type="text/html" /><updated>2020-09-07T13:58:44-07:00</updated><id>https://yyang768osu.github.io/</id><title type="html">Yang Yang</title><subtitle>Engineer at Qualcomm</subtitle><author><name>Yang Yang</name></author><entry><title type="html">An Introduction of Lagevin Dynamics for Bayesian Inference</title><link href="https://yyang768osu.github.io/posts/2020/09/langevin-dynamics/" rel="alternate" type="text/html" title="An Introduction of Lagevin Dynamics for Bayesian Inference" /><published>2020-09-06T00:00:00-07:00</published><updated>2020-09-06T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2020/09/langevin-dynamics</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2020/09/langevin-dynamics/">&lt;p&gt;In this post we visit some technical details centered around Langevin Dynamics in the context of stochastic Bayesian learning, assuming minimal background on conventional calculus and Brownian motion. Starting with quadratic variation, we gradually show how Ito’s Lemma and Fokker-Planck equation can be derived. Using Fokker-Planck equation, it is revealed that an overdamped Langevian dynamic can be used as a MCMC method to generate samples from an unnormalized distribution. Lastly, &lt;a href=&quot;https://www.ics.uci.edu/~welling/publications/papers/stoclangevin_v6.pdf&quot;&gt;stochastic gradient Langevin dynamics&lt;/a&gt; method is discussed.&lt;/p&gt;
+
+&lt;p&gt;The following materials are taken as references:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.math.ucdavis.edu/~hunter/m280_09/ch5.pdf&quot;&gt;UC-Davis Lecture Notes on Applied Mathematics&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=PPl-7_RL0Ko&quot;&gt;MIT Topics in Mathematics with Applications in Finance Lecture 17: Stochastic Processes II&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=Z5yRMMVUC5w&quot;&gt;MIT Topics in Mathematics with Applications in Finance Lecture 18: Itō Calculus&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;quadratic-variation&quot;&gt;Quadratic Variation&lt;/h2&gt;
+&lt;p&gt;For Brownian motion $B_t$, 
+we know that $B\left(\frac{i+1}{N}T\right) - B\left(\frac{i}{N}T\right)$ for different index $i$ are i.i.d. with distribution $\mathcal{N}\left(0, \frac{T}{N}\right)$. The following holds by strong law of large numbers.&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\lim_{N\to\infty}\sum_{i=1}^N \left(B\left(\frac{i+1}{N}T\right) - B\left(\frac{i}{N}T\right)\right)^2&amp;=T \text{ a.s.} \\
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;The above can be written in differential form as&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\int (dB)^2 &amp;= \int dt\\
+(dB)^2 &amp;= dt\\
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;which is known as quadratic variation. This means that the second order term of Taylor expansion involving $B_t$ scales as $O(t)$ instead of $o(t)$, the implication of which is detailed in Ito’s Lemma below.&lt;/p&gt;
+
+&lt;h2 id=&quot;itos-lemma&quot;&gt;Ito’s Lemma&lt;/h2&gt;
+
+&lt;p&gt;Suppose we want to compute $f(B_t)$ for some smooth function $f$. By Taylor expansion, the infinitesimal difference can be expressed as&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+f(B_{t+\Delta t}) - f(B_t) &amp;= f'(B_t) (B_{t+\Delta t} - B_t) + \frac{f''(B_t)}{2}\left(B_{t+\Delta t}-B_t\right)^2 \\
+                  \text{(differential form) }      df &amp;= f'(B_t) dB_t + \frac{f''(B_t)}{2}\left(dB_t\right)^2 \\
+                  \text{(quadratic variation) }      df &amp;= f'(B_t) dB_t + \frac{f''(B_t)}{2} dt\\
+                       \frac{df}{dt} &amp;= f'(B_t) \frac{dB_t}{dt} \color{red}{+ \frac{f''(B_t)}{2}}
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;The above equation is a naive version of Ito’s Lemma, the basis of Ito’s calculus. Note how it differs from conventional calculus by having the second term in red, as a direct consequence of quardratic variation.&lt;/p&gt;
+
+&lt;p&gt;Let us now look at a more advanced version of Ito’s Lemma, with the goal of obtaining the differential form of $f(x_t, t)$ where $x_t$ is a stochastic process defined with the following stochastic differential equation&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+dx_t = \mu(x_t)dt + \sigma dB_t
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;Similarly as before, let’s apply Taylor’s expansion on the infinitesimal difference of $f$&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+f(x+\Delta x, t+\Delta t) - f(x, t) &amp;= \frac{\partial f}{\partial t} \Delta t + \frac{\partial f}{\partial x} \Delta x + \frac{1}{2}\left[
+\frac{\partial^2 f}{\partial t^2}\Delta t^2 + 2\frac{\partial^2 f}{\partial t \partial x} \Delta t \Delta x + \frac{\partial^2 f}{\partial x^2}(\Delta x)^2
+\right] \\
+\text{(differential form) } d f &amp;= \frac{\partial f}{\partial t}dt + \frac{\partial f}{\partial x} dx_t +\frac{1}{2}\left[
+o(dt) + o(dt) + \frac{\partial^2 f}{\partial x^2}(dx_t)^2
+\right] \\
+\text{(substitute $dx_t$) } d f &amp;= \frac{\partial f}{\partial t}dt + \frac{\partial f}{\partial x} (\mu(x_t)dt +\sigma dB_t) +\frac{1}{2}
+\frac{\partial^2 f}{\partial x^2}(\mu(x_t)^2(dt)^2 + 2\mu(x_t)\sigma dt dB_t + \sigma^2 (dB_t)^2)
+\\
+\text{(quadratic variation) } d f &amp;= \left(\frac{\partial f}{\partial t} + \mu(x_t)\frac{\partial f}{\partial x} + \color{red}{\frac{1}{2}\sigma^2\frac{\partial^2 f}{\partial x^2}}\right)dt + \sigma\frac{\partial f}{\partial x} dB_t
+\\
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;Again, the red term highlights the difference to conventional calculus. In the special when $f$ is not a function of $t$, the above can be reduced to&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+ d f &amp;= \left(\mu(x_t)f'(x) + \color{red}{\frac{1}{2}\sigma^2 f''(x)}\right)dt + \sigma f'(x) dB_t,
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;which is used in the derivation of Fokker-Planck equation in the next section.&lt;/p&gt;
+
+&lt;h2 id=&quot;fokker-planck-equation&quot;&gt;Fokker-Planck equation&lt;/h2&gt;
+
+&lt;p&gt;For a stochastic process $x$ that is defined as $dx_t = \mu(x_t) dt + \sigma dB_t$, we are interested in how the distribution $p_t$ of $x_t$ evolves over time. For an arbitrary smooth function $f$, the following holds&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+\frac{d}{dt}\mathbb{E}\left[f(x_t)\right] = \left\{
+\begin{array}{ll}
+\int f(x) \frac{d}{dt}p_t(x) dx &amp; \text{ $f(x)$ viewed as a function of $x$ sampled from $p_t$} \\
+\mathbb{E}\left[\frac{d}{dt}f(x_t)\right] &amp; \text{ $f(x_t)$ viewed as a function of stochastic process $x_t$}\\
+\end{array}
+\right.
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;The second expression can be evaluated with Ito’s Lemma.&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+&amp;\mathbb{E}\left[\frac{d}{dt}f(x_t)\right]\\
+\text{(Ito's Lemma) }=&amp;\mathbb{E}\left[\mu(x_t)f'(x_t)+\frac{1}{2}\sigma^2f''(x_t) + \sigma f'(x_t) \frac{dB_t}{dt}\right] \\
+\text{($dB_t$ has mean $0$) }=&amp;\mathbb{E}\left[\mu(x_t)f'(x_t)+\frac{1}{2}\sigma^2f''(x_t) \right] \\
+\text{(using $x_t\sim p_t$) }=&amp;\int\left[\mu(x)f'(x)+\frac{1}{2}\sigma^2f''(x) \right]p_t(x)dx \\
+\text{(integration by part) }=&amp;-\int f(x)\frac{\partial (\mu(x)p_t(x)) }{\partial x}dx+\frac{1}{2}\sigma^2\int f(x)\frac{\partial^2 p_t(x)}{\partial x^2} p_t(x)dx
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;Combining the above two and cancelling out the arbitrary function $f$, we obtain Fokker-Planck equation below.&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+\frac{d}{dt}p_t = -\frac{\partial}{\partial x}\left(\mu(x)p_t(x)\right)+\frac{1}{2}\sigma^2\frac{\partial^2}{\partial x^2}p_t(x)
+\end{align*}&lt;/script&gt;
+
+&lt;h2 id=&quot;langevin-dynamics&quot;&gt;Langevin Dynamics&lt;/h2&gt;
+
+&lt;p&gt;let $\mu(x) = -u’(x)$ for some function $u(x)$, then the corresponding stochastic process is defined as $dx_t = -u’(x_t) dt + \sigma dB_t$, often referred as overdamped Langevin process. Using Fokker-Planck equation, it is easy to check that&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+p(x) \propto e^{-2/\sigma^2 u(x)}
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;is the stationary distribution of $x_t$.&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+&amp;\frac{\partial}{\partial x}\left(u'(x)p(x)\right)+\frac{1}{2}\sigma^2\frac{\partial^2}{\partial x^2}p(x) \\
+=&amp;u''(x)p(x)-\frac{2}{\sigma^2}(u'(x))^2 p(x) + \frac{1}{2}\sigma^2\left(-\frac{2}{\sigma^2}u''(x)p(x) + \frac{4}{\sigma^4}(u'(x))^2 p(x)\right)=0
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;h3 id=&quot;langevin-mcmc&quot;&gt;Langevin MCMC&lt;/h3&gt;
+
+&lt;p&gt;The fact that Langevin process $dx_t = -u’(x_t) dt + \sigma dB_t$ converges to a stationary distribution $p(x) \propto e^{-2/\sigma^2 u(x)}$ lends itself as a suitable Markov chain Monte Carlo method. Specifically, to obtain samples from a unnormalized density function $\bar{p}(x)$, we just need to run the following Langevin process from a random starting point till it reaches steady state distribution&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+dx_t = \nabla_x \log \bar{p}(x) dt + \sqrt{2} dB_t
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;Discretized sample path of Langevin process can be generated with Euler method&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+x_{k+1}  = x_k  + \nabla_x \log \bar{p}(x_k) \epsilon + \sqrt{2\epsilon}\xi_k
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;Since the discretization is only an approximation to the original continous stochastic process, it does not in itself lead to desired stationary distribution (unless $\epsilon$ becomes infinitesimal) and thus should be corrected by Metropolis-Hastings to enforce detailed balance condition.&lt;/p&gt;
+
+&lt;p&gt;One lingering question is: does the discretization of langevin dyanmcis satisfy detailed balance equation in $\epsilon\to0$ asymptote? The fact that it converges to a desirable distribution does not indicate that it is a time-reversible Markov chain. Even thought it is claimed by some source that the asymptotic acceptance ratio approaches 1, I was not able to show that it is the case and is stuck at the following derivation.&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align*}
+&amp;\frac{\bar{p}(x)P(x\to x')}{\bar{p}(x')P(x'\to x)} = \frac{
+\bar{p}(x)\mathcal{N}\left(x'-x-\nabla_x \bar{p}(x)\tau|0, 2\tau\right)
+}{
+\bar{p}(x')\mathcal{N}\left(x-x'-\nabla_x \bar{p}(x')\tau|0, 2\tau\right)
+}\\
+=&amp; 
+\frac{
+\bar{p}(x)e^{(x'-x)\nabla_x \bar{p}(x)/2 + o(\tau)}
+}{
+\bar{p}(x')e^{(x-x')\nabla_x \bar{p}(x')/2 + o(\tau)} 
+}
+=
+\frac{
+\bar{p}(x)e^{(x'-x)\nabla_x \frac{\bar{p}(x)+\bar{p}(x')}{2} + o(\tau)}
+}{
+\bar{p}(x') 
+}
+\end{align*} %]]&gt;&lt;/script&gt;
+
+&lt;h3 id=&quot;relevance-to-bayesian-inference&quot;&gt;Relevance to Bayesian Inference&lt;/h3&gt;
+
+&lt;p&gt;In Bayesian inference we deal with a prior distribution $p_\text{prior}(\theta)$ for some latent parameter $\theta$ and a likelihood term $p_\text{likelihood}(\mathcal{D}|\theta)$ of the dataset $\mathcal{D}$ given the latent parameter, and the goal is to obtain samples according to the posterior probability $p_\text{post}(\theta|\mathcal{D}) = p_\text{prior}(\theta)p_\text{likelihood}(\mathcal{D}|\theta)/p(\mathcal{D})$. Since the constant marginal likelihood term $p(\mathcal{D})=\int p_\text{likelihood}(\mathcal{D}|\theta)p_\text{prior}(\theta)d\theta$ is often intractable, we are left with a unnormalized poster probability $p_\text{post}\propto p_\text{prior}p_\text{likelihood}$. To sample from it, we can simply construct and run the following stochastic process&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+d\theta_t = \left(\nabla_\theta \log p_\text{prior}(\theta) + \nabla_\theta \log p_\text{likelihood}(\mathcal{D}|\theta)\right) dt + \sqrt{2} dB_t
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;Hereafter we use the notation of $x$ to indicate elements in the dataset $x\in\mathcal{D}$, $\theta$ to denote the hidden parameter for which we want to conduct Bayesian inference, and drop the subscript to different $p$ as they can be differentiated by their arguments.&lt;/p&gt;
+
+&lt;h2 id=&quot;stochastic-gradient-langevin-dynamics-sgld&quot;&gt;Stochastic Gradient Langevin Dynamics (SGLD)&lt;/h2&gt;
+
+&lt;p&gt;Discretizing Langevin dynamics with step size of $\epsilon_t$ leads to the following update rule&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+\Delta \theta = \epsilon_t \left(\nabla_\theta \log p(\theta) + \nabla_\theta \log p(\mathcal{D}|\theta)\right) + \sqrt{2 \epsilon_t} \xi_t, \text{ where }\xi_t\sim\mathcal{N}(0, 1)
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;If we have $\sum_t\epsilon_t = \infty$ and $\sum_t\epsilon^2 &amp;lt;\infty$ then asymptotically the discretization error will become negligible and the update rule approaches the corresponding Langevin dyanmics, resulting in a sequence of $\theta_t$ that converges to the posterior distribution $p(\theta|\mathcal{D})$.&lt;/p&gt;
+
+&lt;p&gt;An interesting and clever observation made by &lt;a href=&quot;https://www.ics.uci.edu/~welling/publications/papers/stoclangevin_v6.pdf&quot;&gt;stochastic gradient Langevin dynamics&lt;/a&gt; paper is that the convergence will hold even if we use mini-batches of the data to estimate the gradient of $\nabla_\theta \log p(\mathcal{D}|\theta)$.&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+\nabla_\theta \log p(\mathcal{D}|\theta) \approx \frac{N}{n}\sum_{i=1}^n\nabla_\theta \log p(x_{t,i}|\theta)
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;The insight is that the stochastic error introduced from using mini-batches instead of the whole dataset dies out much faster than the added Gaussian noise as the $\epsilon_t$ decreases, so it does not change the asymptotical behavior of the update rule. Specifically, the randomness coming from the stochastic estimate of $\nabla_\theta \log p(\mathcal{D}|\theta)$ has a variance that scales as $\epsilon_t^2$ since it is multiplied with $\epsilon_t$. In comparison, the variance of the added Gaussian noise scales linearly as $\epsilon_t$.&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+\Delta \theta =\underbrace{ \underbrace{ \underbrace{\epsilon_t \frac{N}{n}\sum_{i=1}^n\nabla_\theta \log p(x_{t, i}|\theta)}_{\text{gradient step towards ML target}} +\epsilon_t \nabla_\theta \log p(\theta)}_{\text{gradient step towards MAP target}} + \sqrt{2 \epsilon_t} \xi_t}_{\text{stochastic gradient Langevin dynamics for posterior sampling}} , \text{ where }\xi_t\sim\mathcal{N}(0, 1)
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;Given that stochastic Langevin dynamics converges to the desired distribution as $\epsilon_t\to0$, we do not need to carry out Metropolis-Hastings to reject samples. This is crucial in simplifying the algorithm, since evaluation of rejection/acceptance rate is computed at every step and it depends on the evaluation of $p(\theta)p(\mathcal{D}|\theta)$ which can only be computed after traversing the whole dataset.&lt;/p&gt;
+
+&lt;p&gt;As a closing remark, if we use the posterior sampling for the estimation of the expectation of some function $f$, it is recommended in &lt;a href=&quot;https://www.ics.uci.edu/~welling/publications/papers/stoclangevin_v6.pdf&quot;&gt;stochastic gradient Langevin dynamics&lt;/a&gt; that the following equation be used.&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
+\mathbb{E}[f(\theta)] = \frac{\sum_t \epsilon_t f(\theta_t)}{\sum_t \epsilon_t}
+\end{align*}&lt;/script&gt;
+
+&lt;p&gt;with the intuition that each $\theta_t$ will contribute an effective sample size proportional to $\epsilon_t$.&lt;/p&gt;</content><author><name>Yang Yang</name></author><category term="MCMC" /><summary type="html">In this post we visit some technical details centered around Langevin Dynamics in the context of stochastic Bayesian learning, assuming minimal background on conventional calculus and Brownian motion. Starting with quadratic variation, we gradually show how Ito’s Lemma and Fokker-Planck equation can be derived. Using Fokker-Planck equation, it is revealed that an overdamped Langevian dynamic can be used as a MCMC method to generate samples from an unnormalized distribution. Lastly, stochastic gradient Langevin dynamics method is discussed.</summary></entry><entry><title type="html">Understanding and Implementing Asymmetric Numeral System (ANS)</title><link href="https://yyang768osu.github.io/posts/2020/06/asymmetric-numeral-system/" rel="alternate" type="text/html" title="Understanding and Implementing Asymmetric Numeral System (ANS)" /><published>2020-06-26T00:00:00-07:00</published><updated>2020-06-26T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2020/06/understanding-and-implementing-ans</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2020/06/asymmetric-numeral-system/">&lt;p&gt;Consider a alphabet with $N$ different symbols $\mathcal{A}=\{0, 1, \ldots, N-1\}. $Let us imagine an coding algorithm where a sequence of these symbols are coded into a sequence of bits, represented by an integer $s$, from which we can decode each symbol sequentially by breaking down $s$ into one symbol $x$ and another integer $s’$ capturing the remaining information. In such case, the encoding and decoding operation can be represented by the following &lt;code class=&quot;highlighter-rouge&quot;&gt;push&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;pop&lt;/code&gt; operation:&lt;/p&gt;
 
 &lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
 \begin{align*}
@@ -1868,74 +2069,4 @@ p(z_n| x_1^n) \propto&amp;\text{ }  p(x_n | z_n) \color{red}{p(z_n | x_1^{n-1})}
 &lt;ul&gt;
   &lt;li&gt;BCJR algorithm in the decoding of convolutional/Turbo code in communication systems&lt;/li&gt;
   &lt;li&gt;Baum-Welch algorithm, commonly used in speech recognition systems with discrete HMM models&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Yang Yang</name></author><category term="kalman filter" /><summary type="html">Kalman filter and particle filter are concepts that are intimidating for new learners due to its involved mathmatical discription, and are straightforward once you grasp the main idea and get used to Gaussian distributions. The goal of this post is to take a journey to Kalman filter by dissecting its idea and operation into pieces that are easy to absorb, and then assemble them together to give the whole picture. As a last step, we will see that particle filter achieves the same goal for non-Gaussian system resorting to Monte Carlo sampling.</summary></entry><entry><title type="html">Griffin-Lim algorithm for waveform reconstruction</title><link href="https://yyang768osu.github.io/posts/2018/08/griffin-lim/" rel="alternate" type="text/html" title="Griffin-Lim algorithm for waveform reconstruction" /><published>2018-08-12T00:00:00-07:00</published><updated>2018-08-12T00:00:00-07:00</updated><id>https://yyang768osu.github.io/posts/2018/08/griffin-lim-algorithm-for-waveform-reconstruction</id><content type="html" xml:base="https://yyang768osu.github.io/posts/2018/08/griffin-lim/">&lt;p&gt;Here’s the problem: we are given some &lt;em&gt;modified&lt;/em&gt; short-time-Fourier-transform (STFT) or &lt;em&gt;modified&lt;/em&gt; spectrogram (magnitude of STFT). The STFT/spectrogram is called &lt;em&gt;modified&lt;/em&gt; to stress the fact that it in general does not corresponds to any valid time-domain signal: it may be obtained by modifying a STFT/spectrogram of some real signal, or it may simply be generated by a neural network. The task here is to synthesize a time-domain signal from this target STFT/spectrogram, such that the STFT/spectrogram of the synthesized signal is as close to the target as possible.&lt;/p&gt;
-
-&lt;p&gt;Let us denote the target STFT as $Y_w[mS,k]$, where $m$ is the index of the time-window, and $k$ represents the frequency axis. Here $S$ denote the step size of the time-domain window, and $mS$ can be viewed as the center of the sliding time windows. Correspondingly, if we are talking about spectrogram, the target can be denoted as  $|Y_w(mS,\omega)|$, to emphasis that there is no phase information.&lt;/p&gt;
-
-&lt;p&gt;First, let’s align the definition and notation of the STFT/spectrogram. For a given time-domain signal $x[n]$, it is masked by a finite length window function $w$, yielding $x_w[mS,n]\triangleq w[n-mS]x[n]$, with $mS$ denoting the offset of the window from the original, and $m$ being the index of time-domain slice. The STFT $X_w[mS,k]$ is obtained by taking the DFT of each windowed signal $x_w[mS, n]$ with respect to time-index $n$: $X_w[mS,k]=\text{DFT}(x_w[mS, n])$.&lt;/p&gt;
-
-&lt;p&gt;The objective is then to find a time domain signal $x[n]$ such that its STFT $X_w[mS,k]$ is as close to the target $Y_w[mS,k]$ as possible. Note, again, that the target $Y_w[mS,k]$ in general does not correspond to any valid time-domain signal. In other words, there is no time-domain signal that produces $Y_w[mS,k]$ as its STFT. Going back to the objective, a natural way to define the closeness is simply the sum squared distance, expressed as below&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
-D\left(X_w, Y_w\right) = \frac{1}{N}\sum_{m=-\infty}^{\infty}\sum_{k=0}^{N-1}|X_w[mS,k]-Y_w[mS,k]|^2\notag,
-\end{align*}&lt;/script&gt;
-
-&lt;p&gt;where $N$ denote the window-length (and correspondingly the DFT size). By Parseval’s theorem we have&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
-\begin{align*}
-D\left(X_w, Y_w\right) =&amp;\sum_{m=-\infty}^{\infty}\sum_{l=-\infty}^{\infty}|x_w[mS,l]-y_w[mS,l]|^2\notag\\
-=&amp;\sum_{m=-\infty}^{\infty}\sum_{l=-\infty}^{\infty}|w[n-mS]x[n]-y_w[mS,l]|^2\notag,
-\end{align*} %]]&gt;&lt;/script&gt;
-
-&lt;p&gt;where $y_w[mS,l]$ is the IDFT of $Y_w[mS,k]$.&lt;/p&gt;
-
-&lt;p&gt;This is just the least-square problem, where the solution of $x[n]$ can be obtained by taking the derivative with respect to $D\left(X_w, Y_w\right)$ and enforce it to be zero, yielding the following solution:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
-x[n]=\frac{  \sum_{m=-\infty}^\infty w[n-Sm]y_w[mS,n]  }{  \sum_{m=-\infty}^\infty w^2[n-Sm]  }\notag,
-\end{align*}&lt;/script&gt;
-
-&lt;p&gt;With carefully designed window function, we can make the denominator to be $1$, resulting in a form where the reconstructed signal $x$ is simply the sum of the IDFT of the target STFT, weighted by the window function $w$. Two such window functions are: (1) Rectangular window $w_r$ with length $L$ being an integer multiple of the sliding step-size $S$ (2) Sinusoidal window&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
-w_s[n] = \frac{2w_r[n]}{\sqrt{4a^2+2b^2}}\left[a+b\cos\left(\frac{2\pi n}{L}+\phi\right)\right]\notag.
-\end{align*}&lt;/script&gt;
-
-&lt;p&gt;with length $L$ being a multiple of four times the window shift $S$.&lt;/p&gt;
-
-&lt;p&gt;Now that we have introduced the reconstruction of modified STFT with a least-square error estimate (LSEE) criterion, let us look at the corresponding reconstruction of the modified spectrogram. Without phase information, the least-square optimization problem is modified to&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
-D\left(X_w, Y_w\right) = \frac{1}{N}\sum_{m=-\infty}^{\infty}\sum_{k=0}^{N-1}\left(|X_w[mS,k]|-|Y_w[mS,k]|\right)^2\notag,
-\end{align*}&lt;/script&gt;
-
-&lt;p&gt;It can be showed that the following iterative algorithm reduces the error function above after each iteration:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;Start with initial estimate of $x^{(t)}[n]$&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Obtain its STFT $X_w^{(t)}[mS, k]$&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Replace the magnitude of $X_w^{(t)}[mS, k]$ with the target spectrogram $|Y_w[mS, k]|$ and preserve the phase. More precisely, obtain $\widehat{X}_w^{(t)}[mS, k]$&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
-\widehat{X}_w^{(t)}[mS, k]=|Y_w[mS, k]|\frac{X_w^{(t)}[mS, k]}{|X_w^{(t)}[mS, k]|}\notag.
-\end{align*}&lt;/script&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;Get an updated estimate of $x^{(t+1)}[n]$ by running the LSEE algorithm with target STFT of $\widehat{X}_w^{(t)}[mS, k]$&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align*}
-x^{(t+1)}[n]=\frac{  \sum_{m=-\infty}^\infty w[n-Sm]\text{IDFT}\left(\widehat{X}_w^{(t)}[mS, k]\right) }{  \sum_{m=-\infty}^\infty w^2[n-Sm]  }\notag,
-\end{align*}&lt;/script&gt;
-
-&lt;p&gt;and go back to step 1.&lt;/p&gt;
-
-&lt;p&gt;https://pdfs.semanticscholar.org/ade8/d1511a61d78948bb0d43e207593389935421.pdf&lt;/p&gt;</content><author><name>Yang Yang</name></author><category term="text to speech" /><summary type="html">Here’s the problem: we are given some modified short-time-Fourier-transform (STFT) or modified spectrogram (magnitude of STFT). The STFT/spectrogram is called modified to stress the fact that it in general does not corresponds to any valid time-domain signal: it may be obtained by modifying a STFT/spectrogram of some real signal, or it may simply be generated by a neural network. The task here is to synthesize a time-domain signal from this target STFT/spectrogram, such that the STFT/spectrogram of the synthesized signal is as close to the target as possible.</summary></entry></feed>
+&lt;/ul&gt;</content><author><name>Yang Yang</name></author><category term="kalman filter" /><summary type="html">Kalman filter and particle filter are concepts that are intimidating for new learners due to its involved mathmatical discription, and are straightforward once you grasp the main idea and get used to Gaussian distributions. The goal of this post is to take a journey to Kalman filter by dissecting its idea and operation into pieces that are easy to absorb, and then assemble them together to give the whole picture. As a last step, we will see that particle filter achieves the same goal for non-Gaussian system resorting to Monte Carlo sampling.</summary></entry></feed>

@@ -1,0 +1,630 @@
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+
+<meta charset="utf-8">
+
+
+
+<!-- begin SEO -->
+
+
+
+
+
+
+
+
+
+<title>An Introduction of Lagevin Dynamics for Bayesian Inference - Yang Yang</title>
+
+
+
+
+
+
+
+<meta property="og:locale" content="en-US">
+<meta property="og:site_name" content="Yang Yang">
+<meta property="og:title" content="An Introduction of Lagevin Dynamics for Bayesian Inference">
+
+
+  <link rel="canonical" href="https://yyang768osu.github.io/posts/2020/09/langevin-dynamics/">
+  <meta property="og:url" content="https://yyang768osu.github.io/posts/2020/09/langevin-dynamics/">
+
+
+
+  <meta property="og:description" content="In this post we visit some technical details centered around Langevin Dynamics in the context of stochastic Bayesian learning, assuming minimal background on conventional calculus and Brownian motion. Starting with quadratic variation, we gradually show how Ito’s Lemma and Fokker-Planck equation can be derived. Using Fokker-Planck equation, it is revealed that an overdamped Langevian dynamic can be used as a MCMC method to generate samples from an unnormalized distribution. Lastly, stochastic gradient Langevin dynamics method is discussed.">
+
+
+
+
+
+  
+
+  
+
+
+
+
+
+  <meta property="og:type" content="article">
+  <meta property="article:published_time" content="2020-09-06T00:00:00-07:00">
+
+
+
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context" : "http://schema.org",
+      "@type" : "Person",
+      "name" : "Yang Yang",
+      "url" : "https://yyang768osu.github.io",
+      "sameAs" : null
+    }
+  </script>
+
+
+
+
+
+
+<!-- end SEO -->
+
+
+<link href="https://yyang768osu.github.io/feed.xml" type="application/atom+xml" rel="alternate" title="Yang Yang Feed">
+
+<!-- http://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="https://yyang768osu.github.io/assets/css/main.css">
+
+<meta http-equiv="cleartype" content="on">
+    
+
+<!-- start custom head snippets -->
+
+<link rel="apple-touch-icon" sizes="57x57" href="https://yyang768osu.github.io/images/apple-touch-icon-57x57.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="60x60" href="https://yyang768osu.github.io/images/apple-touch-icon-60x60.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="72x72" href="https://yyang768osu.github.io/images/apple-touch-icon-72x72.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="76x76" href="https://yyang768osu.github.io/images/apple-touch-icon-76x76.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="114x114" href="https://yyang768osu.github.io/images/apple-touch-icon-114x114.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="120x120" href="https://yyang768osu.github.io/images/apple-touch-icon-120x120.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="144x144" href="https://yyang768osu.github.io/images/apple-touch-icon-144x144.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="152x152" href="https://yyang768osu.github.io/images/apple-touch-icon-152x152.png?v=M44lzPylqQ">
+<link rel="apple-touch-icon" sizes="180x180" href="https://yyang768osu.github.io/images/apple-touch-icon-180x180.png?v=M44lzPylqQ">
+<link rel="icon" type="image/png" href="https://yyang768osu.github.io/images/favicon-32x32.png?v=M44lzPylqQ" sizes="32x32">
+<link rel="icon" type="image/png" href="https://yyang768osu.github.io/images/android-chrome-192x192.png?v=M44lzPylqQ" sizes="192x192">
+<link rel="icon" type="image/png" href="https://yyang768osu.github.io/images/favicon-96x96.png?v=M44lzPylqQ" sizes="96x96">
+<link rel="icon" type="image/png" href="https://yyang768osu.github.io/images/favicon-16x16.png?v=M44lzPylqQ" sizes="16x16">
+<link rel="manifest" href="https://yyang768osu.github.io/images/manifest.json?v=M44lzPylqQ">
+<link rel="mask-icon" href="https://yyang768osu.github.io/images/safari-pinned-tab.svg?v=M44lzPylqQ" color="#000000">
+<link rel="shortcut icon" href="/images/favicon.ico?v=M44lzPylqQ">
+<meta name="msapplication-TileColor" content="#000000">
+<meta name="msapplication-TileImage" content="https://yyang768osu.github.io/images/mstile-144x144.png?v=M44lzPylqQ">
+<meta name="msapplication-config" content="https://yyang768osu.github.io/images/browserconfig.xml?v=M44lzPylqQ">
+<meta name="theme-color" content="#ffffff">
+<link rel="stylesheet" href="https://yyang768osu.github.io/assets/css/academicons.css"/>
+
+<script type="text/x-mathjax-config"> MathJax.Hub.Config({ TeX: { equationNumbers: { autoNumber: "all" } } }); </script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      displayMath: [ ['$$', '$$'] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/latest.js?config=TeX-MML-AM_CHTML' async></script>
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        <button><div class="navicon"></div></button>
+        <ul class="visible-links">
+          <li class="masthead__menu-item masthead__menu-item--lg"><a href="https://yyang768osu.github.io/">Yang Yang</a></li>
+          
+            
+            <li class="masthead__menu-item"><a href="https://yyang768osu.github.io/blog-posts/">Blog Posts</a></li>
+          
+            
+            <li class="masthead__menu-item"><a href="https://yyang768osu.github.io/reading-notes/">Reading Notes</a></li>
+          
+            
+            <li class="masthead__menu-item"><a href="https://yyang768osu.github.io/reading-list/">Reading List</a></li>
+          
+        </ul>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+    
+
+
+
+
+
+<div id="main" role="main">
+  
+
+
+  <div class="sidebar sticky">
+  
+
+
+
+<div itemscope itemtype="http://schema.org/Person">
+
+  <div class="author__avatar">
+    
+    	<img src="https://yyang768osu.github.io/images/profile.png" class="author__avatar" alt="Yang Yang">
+    
+  </div>
+
+  <div class="author__content">
+    <h3 class="author__name">Yang Yang</h3>
+    <p class="author__bio"></p>
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li><i class="fa fa-fw fa-map-marker" aria-hidden="true"></i> San Diego, California</li>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+        <li><a href="https://github.com/yyang768osu"><i class="fa fa-fw fa-github" aria-hidden="true"></i> Github</a></li>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+        <li><a href="https://scholar.google.com/citations?user=mcncpioAAAAJ&hl=en"><i class="ai ai-google-scholar-square ai-fw"></i> Google Scholar</a></li>
+      
+      
+      
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+    <meta itemprop="headline" content="An Introduction of Lagevin Dynamics for Bayesian Inference">
+    <meta itemprop="description" content="In this post we visit some technical details centered around Langevin Dynamics in the context of stochastic Bayesian learning, assuming minimal background on conventional calculus and Brownian motion. Starting with quadratic variation, we gradually show how Ito’s Lemma and Fokker-Planck equation can be derived. Using Fokker-Planck equation, it is revealed that an overdamped Langevian dynamic can be used as a MCMC method to generate samples from an unnormalized distribution. Lastly, stochastic gradient Langevin dynamics method is discussed.">
+    <meta itemprop="datePublished" content="September 06, 2020">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 class="page__title" itemprop="headline">An Introduction of Lagevin Dynamics for Bayesian Inference
+</h1>
+          
+            <p class="page__meta"><i class="fa fa-clock-o" aria-hidden="true"></i> 
+
+
+  
+	  6 minute read
+	
+</p>
+          
+        
+        
+        
+          <p class="page__date"><strong><i class="fa fa-fw fa-calendar" aria-hidden="true"></i> Published:</strong> <time datetime="2020-09-06T00:00:00-07:00">September 06, 2020</time></p>
+        
+        
+             
+        
+    
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        <p>In this post we visit some technical details centered around Langevin Dynamics in the context of stochastic Bayesian learning, assuming minimal background on conventional calculus and Brownian motion. Starting with quadratic variation, we gradually show how Ito’s Lemma and Fokker-Planck equation can be derived. Using Fokker-Planck equation, it is revealed that an overdamped Langevian dynamic can be used as a MCMC method to generate samples from an unnormalized distribution. Lastly, <a href="https://www.ics.uci.edu/~welling/publications/papers/stoclangevin_v6.pdf">stochastic gradient Langevin dynamics</a> method is discussed.</p>
+
+<p>The following materials are taken as references:</p>
+
+<ul>
+  <li><a href="https://www.math.ucdavis.edu/~hunter/m280_09/ch5.pdf">UC-Davis Lecture Notes on Applied Mathematics</a></li>
+  <li><a href="https://www.youtube.com/watch?v=PPl-7_RL0Ko">MIT Topics in Mathematics with Applications in Finance Lecture 17: Stochastic Processes II</a></li>
+  <li><a href="https://www.youtube.com/watch?v=Z5yRMMVUC5w">MIT Topics in Mathematics with Applications in Finance Lecture 18: Itō Calculus</a></li>
+</ul>
+
+<h2 id="quadratic-variation">Quadratic Variation</h2>
+<p>For Brownian motion $B_t$, 
+we know that $B\left(\frac{i+1}{N}T\right) - B\left(\frac{i}{N}T\right)$ for different index $i$ are i.i.d. with distribution $\mathcal{N}\left(0, \frac{T}{N}\right)$. The following holds by strong law of large numbers.</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+\lim_{N\to\infty}\sum_{i=1}^N \left(B\left(\frac{i+1}{N}T\right) - B\left(\frac{i}{N}T\right)\right)^2&=T \text{ a.s.} \\
+\end{align*} %]]></script>
+
+<p>The above can be written in differential form as</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+\int (dB)^2 &= \int dt\\
+(dB)^2 &= dt\\
+\end{align*} %]]></script>
+
+<p>which is known as quadratic variation. This means that the second order term of Taylor expansion involving $B_t$ scales as $O(t)$ instead of $o(t)$, the implication of which is detailed in Ito’s Lemma below.</p>
+
+<h2 id="itos-lemma">Ito’s Lemma</h2>
+
+<p>Suppose we want to compute $f(B_t)$ for some smooth function $f$. By Taylor expansion, the infinitesimal difference can be expressed as</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+f(B_{t+\Delta t}) - f(B_t) &= f'(B_t) (B_{t+\Delta t} - B_t) + \frac{f''(B_t)}{2}\left(B_{t+\Delta t}-B_t\right)^2 \\
+                  \text{(differential form) }      df &= f'(B_t) dB_t + \frac{f''(B_t)}{2}\left(dB_t\right)^2 \\
+                  \text{(quadratic variation) }      df &= f'(B_t) dB_t + \frac{f''(B_t)}{2} dt\\
+                       \frac{df}{dt} &= f'(B_t) \frac{dB_t}{dt} \color{red}{+ \frac{f''(B_t)}{2}}
+\end{align*} %]]></script>
+
+<p>The above equation is a naive version of Ito’s Lemma, the basis of Ito’s calculus. Note how it differs from conventional calculus by having the second term in red, as a direct consequence of quardratic variation.</p>
+
+<p>Let us now look at a more advanced version of Ito’s Lemma, with the goal of obtaining the differential form of $f(x_t, t)$ where $x_t$ is a stochastic process defined with the following stochastic differential equation</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+dx_t = \mu(x_t)dt + \sigma dB_t
+\end{align*}</script>
+
+<p>Similarly as before, let’s apply Taylor’s expansion on the infinitesimal difference of $f$</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+f(x+\Delta x, t+\Delta t) - f(x, t) &= \frac{\partial f}{\partial t} \Delta t + \frac{\partial f}{\partial x} \Delta x + \frac{1}{2}\left[
+\frac{\partial^2 f}{\partial t^2}\Delta t^2 + 2\frac{\partial^2 f}{\partial t \partial x} \Delta t \Delta x + \frac{\partial^2 f}{\partial x^2}(\Delta x)^2
+\right] \\
+\text{(differential form) } d f &= \frac{\partial f}{\partial t}dt + \frac{\partial f}{\partial x} dx_t +\frac{1}{2}\left[
+o(dt) + o(dt) + \frac{\partial^2 f}{\partial x^2}(dx_t)^2
+\right] \\
+\text{(substitute $dx_t$) } d f &= \frac{\partial f}{\partial t}dt + \frac{\partial f}{\partial x} (\mu(x_t)dt +\sigma dB_t) +\frac{1}{2}
+\frac{\partial^2 f}{\partial x^2}(\mu(x_t)^2(dt)^2 + 2\mu(x_t)\sigma dt dB_t + \sigma^2 (dB_t)^2)
+\\
+\text{(quadratic variation) } d f &= \left(\frac{\partial f}{\partial t} + \mu(x_t)\frac{\partial f}{\partial x} + \color{red}{\frac{1}{2}\sigma^2\frac{\partial^2 f}{\partial x^2}}\right)dt + \sigma\frac{\partial f}{\partial x} dB_t
+\\
+\end{align*} %]]></script>
+
+<p>Again, the red term highlights the difference to conventional calculus. In the special when $f$ is not a function of $t$, the above can be reduced to</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+ d f &= \left(\mu(x_t)f'(x) + \color{red}{\frac{1}{2}\sigma^2 f''(x)}\right)dt + \sigma f'(x) dB_t,
+\end{align*} %]]></script>
+
+<p>which is used in the derivation of Fokker-Planck equation in the next section.</p>
+
+<h2 id="fokker-planck-equation">Fokker-Planck equation</h2>
+
+<p>For a stochastic process $x$ that is defined as $dx_t = \mu(x_t) dt + \sigma dB_t$, we are interested in how the distribution $p_t$ of $x_t$ evolves over time. For an arbitrary smooth function $f$, the following holds</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+\frac{d}{dt}\mathbb{E}\left[f(x_t)\right] = \left\{
+\begin{array}{ll}
+\int f(x) \frac{d}{dt}p_t(x) dx & \text{ $f(x)$ viewed as a function of $x$ sampled from $p_t$} \\
+\mathbb{E}\left[\frac{d}{dt}f(x_t)\right] & \text{ $f(x_t)$ viewed as a function of stochastic process $x_t$}\\
+\end{array}
+\right.
+\end{align*} %]]></script>
+
+<p>The second expression can be evaluated with Ito’s Lemma.</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+&\mathbb{E}\left[\frac{d}{dt}f(x_t)\right]\\
+\text{(Ito's Lemma) }=&\mathbb{E}\left[\mu(x_t)f'(x_t)+\frac{1}{2}\sigma^2f''(x_t) + \sigma f'(x_t) \frac{dB_t}{dt}\right] \\
+\text{($dB_t$ has mean $0$) }=&\mathbb{E}\left[\mu(x_t)f'(x_t)+\frac{1}{2}\sigma^2f''(x_t) \right] \\
+\text{(using $x_t\sim p_t$) }=&\int\left[\mu(x)f'(x)+\frac{1}{2}\sigma^2f''(x) \right]p_t(x)dx \\
+\text{(integration by part) }=&-\int f(x)\frac{\partial (\mu(x)p_t(x)) }{\partial x}dx+\frac{1}{2}\sigma^2\int f(x)\frac{\partial^2 p_t(x)}{\partial x^2} p_t(x)dx
+\end{align*} %]]></script>
+
+<p>Combining the above two and cancelling out the arbitrary function $f$, we obtain Fokker-Planck equation below.</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+\frac{d}{dt}p_t = -\frac{\partial}{\partial x}\left(\mu(x)p_t(x)\right)+\frac{1}{2}\sigma^2\frac{\partial^2}{\partial x^2}p_t(x)
+\end{align*}</script>
+
+<h2 id="langevin-dynamics">Langevin Dynamics</h2>
+
+<p>let $\mu(x) = -u’(x)$ for some function $u(x)$, then the corresponding stochastic process is defined as $dx_t = -u’(x_t) dt + \sigma dB_t$, often referred as overdamped Langevin process. Using Fokker-Planck equation, it is easy to check that</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+p(x) \propto e^{-2/\sigma^2 u(x)}
+\end{align*}</script>
+
+<p>is the stationary distribution of $x_t$.</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+&\frac{\partial}{\partial x}\left(u'(x)p(x)\right)+\frac{1}{2}\sigma^2\frac{\partial^2}{\partial x^2}p(x) \\
+=&u''(x)p(x)-\frac{2}{\sigma^2}(u'(x))^2 p(x) + \frac{1}{2}\sigma^2\left(-\frac{2}{\sigma^2}u''(x)p(x) + \frac{4}{\sigma^4}(u'(x))^2 p(x)\right)=0
+\end{align*} %]]></script>
+
+<h3 id="langevin-mcmc">Langevin MCMC</h3>
+
+<p>The fact that Langevin process $dx_t = -u’(x_t) dt + \sigma dB_t$ converges to a stationary distribution $p(x) \propto e^{-2/\sigma^2 u(x)}$ lends itself as a suitable Markov chain Monte Carlo method. Specifically, to obtain samples from a unnormalized density function $\bar{p}(x)$, we just need to run the following Langevin process from a random starting point till it reaches steady state distribution</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+dx_t = \nabla_x \log \bar{p}(x) dt + \sqrt{2} dB_t
+\end{align*}</script>
+
+<p>Discretized sample path of Langevin process can be generated with Euler method</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+x_{k+1}  = x_k  + \nabla_x \log \bar{p}(x_k) \epsilon + \sqrt{2\epsilon}\xi_k
+\end{align*}</script>
+
+<p>Since the discretization is only an approximation to the original continous stochastic process, it does not in itself lead to desired stationary distribution (unless $\epsilon$ becomes infinitesimal) and thus should be corrected by Metropolis-Hastings to enforce detailed balance condition.</p>
+
+<p>One lingering question is: does the discretization of langevin dyanmcis satisfy detailed balance equation in $\epsilon\to0$ asymptote? The fact that it converges to a desirable distribution does not indicate that it is a time-reversible Markov chain. Even thought it is claimed by some source that the asymptotic acceptance ratio approaches 1, I was not able to show that it is the case and is stuck at the following derivation.</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align*}
+&\frac{\bar{p}(x)P(x\to x')}{\bar{p}(x')P(x'\to x)} = \frac{
+\bar{p}(x)\mathcal{N}\left(x'-x-\nabla_x \bar{p}(x)\tau|0, 2\tau\right)
+}{
+\bar{p}(x')\mathcal{N}\left(x-x'-\nabla_x \bar{p}(x')\tau|0, 2\tau\right)
+}\\
+=& 
+\frac{
+\bar{p}(x)e^{(x'-x)\nabla_x \bar{p}(x)/2 + o(\tau)}
+}{
+\bar{p}(x')e^{(x-x')\nabla_x \bar{p}(x')/2 + o(\tau)} 
+}
+=
+\frac{
+\bar{p}(x)e^{(x'-x)\nabla_x \frac{\bar{p}(x)+\bar{p}(x')}{2} + o(\tau)}
+}{
+\bar{p}(x') 
+}
+\end{align*} %]]></script>
+
+<h3 id="relevance-to-bayesian-inference">Relevance to Bayesian Inference</h3>
+
+<p>In Bayesian inference we deal with a prior distribution $p_\text{prior}(\theta)$ for some latent parameter $\theta$ and a likelihood term $p_\text{likelihood}(\mathcal{D}|\theta)$ of the dataset $\mathcal{D}$ given the latent parameter, and the goal is to obtain samples according to the posterior probability $p_\text{post}(\theta|\mathcal{D}) = p_\text{prior}(\theta)p_\text{likelihood}(\mathcal{D}|\theta)/p(\mathcal{D})$. Since the constant marginal likelihood term $p(\mathcal{D})=\int p_\text{likelihood}(\mathcal{D}|\theta)p_\text{prior}(\theta)d\theta$ is often intractable, we are left with a unnormalized poster probability $p_\text{post}\propto p_\text{prior}p_\text{likelihood}$. To sample from it, we can simply construct and run the following stochastic process</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+d\theta_t = \left(\nabla_\theta \log p_\text{prior}(\theta) + \nabla_\theta \log p_\text{likelihood}(\mathcal{D}|\theta)\right) dt + \sqrt{2} dB_t
+\end{align*}</script>
+
+<p>Hereafter we use the notation of $x$ to indicate elements in the dataset $x\in\mathcal{D}$, $\theta$ to denote the hidden parameter for which we want to conduct Bayesian inference, and drop the subscript to different $p$ as they can be differentiated by their arguments.</p>
+
+<h2 id="stochastic-gradient-langevin-dynamics-sgld">Stochastic Gradient Langevin Dynamics (SGLD)</h2>
+
+<p>Discretizing Langevin dynamics with step size of $\epsilon_t$ leads to the following update rule</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+\Delta \theta = \epsilon_t \left(\nabla_\theta \log p(\theta) + \nabla_\theta \log p(\mathcal{D}|\theta)\right) + \sqrt{2 \epsilon_t} \xi_t, \text{ where }\xi_t\sim\mathcal{N}(0, 1)
+\end{align*}</script>
+
+<p>If we have $\sum_t\epsilon_t = \infty$ and $\sum_t\epsilon^2 &lt;\infty$ then asymptotically the discretization error will become negligible and the update rule approaches the corresponding Langevin dyanmics, resulting in a sequence of $\theta_t$ that converges to the posterior distribution $p(\theta|\mathcal{D})$.</p>
+
+<p>An interesting and clever observation made by <a href="https://www.ics.uci.edu/~welling/publications/papers/stoclangevin_v6.pdf">stochastic gradient Langevin dynamics</a> paper is that the convergence will hold even if we use mini-batches of the data to estimate the gradient of $\nabla_\theta \log p(\mathcal{D}|\theta)$.</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+\nabla_\theta \log p(\mathcal{D}|\theta) \approx \frac{N}{n}\sum_{i=1}^n\nabla_\theta \log p(x_{t,i}|\theta)
+\end{align*}</script>
+
+<p>The insight is that the stochastic error introduced from using mini-batches instead of the whole dataset dies out much faster than the added Gaussian noise as the $\epsilon_t$ decreases, so it does not change the asymptotical behavior of the update rule. Specifically, the randomness coming from the stochastic estimate of $\nabla_\theta \log p(\mathcal{D}|\theta)$ has a variance that scales as $\epsilon_t^2$ since it is multiplied with $\epsilon_t$. In comparison, the variance of the added Gaussian noise scales linearly as $\epsilon_t$.</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+\Delta \theta =\underbrace{ \underbrace{ \underbrace{\epsilon_t \frac{N}{n}\sum_{i=1}^n\nabla_\theta \log p(x_{t, i}|\theta)}_{\text{gradient step towards ML target}} +\epsilon_t \nabla_\theta \log p(\theta)}_{\text{gradient step towards MAP target}} + \sqrt{2 \epsilon_t} \xi_t}_{\text{stochastic gradient Langevin dynamics for posterior sampling}} , \text{ where }\xi_t\sim\mathcal{N}(0, 1)
+\end{align*}</script>
+
+<p>Given that stochastic Langevin dynamics converges to the desired distribution as $\epsilon_t\to0$, we do not need to carry out Metropolis-Hastings to reject samples. This is crucial in simplifying the algorithm, since evaluation of rejection/acceptance rate is computed at every step and it depends on the evaluation of $p(\theta)p(\mathcal{D}|\theta)$ which can only be computed after traversing the whole dataset.</p>
+
+<p>As a closing remark, if we use the posterior sampling for the estimation of the expectation of some function $f$, it is recommended in <a href="https://www.ics.uci.edu/~welling/publications/papers/stoclangevin_v6.pdf">stochastic gradient Langevin dynamics</a> that the following equation be used.</p>
+
+<script type="math/tex; mode=display">\begin{align*}
+\mathbb{E}[f(\theta)] = \frac{\sum_t \epsilon_t f(\theta_t)}{\sum_t \epsilon_t}
+\end{align*}</script>
+
+<p>with the intuition that each $\theta_t$ will contribute an effective sample size proportional to $\epsilon_t$.</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+  
+
+
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fa fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="https://yyang768osu.github.io/tags/#mcmc" class="page__taxonomy-item" rel="tag">MCMC</a>
+    
+    </span>
+  </p>
+
+
+
+
+      </footer>
+
+      
+
+<section class="page__share">
+  
+    <h4 class="page__share-title">Share on</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=https://yyang768osu.github.io/posts/2020/09/langevin-dynamics/" class="btn btn--twitter" title="Share on Twitter"><i class="fa fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https://yyang768osu.github.io/posts/2020/09/langevin-dynamics/" class="btn btn--facebook" title="Share on Facebook"><i class="fa fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://plus.google.com/share?url=https://yyang768osu.github.io/posts/2020/09/langevin-dynamics/" class="btn btn--google-plus" title="Share on Google Plus"><i class="fa fa-fw fa-google-plus" aria-hidden="true"></i><span> Google+</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https://yyang768osu.github.io/posts/2020/09/langevin-dynamics/" class="btn btn--linkedin" title="Share on LinkedIn"><i class="fa fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+      
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://yyang768osu-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+
+
+
+      
+
+
+  <nav class="pagination">
+    
+      <a href="https://yyang768osu.github.io/posts/2020/06/asymmetric-numeral-system/" class="pagination--pager" title="Understanding and Implementing Asymmetric Numeral System (ANS)
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+
+
+  
+  
+</div>
+
+
+    </script>
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<a href="/sitemap/">Sitemap</a>
+<!-- end custom footer snippets -->
+
+        
+
+<div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+    
+    
+    
+      <li><a href="http://github.com/yyang768osu"><i class="fa fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+    
+    
+    <li><a href="https://yyang768osu.github.io/feed.xml"><i class="fa fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2020 Yang Yang. Powered by <a href="http://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://github.com/academicpages/academicpages.github.io">AcademicPages</a>, a fork of <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    <script src="https://yyang768osu.github.io/assets/js/main.min.js"></script>
+
+
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-123722738-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-123722738-1');
+</script>
+
+
+
+
+
+
+
+  </body>
+</html>
+
