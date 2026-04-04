@@ -49,7 +49,7 @@ where $$\lfloor\cdot\rceil$$ denotes rounding-to-nearest operation and $$\texttt
     <div class="col-sm-1 mt-3 mt-md-0">
     </div>
     <div class="col-sm-10 mt-3 mt-md-0">
-        {% include figure.html path="assets/img/blog_img/quantization/quantization.png" class="img-fluid rounded z-depth-1" zoomable=false%}
+        {% include figure.liquid path="assets/img/blog_img/quantization/quantization.png" class="img-fluid rounded z-depth-1" zoomable=false%}
     </div>
     <div class="col-sm-1 mt-3 mt-md-0">
     </div>
@@ -160,7 +160,7 @@ In the figure below, we illustrate an example when $$z_w$$ $$z_x$$ and $$z_y$$ a
     <div class="col-sm-2 mt-3 mt-md-0">
     </div>
     <div class="col-sm-8 mt-3 mt-md-0">
-        {% include figure.html path="assets/img/blog_img/quantization/requantization.png" class="img-fluid rounded z-depth-1" zoomable=false%}
+        {% include figure.liquid path="assets/img/blog_img/quantization/requantization.png" class="img-fluid rounded z-depth-1" zoomable=false%}
     </div>
     <div class="col-sm-2 mt-3 mt-md-0">
     </div>
@@ -221,7 +221,7 @@ One problem with this setting is that in practice, weights from different output
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/blog_img/quantization/quantization_granularity.png" class="img-fluid rounded z-depth-1" zoomable=false %}
+        {% include figure.liquid path="assets/img/blog_img/quantization/quantization_granularity.png" class="img-fluid rounded z-depth-1" zoomable=false %}
     </div>
 </div>
 
@@ -263,7 +263,7 @@ The schematic below illustrate how simulated quantization described by this equa
     <div class="col-sm-2 mt-3 mt-md-0">
     </div>
     <div class="col-sm-8 mt-3 mt-md-0">
-        {% include figure.html path="assets/img/blog_img/quantization/quantization_sim.png" class="img-fluid rounded z-depth-1" zoomable=false %}
+        {% include figure.liquid path="assets/img/blog_img/quantization/quantization_sim.png" class="img-fluid rounded z-depth-1" zoomable=false %}
     </div>
     <div class="col-sm-2 mt-3 mt-md-0">
     </div>
@@ -400,7 +400,7 @@ $$
 This is illustrated in the figure below, where we take as an example two 1x1 convolutions with a ReLU in between.
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/blog_img/quantization/cross_layer_equalization.png" class="img-fluid rounded z-depth-1" zoomable=false %}
+        {% include figure.liquid path="assets/img/blog_img/quantization/cross_layer_equalization.png" class="img-fluid rounded z-depth-1" zoomable=false %}
     </div>
 </div>
 
@@ -424,7 +424,7 @@ Cross layer equalization with the scaling factor derived as above is a super eff
     <div class="col-sm-3 mt-3 mt-md-0">
     </div>
     <div class="col-sm-6 mt-3 mt-md-0">
-        {% include figure.html path="assets/img/blog_img/quantization/cle_results.png" class="img-fluid rounded z-depth-1" zoomable=false %}
+        {% include figure.liquid path="assets/img/blog_img/quantization/cle_results.png" class="img-fluid rounded z-depth-1" zoomable=false %}
     </div>
     <div class="col-sm-3 mt-3 mt-md-0">
     </div>
@@ -487,7 +487,7 @@ Alternatively, one can use straight-through estimator (STE) to directly optimize
     <div class="col-sm mt-3 mt-md-0">
     </div>
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/blog_img/quantization/adaround.png" class="img-fluid rounded z-depth-1" zoomable=false %}
+        {% include figure.liquid path="assets/img/blog_img/quantization/adaround.png" class="img-fluid rounded z-depth-1" zoomable=false %}
     </div>
     <div class="col-sm mt-3 mt-md-0">
     </div>
