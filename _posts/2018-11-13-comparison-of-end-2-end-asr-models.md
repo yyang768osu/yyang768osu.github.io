@@ -6,7 +6,6 @@ comments: true
 description: how CTC, RNN-transducer, and Attention factor probabilities
 ---
 
-
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
         {% include figure.liquid path="assets/img/blog_img/asr/end2end.png" class="img-fluid rounded z-depth-1" zoomable=false %}
@@ -18,4 +17,3 @@ description: how CTC, RNN-transducer, and Attention factor probabilities
         {% include figure.liquid path="assets/img/blog_img/asr/transcription_model.png" class="img-fluid rounded z-depth-1" zoomable=false %}
     </div>
 </div>
-

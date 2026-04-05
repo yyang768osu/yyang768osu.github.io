@@ -6,16 +6,17 @@ comments: true
 description: stochastic differential equation, Fokker Plank equation, and their connections to Bayesian inference
 ---
 
-In this post we visit some technical details centered around Langevin Dynamics in the context of stochastic Bayesian learning, assuming minimal background on conventional calculus and Brownian motion. Starting with quadratic variation, we gradually show how Ito's Lemma and Fokker-Planck equation can be derived. Using Fokker-Planck equation, it is revealed that an Langevian dynamic can be used as a MCMC method to generate samples from an un-normalized distribution. Lastly, [stochastic gradient Langevin dynamics](https://www.ics.uci.edu/~welling/publications/papers/stoclangevin_v6.pdf) method is discussed.  
+In this post we visit some technical details centered around Langevin Dynamics in the context of stochastic Bayesian learning, assuming minimal background on conventional calculus and Brownian motion. Starting with quadratic variation, we gradually show how Ito's Lemma and Fokker-Planck equation can be derived. Using Fokker-Planck equation, it is revealed that an Langevian dynamic can be used as a MCMC method to generate samples from an un-normalized distribution. Lastly, [stochastic gradient Langevin dynamics](https://www.ics.uci.edu/~welling/publications/papers/stoclangevin_v6.pdf) method is discussed.
 
 The following materials are taken as references:
 
-* [UC-Davis Lecture Notes on Applied Mathematics](https://www.math.ucdavis.edu/~hunter/m280_09/ch5.pdf)
-* [MIT Topics in Mathematics with Applications in Finance Lecture 17: Stochastic Processes II](https://www.youtube.com/watch?v=PPl-7_RL0Ko)
-* [MIT Topics in Mathematics with Applications in Finance Lecture 18: Itō Calculus](https://www.youtube.com/watch?v=Z5yRMMVUC5w)
+- [UC-Davis Lecture Notes on Applied Mathematics](https://www.math.ucdavis.edu/~hunter/m280_09/ch5.pdf)
+- [MIT Topics in Mathematics with Applications in Finance Lecture 17: Stochastic Processes II](https://www.youtube.com/watch?v=PPl-7_RL0Ko)
+- [MIT Topics in Mathematics with Applications in Finance Lecture 18: Itō Calculus](https://www.youtube.com/watch?v=Z5yRMMVUC5w)
 
 ## Quadratic Variation
-For Brownian motion $$B_t$$, 
+
+For Brownian motion $$B_t$$,
 we know that $$B\left(\frac{i+1}{N}T\right) - B\left(\frac{i}{N}T\right)$$ for different index $$i$$ are i.i.d. with distribution $$\mathcal{N}\left(0, \frac{T}{N}\right)$$. The following holds by strong law of large numbers.
 
 $$
@@ -24,7 +25,7 @@ $$
 \end{align*}
 $$
 
-The above can be written in differential form as 
+The above can be written in differential form as
 
 $$
 \begin{align*}
@@ -48,7 +49,7 @@ f(B_{t+\Delta t}) - f(B_t) &= f'(B_t) (B_{t+\Delta t} - B_t) + \frac{f''(B_t)}{2
 \end{align*}
 $$
 
-The above equation is a naive version of Ito's Lemma, the basis of Ito's calculus. Note how it differs from conventional calculus by having the second term in red, as a direct consequence of quadratic variation. 
+The above equation is a naive version of Ito's Lemma, the basis of Ito's calculus. Note how it differs from conventional calculus by having the second term in red, as a direct consequence of quadratic variation.
 
 Let us now look at a more advanced version of Ito's Lemma, with the goal of obtaining the differential form of $$f(x_t, t)$$ where $$x_t$$ is a stochastic process defined with the following stochastic differential equation
 
@@ -75,7 +76,7 @@ o(dt) + o(dt) + \frac{\partial^2 f}{\partial x^2}(dx_t)^2
 \end{align*}
 $$
 
-Again, the red term highlights the difference to conventional calculus. In the special when $$f$$ is not a function of $$t$$, the above can be reduced to 
+Again, the red term highlights the difference to conventional calculus. In the special when $$f$$ is not a function of $$t$$, the above can be reduced to
 
 $$
 \begin{align*}
@@ -85,7 +86,7 @@ $$
 
 which is used in the derivation of Fokker-Planck equation in the next section.
 
-## Fokker-Planck equation 
+## Fokker-Planck equation
 
 For a stochastic process $$x$$ that is defined as $$dx_t = \mu(x_t) dt + \sigma dB_t$$, we are interested in how the distribution $$p_t$$ of $$x_t$$ evolves over time. For an arbitrary smooth function $$f$$, the following holds
 
@@ -100,7 +101,7 @@ $$
 \end{align*}
 $$
 
-The second expression can be evaluated with Ito's Lemma. 
+The second expression can be evaluated with Ito's Lemma.
 
 $$
 \begin{align*}
@@ -122,7 +123,7 @@ $$
 
 ## Langevin Dynamics
 
-let $$\mu(x) = -u'(x)$$ for some function $$u(x)$$, then the corresponding stochastic process is defined as $$dx_t = -u'(x_t) dt + \sigma dB_t$$, often referred as over-damped Langevin process. Using Fokker-Planck equation, we know that 
+let $$\mu(x) = -u'(x)$$ for some function $$u(x)$$, then the corresponding stochastic process is defined as $$dx_t = -u'(x_t) dt + \sigma dB_t$$, often referred as over-damped Langevin process. Using Fokker-Planck equation, we know that
 
 $$
 \begin{align*}
@@ -130,7 +131,7 @@ p(x) \propto e^{-2/\sigma^2 u(x)}
 \end{align*}
 $$
 
-is the stationary distribution of $$x_t$$. 
+is the stationary distribution of $$x_t$$.
 
 $$
 \begin{align*}
@@ -149,7 +150,7 @@ dx_t = \nabla_x \log \bar{p}(x) dt + \sqrt{2} dB_t
 \end{align*}
 $$
 
-Discretized sample path of Langevin process can be generated with Euler method 
+Discretized sample path of Langevin process can be generated with Euler method
 
 $$
 \begin{align*}
@@ -157,7 +158,7 @@ x_{k+1}  = x_k  + \nabla_x \log \bar{p}(x_k) \epsilon + \sqrt{2\epsilon}\xi_k
 \end{align*}
 $$
 
-Since the discretization is only an approximation to the original continuous stochastic process, it does not in itself lead to desired stationary distribution (unless $$\epsilon$$ becomes infinitesimal) and thus should be corrected by Metropolis-Hastings to enforce detailed balance condition. 
+Since the discretization is only an approximation to the original continuous stochastic process, it does not in itself lead to desired stationary distribution (unless $$\epsilon$$ becomes infinitesimal) and thus should be corrected by Metropolis-Hastings to enforce detailed balance condition.
 
 One lingering question is: does the discretization of Langevin dynamics satisfy detailed balance equation in $$\epsilon\to0$$ asymptote? The fact that it converges to a desirable distribution does not indicate that it is a time-reversible Markov chain. Even thought it is claimed by some source that the asymptotic acceptance ratio approaches 1, I was not able to show that it is the case and is stuck at the following derivation.
 
@@ -168,17 +169,17 @@ $$
 }{
 \bar{p}(x')\mathcal{N}\left(x-x'-\nabla_x \bar{p}(x')\tau|0, 2\tau\right)
 }\\
-=& 
+=&
 \frac{
 \bar{p}(x)e^{(x'-x)\nabla_x \bar{p}(x)/2 + o(\tau)}
 }{
-\bar{p}(x')e^{(x-x')\nabla_x \bar{p}(x')/2 + o(\tau)} 
+\bar{p}(x')e^{(x-x')\nabla_x \bar{p}(x')/2 + o(\tau)}
 }
 =
 \frac{
 \bar{p}(x)e^{(x'-x)\nabla_x \frac{\bar{p}(x)+\bar{p}(x')}{2} + o(\tau)}
 }{
-\bar{p}(x') 
+\bar{p}(x')
 }
 \end{align*}
 $$
@@ -195,7 +196,6 @@ $$
 
 Hereafter we use the notation of $$x$$ to indicate elements in the dataset $$x\in\mathcal{D}$$, $$\theta$$ to denote the hidden parameter for which we want to conduct Bayesian inference, and drop the subscript to different $$p$$ as they can be differentiated by their arguments.
 
-
 ## Stochastic Gradient Langevin Dynamics (SGLD)
 
 Discretizing Langevin dynamics with step size of $$\epsilon_t$$ leads to the following update rule
@@ -208,7 +208,7 @@ $$
 
 If we have $$\sum_t\epsilon_t = \infty$$ and $$\sum_t\epsilon^2 <\infty$$ then asymptotically the discretization error will become negligible and the update rule approaches the corresponding Langevin dyanmics, resulting in a sequence of $$\theta_t$$ that converges to the posterior distribution $$p(\theta\|\mathcal{D})$$.
 
-An interesting and clever observation made by [stochastic gradient Langevin dynamics](https://www.ics.uci.edu/~welling/publications/papers/stoclangevin_v6.pdf) paper is that the convergence will hold even if we use mini-batches of the data to estimate the gradient of $$\nabla_\theta \log p(\mathcal{D}\|\theta)$$. 
+An interesting and clever observation made by [stochastic gradient Langevin dynamics](https://www.ics.uci.edu/~welling/publications/papers/stoclangevin_v6.pdf) paper is that the convergence will hold even if we use mini-batches of the data to estimate the gradient of $$\nabla_\theta \log p(\mathcal{D}\|\theta)$$.
 
 $$
 \begin{align*}
@@ -226,7 +226,7 @@ $$
 
 Given that stochastic Langevin dynamics converges to the desired distribution as $$\epsilon_t\to0$$, we do not need to carry out Metropolis-Hastings to reject samples. This is crucial in simplifying the algorithm, since evaluation of rejection/acceptance rate is computed at every step and it depends on the evaluation of $$p(\theta)p(\mathcal{D}\|\theta)$$ which can only be computed after traversing the whole dataset.
 
-As a closing remark, if we use the posterior sampling for the estimation of the expectation of some function $$f$$, it is recommended in [stochastic gradient Langevin dynamics](https://www.ics.uci.edu/~welling/publications/papers/stoclangevin_v6.pdf) that the following equation be used. 
+As a closing remark, if we use the posterior sampling for the estimation of the expectation of some function $$f$$, it is recommended in [stochastic gradient Langevin dynamics](https://www.ics.uci.edu/~welling/publications/papers/stoclangevin_v6.pdf) that the following equation be used.
 
 $$
 \begin{align*}
@@ -235,6 +235,3 @@ $$
 $$
 
 with the intuition that each $$\theta_t$$ contributes an effective sample size proportional to $$\epsilon_t$$.
-
-
-

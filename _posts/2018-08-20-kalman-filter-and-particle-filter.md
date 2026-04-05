@@ -6,14 +6,13 @@ comments: true
 description: Kalman filter 101
 ---
 
-Kalman filter and particle filter are concepts that are intimidating for new learners due to its involved mathmatical discription, and are straightforward once you grasp the main idea and get used to Gaussian distributions. The goal of this post is to take a journey to Kalman filter by dissecting its idea and operation into pieces that are easy to absorb, and then assemble them together to give the whole picture. As a last step, we will see that particle filter achieves the same goal for non-Gaussian system resorting to Monte Carlo sampling.   
+Kalman filter and particle filter are concepts that are intimidating for new learners due to its involved mathmatical discription, and are straightforward once you grasp the main idea and get used to Gaussian distributions. The goal of this post is to take a journey to Kalman filter by dissecting its idea and operation into pieces that are easy to absorb, and then assemble them together to give the whole picture. As a last step, we will see that particle filter achieves the same goal for non-Gaussian system resorting to Monte Carlo sampling.
 
 Below let's walk through three simple problems and their solutions stemming from Gaussian distributions, and then stitching them together to form the problem that Kalman filter tries to solve and present its solution.
 
-A. Conditional Gaussian distribution
-------
+## A. Conditional Gaussian distribution
 
-Here I assume you have a basic knowledge regarding multi-variant Gaussian distribution. A multi-variant Gaussian distribution is captured by its mean vector and covariance matrix, often denoted as $$\mu$$ and $$\Sigma$$. Below let us consider the bi-variant Gaussian vector $$[z,x]^T$$, with the following general notation: 
+Here I assume you have a basic knowledge regarding multi-variant Gaussian distribution. A multi-variant Gaussian distribution is captured by its mean vector and covariance matrix, often denoted as $$\mu$$ and $$\Sigma$$. Below let us consider the bi-variant Gaussian vector $$[z,x]^T$$, with the following general notation:
 
 $$
 \begin{align*}
@@ -81,7 +80,7 @@ The off-diagonal term represents the cross covariance between the two random var
     </div>
 </div>
 
-The figure above illustrates the joint distribution of a bivariant Gaussian distribution with $$\mu_z=\mu_x=0$$, $$\Sigma_z=\Sigma_x=1$$, and $$\Sigma_{zx}=\Sigma_{xz}=0.8$$. The marginal distributions of both $$x$$ and $$z$$ are $$\mathcal{N}(0,1)$$. The contour of the distribution forms a thin ellipse, reflecting the strong covariance $$\Sigma_{zx}=\Sigma_{xz}=0.8$$ between the two random variables $$x$$ and $$z$$. To testify the claim that knowing one variable would help us estimating the other,  let us take a look at the the conditional distribution of $$z$$ given $$x=1$$, and compare it with the marginal distribution of $$z$$. As can be seen from the figure above, the distribution of $$z\|x=1$$ has much narrow span than $$z$$ with a shift in the mean. The reduction of variance of $$z$$ after observing $$x=1$$ is an evident that the observation of $$x$$ narrows down the potential values of $$z$$.  
+The figure above illustrates the joint distribution of a bivariant Gaussian distribution with $$\mu_z=\mu_x=0$$, $$\Sigma_z=\Sigma_x=1$$, and $$\Sigma_{zx}=\Sigma_{xz}=0.8$$. The marginal distributions of both $$x$$ and $$z$$ are $$\mathcal{N}(0,1)$$. The contour of the distribution forms a thin ellipse, reflecting the strong covariance $$\Sigma_{zx}=\Sigma_{xz}=0.8$$ between the two random variables $$x$$ and $$z$$. To testify the claim that knowing one variable would help us estimating the other, let us take a look at the the conditional distribution of $$z$$ given $$x=1$$, and compare it with the marginal distribution of $$z$$. As can be seen from the figure above, the distribution of $$z\|x=1$$ has much narrow span than $$z$$ with a shift in the mean. The reduction of variance of $$z$$ after observing $$x=1$$ is an evident that the observation of $$x$$ narrows down the potential values of $$z$$.
 
 An important fact here is that the conditional distribution of a joint-Gaussian distribution is also Gaussian
 
@@ -91,22 +90,20 @@ p(z|x) = p(x,z)/p(x)\sim\mathcal{N}\left(\mu_{z|x}, \Sigma_{z|x}\right)\notag.
 \end{align*}
 $$
 
-Below are two identities on the general expressions of the conditional distribution, here let us accept them as they are without bothering with any proof. 
+Below are two identities on the general expressions of the conditional distribution, here let us accept them as they are without bothering with any proof.
 
 $$
 \begin{align*}
-\mu_{z|x} &= \mu_z + \Sigma_{zx}\Sigma_{xx}^{-1}(x-\mu_x)\notag\\ 
+\mu_{z|x} &= \mu_z + \Sigma_{zx}\Sigma_{xx}^{-1}(x-\mu_x)\notag\\
 \Sigma_{z|x} &= \Sigma_{z} - \Sigma_{zx}\Sigma_x^{-1}\Sigma_{xz} \text{ } \left(\preccurlyeq \Sigma_{z}\right)  \notag
 \end{align*}
 $$
 
-The above two equations are very important, and lies in the core of many concepts such as MMSE estimator, Wiener filter and of course, Kalman filter. To see that knowing $$x$$ would reduce the uncertainty in $$z$$, here let's just point out that the entropy (measure of uncertainty) of a Gaussian random vector is an increasing function of the determinant of the covariance-matrix, and that $$\Sigma_{z\|x}$$ always [has a smaller determinant](https://math.stackexchange.com/questions/466158/on-the-difference-of-two-positive-semi-definite-matrices) than $$\Sigma_z$$ for any non-zero cross covariance $$\Sigma_{zx}$$, followed from the second equation with the fact that $$\Sigma_{z}-\Sigma_{z\|x}$$ $$=\Sigma_{zx}\Sigma_x^{-1}\Sigma_{xz}\succcurlyeq 0$$ is a semi-positive-definite matrix. 
+The above two equations are very important, and lies in the core of many concepts such as MMSE estimator, Wiener filter and of course, Kalman filter. To see that knowing $$x$$ would reduce the uncertainty in $$z$$, here let's just point out that the entropy (measure of uncertainty) of a Gaussian random vector is an increasing function of the determinant of the covariance-matrix, and that $$\Sigma_{z\|x}$$ always [has a smaller determinant](https://math.stackexchange.com/questions/466158/on-the-difference-of-two-positive-semi-definite-matrices) than $$\Sigma_z$$ for any non-zero cross covariance $$\Sigma_{zx}$$, followed from the second equation with the fact that $$\Sigma_{z}-\Sigma_{z\|x}$$ $$=\Sigma_{zx}\Sigma_x^{-1}\Sigma_{xz}\succcurlyeq 0$$ is a semi-positive-definite matrix.
 
 These two equations will become useful when we visit part C, and we will come back to them.
 
-
-B. Gaussian distribution with linear transformation
-------
+## B. Gaussian distribution with linear transformation
 
 In the first section we looked at the case of obtaining the conditional distribution from a joint Gaussian distribution, here let's look at the distribution of a Gaussian vector going through a linear transform. More precisely, let us define a random variable $$z_n$$ as obtained from the following transform
 
@@ -196,12 +193,11 @@ z_n \sim \mathcal{N}\left(A\mu_{n-1}+a, AV_{n-1}A^T + \Gamma\right).
 \end{align*}
 $$
 
-C. Bayes' theorem for Gaussian
-------
+## C. Bayes' theorem for Gaussian
 
 In part A, we provide the equation for calculating the conditional distribution from a joint Gaussian distribution, i.e., for a given joint-Gaussian probability $$p(x,z)$$, the conditional distribution of $$p(z\|x)$$ is also Gaussian and it can be expressed in closed-form.
 
-In this part, we consider a slightly more complex problem, whereby we are given Gaussian distributions $$p(x\|z)$$ and $$p(z)$$, 
+In this part, we consider a slightly more complex problem, whereby we are given Gaussian distributions $$p(x\|z)$$ and $$p(z)$$,
 
 $$
 \begin{align*}
@@ -264,11 +260,11 @@ Now, by plugging in the solution in part A, we can obtain below the expression o
 $$
 \begin{align*}
 \mu_{z|x} &= \nu + PC^T (CPC^T+\Pi)^{-1}(x-C\nu-c)\notag\\
-\Sigma_{z|x} &= P - PC^T (CPC^T+\Pi)^{-1}CP\notag 
+\Sigma_{z|x} &= P - PC^T (CPC^T+\Pi)^{-1}CP\notag
 \end{align*}
 $$
 
-To simplify the expression as well as to gain some insights into the expression, it is necessary to group some of the terms in $$K$$ below and substitute the corresponding terms. 
+To simplify the expression as well as to gain some insights into the expression, it is necessary to group some of the terms in $$K$$ below and substitute the corresponding terms.
 
 $$
 \begin{align*}
@@ -285,13 +281,11 @@ $$
 \end{align*}
 $$
 
-It is interesting to observe that the highlighted term in the expression above is the mean and the variance of the prior distribution $$p(z)$$ without taking $$p(x\|z)$$ into account. The effect of the $$p(x\|z)$$ can be thought of as a correction to the prior distribution: the mean is shifted by $$K(x-Cv-c)$$ and the covariance matrix is reduced by $$KCP$$ (or shrunk by $$(I-KC)$$), leading to a refined posterior distribution $$p(z\|x)$$. Here $$K$$ can be considered as a _gain_ factor, as it shifts the mean towards that dictated by $$x$$ and it shrinks the covariance matrix, leading to a more concentrated distributed with less amount of uncertainty. 
+It is interesting to observe that the highlighted term in the expression above is the mean and the variance of the prior distribution $$p(z)$$ without taking $$p(x\|z)$$ into account. The effect of the $$p(x\|z)$$ can be thought of as a correction to the prior distribution: the mean is shifted by $$K(x-Cv-c)$$ and the covariance matrix is reduced by $$KCP$$ (or shrunk by $$(I-KC)$$), leading to a refined posterior distribution $$p(z\|x)$$. Here $$K$$ can be considered as a _gain_ factor, as it shifts the mean towards that dictated by $$x$$ and it shrinks the covariance matrix, leading to a more concentrated distributed with less amount of uncertainty.
 
 Next we will see that Kalman filter is just a repeated (or sequential) application of this Bayes' rule on Gaussian distribution.
 
-
-Kalman filter
-------
+## Kalman filter
 
 It's time to assemble what we learnt from the previous parts. Let's consider following an evolving system, where the system state $$z_n$$ follows linear evolving over time, whose true value is hidden from us. Every time instance, we obtain a noisy observation $$x_n$$ of the system state. The noisy observation $$x_n$$ may not be directly the state itself, but is in general an linear function of the state of interest, with added Gaussian noise. The task is to keep updating the belief on the system state, based on all the noisy observations, and the knowledge on the system evolution itself. In the degenerated case where the system does not evolve, then the problem amount to the sequential application of Bayes' rule on the same hidden variable to fuse all the instances of noisy observations.
 
@@ -308,20 +302,20 @@ In other words, we want to find an iterative procedure that update the belief on
 $$
 \begin{align*}
 \underset{\substack{\\\mathcal{N}(\mu_{n-1}, V_{n-1})}}{p(z_{n-1}|x_1^{n-1})}
-\underset{\text{ }}{\xrightarrow{\substack{\text{system evolution }\\p(z_n|z_{n-1})}}}  
+\underset{\text{ }}{\xrightarrow{\substack{\text{system evolution }\\p(z_n|z_{n-1})}}}
 \underset{\substack{\\\mathcal{N}(\nu_{n-1}, P_{n-1})}}{p(z_n|x_1^{n-1}) }
-\underset{\text{ }}{\xrightarrow{\substack{\text{noisy observation }\\p(x_n|z_{n})}}}  
+\underset{\text{ }}{\xrightarrow{\substack{\text{noisy observation }\\p(x_n|z_{n})}}}
 \underset{\substack{\\\mathcal{N}(\mu_{n}, V_{n})}}{p(z_{n}|x_1^{n})}
 \end{align*}
 $$
 
 <!---
-Here we assume that the noisy observations $$x$$ are independent given the underlying system state $$z$$ (this assumption is actually encoded in the graphic model above), then $$p(z_{n-1}\|x_1^{n-1})$$  captures all the information regarding $$x_1^{n-1}$$, and we can simply drop them from the expression. 
+Here we assume that the noisy observations $$x$$ are independent given the underlying system state $$z$$ (this assumption is actually encoded in the graphic model above), then $$p(z_{n-1}\|x_1^{n-1})$$  captures all the information regarding $$x_1^{n-1}$$, and we can simply drop them from the expression.
 -->
 
 The decomposed two sub-problem above correspond to part B and part C respectively, for which we can get the following solution
 
-* $$p(z_n\|x_1^{n-1}) = \int p(z_n\|z_{n-1}) p(z_{n-1}\|x_1^{n-1})dz_{n-1}$$
+- $$p(z_n\|x_1^{n-1}) = \int p(z_n\|z_{n-1}) p(z_{n-1}\|x_1^{n-1})dz_{n-1}$$
 
 $$
 \begin{align*}
@@ -340,7 +334,7 @@ P_{n-1}=& AV_{n-1}A^T+\Gamma\notag
 \end{align*}
 $$
 
-* $$p(z_n\|x_1^n)\propto p(x_n\|z_n)p(z_n\|x_1^{n-1})$$
+- $$p(z_n\|x_1^n)\propto p(x_n\|z_n)p(z_n\|x_1^{n-1})$$
 
 $$
 \begin{align*}
@@ -350,11 +344,10 @@ x_n|z_n\sim& \mathcal{N}(Cz_n+c,\Pi)\notag
 \end{align*}
 $$
 
-
 $$
 \begin{align*}
 \text{Solution: }&\notag\\
-z_n|x_1^n \sim&\mathcal{N}(\mu_n, V_n)\notag\\ 
+z_n|x_1^n \sim&\mathcal{N}(\mu_n, V_n)\notag\\
 \mu_n =& \nu_{n-1} + K_n(x_n-C\nu_{n-1}-c)\notag\\
 V_n =& (I-K_nC)P_{n-1}\notag
 \end{align*}
@@ -366,32 +359,31 @@ K_n\triangleq P_{n-1}C^T(CP_{n-1}C^T+\Pi)^{-1}\notag
 \end{align*}
 $$
 
-The final solution above is the Kalman filter equation, and $$K_n$$ is referred to as the Kalman gain. 
+The final solution above is the Kalman filter equation, and $$K_n$$ is referred to as the Kalman gain.
 
-Particle filter
-------
+## Particle filter
 
-One biggest constraint for the application of Kalman filter is that it assumes a linear dynamic system where the state transition and noisy observations are linear processes, which is evident from the probabilistic-graphic-model diagram shown before. The linear assumption is necessary to make sure that all the distributions involved in the system are Gaussian, which is easy to characterize and analytically tractable. 
+One biggest constraint for the application of Kalman filter is that it assumes a linear dynamic system where the state transition and noisy observations are linear processes, which is evident from the probabilistic-graphic-model diagram shown before. The linear assumption is necessary to make sure that all the distributions involved in the system are Gaussian, which is easy to characterize and analytically tractable.
 
-In general cases, seldom do we have a system being linear. Even with a linear system, the distribution may not be Gaussian. The most cited example for the explanation of particle filter is localization. We can fit in the problem of localization as a dynamic system with hidden variables and heterogeneous system evolutions. Here the location of the system at time-step $$n$$ is modeled by the hidden variable $$z_n$$, and any observations made by accelerometer, GPS, and various other type of sensors are captured in $$x_n$$. Since $$z_n$$ represent the belief of the system's location in a map, it can hardly be described by a Gaussian distribution and may not even have a tractable form. On top of that, the observations made by the sensors may not be a linear function of the system location. 
+In general cases, seldom do we have a system being linear. Even with a linear system, the distribution may not be Gaussian. The most cited example for the explanation of particle filter is localization. We can fit in the problem of localization as a dynamic system with hidden variables and heterogeneous system evolutions. Here the location of the system at time-step $$n$$ is modeled by the hidden variable $$z_n$$, and any observations made by accelerometer, GPS, and various other type of sensors are captured in $$x_n$$. Since $$z_n$$ represent the belief of the system's location in a map, it can hardly be described by a Gaussian distribution and may not even have a tractable form. On top of that, the observations made by the sensors may not be a linear function of the system location.
 
 In this type of systems, instead of trying to deriving the exact distributions of hidden variables, it is more practical to characterize them using sets of samples. The sample update are achieved by a scheme often referred to as sequential Monte Carlo sampling, which we will introduce next.
 
-Again we emphasis that the problem at hand is the inference of hidden variables in a non-linear dynamic system. The goal is to characterize the posterior probability of the system state $$z_n$$ given all previous observations $$x_1^n\triangleq x_1,x_2,\ldots x_n$$. Specifically, we want to have an iterative procedure that update the system belief at time-slot $$n$$: $$p(z_n\|x_1^n)$$ from the belief in the previous time instance $$n-1$$ ($$p(z_{n-1}\|x_1^{n-1}$$) by considering both the system evolution $$p(z_n\|z_{n-1)}$$ and the updated noisy observations $$p(x_n\|z_n)$$. 
+Again we emphasis that the problem at hand is the inference of hidden variables in a non-linear dynamic system. The goal is to characterize the posterior probability of the system state $$z_n$$ given all previous observations $$x_1^n\triangleq x_1,x_2,\ldots x_n$$. Specifically, we want to have an iterative procedure that update the system belief at time-slot $$n$$: $$p(z_n\|x_1^n)$$ from the belief in the previous time instance $$n-1$$ ($$p(z_{n-1}\|x_1^{n-1}$$) by considering both the system evolution $$p(z_n\|z_{n-1)}$$ and the updated noisy observations $$p(x_n\|z_n)$$.
 
 Drawing similarity to Kalman filter, we can represent the problem as the following:
 
 $$
 \begin{align*}
 \underset{\substack{\\\text{weighted samples}}}{p(z_{n-1}|x_1^{n-1})}
-\underset{\text{sampling}}{\xrightarrow{\substack{\text{system evolution }\\p(z_n|z_{n-1})}}}  
+\underset{\text{sampling}}{\xrightarrow{\substack{\text{system evolution }\\p(z_n|z_{n-1})}}}
 \underset{\substack{\\\text{samples}}}{p(z_n|x_1^{n-1}) }
-\underset{\text{importance weighting}}{\xrightarrow{\substack{\text{noisy observation }\\p(x_n|z_{n})}}}  
+\underset{\text{importance weighting}}{\xrightarrow{\substack{\text{noisy observation }\\p(x_n|z_{n})}}}
 \underset{\substack{\\\text{weighted samples}}}{p(z_{n}|x_1^{n})}
 \end{align*}
 $$
 
-The plan of attack, as suggested by the annotations in the above equation, is to get samples from the potentially intractable probabilities. Let's start by assuming that we have a set of samples $$\\{\color{red}{z_n^{(s)}}, s=1,\ldots, S\\}$$ that represent the distribution of $$p(z_n\|x_1^{n-1})$$, and the task is to generate a new set of sample $$\\{\color{blue}{z_{n+1}^{(s)}}, s=1,\ldots, S\\}$$ representing the distribution of $$p(z_{n+1}\|x_1^n)$$. 
+The plan of attack, as suggested by the annotations in the above equation, is to get samples from the potentially intractable probabilities. Let's start by assuming that we have a set of samples $$\\{\color{red}{z_n^{(s)}}, s=1,\ldots, S\\}$$ that represent the distribution of $$p(z_n\|x_1^{n-1})$$, and the task is to generate a new set of sample $$\\{\color{blue}{z_{n+1}^{(s)}}, s=1,\ldots, S\\}$$ representing the distribution of $$p(z_{n+1}\|x_1^n)$$.
 
 $$
 \begin{align*}
@@ -400,7 +392,7 @@ p(z_n| x_1^n) \propto&\text{ }  p(x_n | z_n) \color{red}{p(z_n | x_1^{n-1})}\not
 \end{align*}
 $$
 
-Since the evaluation of $$\color{blue}{p(z_{n+1}\|x_1^n)}$$ involves taking the expectation, a corresponding sampling approach would be to approximate it using sampling from  $$\color{red}{p(z_n \| x_1^{n-1})}$$ together with the technique of importance sampling to bridge the gap between the $$p(z_n\| x_1^n)$$ and $$\color{red}{p(z_n \| x_1^{n-1})}$$, resulting in the derivation below
+Since the evaluation of $$\color{blue}{p(z_{n+1}\|x_1^n)}$$ involves taking the expectation, a corresponding sampling approach would be to approximate it using sampling from $$\color{red}{p(z_n \| x_1^{n-1})}$$ together with the technique of importance sampling to bridge the gap between the $$p(z_n\| x_1^n)$$ and $$\color{red}{p(z_n \| x_1^{n-1})}$$, resulting in the derivation below
 
 $$
 \begin{align*}
@@ -423,22 +415,19 @@ $$
 
 Comparing the above equation with the one before, one can realize that the probability $$p(z_n\|x_1^n)$$ is basically represented by a set of weighted samples, where the samples $$z_n^{(s)}$$ are drawn from $$\color{red}{p(z_n\|x_1^{n-1})}$$ and the weights are defined as $$w_n^{(s)}\triangleq \frac{p(x_n\|z_n^{(s)})}{\sum_{l=1}^S p(x_n\|z_n^{(l)})}$$.
 
-Eventually, according to the above equation, to obtain samples $$\color{blue}{\\{x_{n+1}^{(s)}, s=1,\ldots, S\\}}$$ from $$\color{blue}{p(z_{n+1}\|x_1^n)}$$, one can equivalently draw samples from $$\sum_{s=1}^S w_n^{(s)}p(z_{n+1}\|z_n^{(s)})$$, which is itself a weighted sum of $$p(z_{n+1}\|z_n^{(s)})$$ for each sample in $$\color{red}{\\{x_{n}^{(s)}, s=1,\ldots, S\\}}$$. 
+Eventually, according to the above equation, to obtain samples $$\color{blue}{\\{x_{n+1}^{(s)}, s=1,\ldots, S\\}}$$ from $$\color{blue}{p(z_{n+1}\|x_1^n)}$$, one can equivalently draw samples from $$\sum_{s=1}^S w_n^{(s)}p(z_{n+1}\|z_n^{(s)})$$, which is itself a weighted sum of $$p(z_{n+1}\|z_n^{(s)})$$ for each sample in $$\color{red}{\\{x_{n}^{(s)}, s=1,\ldots, S\\}}$$.
 
 With this we complete the derivation of the particle filter. In essence, it can be viewed as the sampling counterpart of Kalman filter, that generalizes to non-linear systems. The sequential Monte Carlo method is also referred to as sampling-importance-resampling in the literature.
 
 To link the math with a specific example, i recommend [this video](https://www.youtube.com/watch?v=aUkBa1zMKv4).
 
-Generalization
-------
+## Generalization
 
-Both Kalman filter and Particle filter are inference algorithms in hidden Markov models with continuous random variables. Specifically, the formulation we went through corresponds to the forward procedure in HMM inference, and one can generalize it for the backward procedure as well. 
+Both Kalman filter and Particle filter are inference algorithms in hidden Markov models with continuous random variables. Specifically, the formulation we went through corresponds to the forward procedure in HMM inference, and one can generalize it for the backward procedure as well.
 
 The forward-backward algorithm itself is a special realization of belief-propagation or message-passing-algorithm applied in a HMM system, whose probabilistic graphic model is a tree.
 
 The HMM model and the forward-backward procedure has manifestation in different areas:
-* BCJR algorithm in the decoding of convolutional/Turbo code in communication systems
-* Baum-Welch algorithm, commonly used in speech recognition systems with discrete HMM models
 
-
-
+- BCJR algorithm in the decoding of convolutional/Turbo code in communication systems
+- Baum-Welch algorithm, commonly used in speech recognition systems with discrete HMM models

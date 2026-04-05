@@ -6,7 +6,7 @@ comments: true
 description: sampling of softmax == max of (logit + Gumbel noise)
 ---
 
-Before we talk about Gumbel distribution, let's refresh our knowledge on exponential distribution. It is well-known that the exponential distribution is min-stable: the min of $$n$$ I.I.D. exponential random variables  $$X_i\sim \text{Exp}(\lambda_i), i=1,2,\ldots, n$$ is also exponentially distributed with decay rate $$\sum_{1\leq i\leq n} \lambda_i$$, as can be seen from the equation below.
+Before we talk about Gumbel distribution, let's refresh our knowledge on exponential distribution. It is well-known that the exponential distribution is min-stable: the min of $$n$$ I.I.D. exponential random variables $$X_i\sim \text{Exp}(\lambda_i), i=1,2,\ldots, n$$ is also exponentially distributed with decay rate $$\sum_{1\leq i\leq n} \lambda_i$$, as can be seen from the equation below.
 
 $$
 \begin{align*}
@@ -27,10 +27,10 @@ $$
 
 As we will see shortly, this property directly leads to the Gumbel max trick.
 
-Gumbel max trick
-------
+## Gumbel max trick
 
 Assume that we are given a multinomial (a.k.a. categorical) distribution with unnormalized event probabilities $$\lambda_i, i=1\to n$$ (i.e., $$\sum_{i=1}^n\lambda_i\not=1$$), the above property provides us a way to sample from the distribution without the need for normalization:
+
 1. draw $$n$$ samples from an exponential distributions with decay rate of $$1$$
 2. scale the value of these $$n$$ samples with $$1/\lambda_i$$ for $$i=1\to n$$.
 3. take the index of the minimum of the scaled samples
@@ -53,7 +53,7 @@ $$
 \end{align*}
 $$
 
-One observation is that the left hand side of the above equation is invariant to any linear transform. The Gumbel-max trick is obtained by taking $$-\log(\cdot)$$ operation to the right-hand-side, in which case $$-\log(\text{Exp}(1))$$ is a standard Gumbel distribution, leading to the equation below  
+One observation is that the left hand side of the above equation is invariant to any linear transform. The Gumbel-max trick is obtained by taking $$-\log(\cdot)$$ operation to the right-hand-side, in which case $$-\log(\text{Exp}(1))$$ is a standard Gumbel distribution, leading to the equation below
 
 $$
 \begin{align*}
@@ -68,16 +68,12 @@ This provides us a way to obtain samples directly from the logits without going 
 2. add the values of the $$n$$ samples to the logits.
 3. take the index of the minimum of the $$n$$ summations.
 
-Essentially, *the Gumbel max trick converts the sampling operation from a categorical/multinomial distribution into an argmax operation*. The sampling process can be expedited if we pre-calculate and store a stream of Gumbel samples.
+Essentially, _the Gumbel max trick converts the sampling operation from a categorical/multinomial distribution into an argmax operation_. The sampling process can be expedited if we pre-calculate and store a stream of Gumbel samples.
 
-Gumbel softmax
-------
+## Gumbel softmax
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
         {% include figure.liquid path="assets/img/blog_img/gumbel/gumbel.png" class="img-fluid rounded z-depth-1" zoomable=false %}
     </div>
 </div>
-
-
-

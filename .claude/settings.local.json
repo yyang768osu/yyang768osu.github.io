@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bundle install:*)",
+      "Bash(grep:*)",
+      "Bash(curl:*)",
+      "Bash(python3:*)",
+      "Bash(git add:*)",
+      "Bash(git push:*)",
+      "Bash(npm install:*)",
+      "Bash(npx prettier:*)"
+    ]
+  }
+}

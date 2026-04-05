@@ -16,6 +16,7 @@ $$
 $$
 
 There are two design goals for such a codec:
+
 1. validity: for valid encoding and decoding, we want to make sure that $$e$$ and $$d$$ are bijections and inverse of each other ($$e=d^{-1}$$).
 2. efficiency: for coding efficiency, we want the final codeword length to approach the entropy of the data source
 
@@ -35,7 +36,7 @@ $$
 \end{align*}
 $$
 
-The question is: how can we design a bijective mapping from $$\mathbb{N}$$ and $$\mathbb{N}\times\mathcal{A}$$ satisfying the above goal? Here's the core idea of asymmetric numerical system: let us assume that we have access to a function that maps each of the number in $$\mathbb{N}$$ into one of the symbols in $$\mathcal{A}$$, denoted as $$h:\mathbb{N}\to\mathcal{A}$$ with the property that for any integer $$s$$ and symbol $$x$$, there are roughly $$P(x)\times s$$ numbers below $$s$$ with symbol $$x$$. Put more precisely, 
+The question is: how can we design a bijective mapping from $$\mathbb{N}$$ and $$\mathbb{N}\times\mathcal{A}$$ satisfying the above goal? Here's the core idea of asymmetric numerical system: let us assume that we have access to a function that maps each of the number in $$\mathbb{N}$$ into one of the symbols in $$\mathcal{A}$$, denoted as $$h:\mathbb{N}\to\mathcal{A}$$ with the property that for any integer $$s$$ and symbol $$x$$, there are roughly $$P(x)\times s$$ numbers below $$s$$ with symbol $$x$$. Put more precisely,
 
 $$
 \begin{align*}
@@ -57,16 +58,16 @@ and it is easy to check that our two design goals are satisfied, and now we have
 
 ## Mapping of natural numbers to symbols ($$h$$)
 
-In r-ANS (range-ANS) design, the pmf $$P:\mathcal{A}\to[0, 1]$$ is quantized into integers $$p(x)$$ where 
+In r-ANS (range-ANS) design, the pmf $$P:\mathcal{A}\to[0, 1]$$ is quantized into integers $$p(x)$$ where
 
 $$
 \begin{align*}
 &\sum_{x\in\mathcal{A}}p(x)=2^r\\
-&p(x)/2^r\approx P(x). 
+&p(x)/2^r\approx P(x).
 \end{align*}
 $$
 
-The mapping $$h$$ is design as the following: we divide the natural numbers into chunks with length $$2^r$$. Within each chunk, start with symbol $$0\in\mathcal{A}$$, we map the first $$p(0)$$ numbers to $$0$$; then the subsequent $$p(1)$$ numbers are mapped to $$1$$, so on and so forth. 
+The mapping $$h$$ is design as the following: we divide the natural numbers into chunks with length $$2^r$$. Within each chunk, start with symbol $$0\in\mathcal{A}$$, we map the first $$p(0)$$ numbers to $$0$$; then the subsequent $$p(1)$$ numbers are mapped to $$1$$, so on and so forth.
 
 Let us define $$c:\mathcal{A} \to \mathcal{N}$$ with $$c(x)=\sum_{a\in\mathcal{A}, a<x}p(a)$$. Then the number from $$c(x)$$ to $$c(x)+p(x)$$ within a length $$2^r$$ chunk is labeled as $$x$$.
 
@@ -95,6 +96,7 @@ def ans_encoder(symbols, p, c, r):
 ```
 
 ### Decoder
+
 ```python
 def ans_decoder(s, p, c, r):
     def h(s):
@@ -117,6 +119,7 @@ Running this encoder decoder pair through tests, one will realize that there is 
 ## ANS without rescaling (correct version)
 
 ### Encoder
+
 ```python
 def ans_encoder(symbols, p, c, r):
     """ ANS encoder (no rescaling)
@@ -155,6 +158,7 @@ def ans_encoder(symbols, p, c, r):
 ```
 
 ### Decoder
+
 ```python
 def ans_decoder(s, p, c, r):
     """ ANS encoder (no rescaling)
@@ -201,6 +205,7 @@ def ans_decoder(s, p, c, r):
             s -= 1
     return list(reversed(decoded_symbols))
 ```
+
 ### Test
 
 ```python
@@ -246,9 +251,9 @@ data source entropy    : 1.79865 bits/symbol
 
 ## ANS with rescaling
 
-The above ANS implementation takes advantage of the fact that python integer has arbitrary precision, which allows us to encode a sequence that is arbitrarily long without overflowing. This poses a complexity issue: the encoding operation gets increasingly hard to compute as integer $$s$$ gets larger. Without resolving this reliance on infinite precision integer arithmetic, we cannot implement it using lower-level language with more hardware friendly instructions. 
+The above ANS implementation takes advantage of the fact that python integer has arbitrary precision, which allows us to encode a sequence that is arbitrarily long without overflowing. This poses a complexity issue: the encoding operation gets increasingly hard to compute as integer $$s$$ gets larger. Without resolving this reliance on infinite precision integer arithmetic, we cannot implement it using lower-level language with more hardware friendly instructions.
 
-One idea is to limit the range of $$s$$, say with a maximum bit-width of $$r_s$$. Since the encoding process will necessary increase the value of $$s$$, we then need to scale down its value before additional encoding, to a point where we can avoid overflow. In other words, before carrying out the encoding operation os $$e(s', x)$$, $$s'$$ should satisfy 
+One idea is to limit the range of $$s$$, say with a maximum bit-width of $$r_s$$. Since the encoding process will necessary increase the value of $$s$$, we then need to scale down its value before additional encoding, to a point where we can avoid overflow. In other words, before carrying out the encoding operation os $$e(s', x)$$, $$s'$$ should satisfy
 
 $$
 \begin{align*}
@@ -260,6 +265,7 @@ $$
 $$
 
 In the rescaling implementation, scaling down is achieved by extracting $$r_t$$ least significant bits, packing these bits into an integer $$t$$, and saving this integer to a stack $$t_\text{stack}$$, achieved through the following logic
+
 ```python
 while s >= (2 ** (r_s - r) + 1) * p[x]:
     t = (s % 2 ** r_t)
@@ -267,7 +273,7 @@ while s >= (2 ** (r_s - r) + 1) * p[x]:
     t_stack.append(t)
 ```
 
-Now we have guaranteed that encoder output will be an integer $$s<2^{r_s}$$ accompanied by a stack of integers $$t<2^{r_t}$$, the next question is, how to perform decoding? An easy answer would be to do the exact inverse of encoding, but to do that we need to know exactly when to perform up-scaling. The key is to realize that after the above loop is performed, it is guaranteed that $$e(s', x)$$ is always larger than or equal to $$2^{r_s-r_t}$$ (assuming $$r_t > r$$), and thus during decoding we just need to upscale $$s$$ whenever it falls below $$2^{r_s-r_t}$$. 
+Now we have guaranteed that encoder output will be an integer $$s<2^{r_s}$$ accompanied by a stack of integers $$t<2^{r_t}$$, the next question is, how to perform decoding? An easy answer would be to do the exact inverse of encoding, but to do that we need to know exactly when to perform up-scaling. The key is to realize that after the above loop is performed, it is guaranteed that $$e(s', x)$$ is always larger than or equal to $$2^{r_s-r_t}$$ (assuming $$r_t > r$$), and thus during decoding we just need to upscale $$s$$ whenever it falls below $$2^{r_s-r_t}$$.
 
 After the while loop terminates, we have
 
@@ -281,7 +287,7 @@ $$
 \end{align*}
 $$
 
-Plugging in the above inequality to $$e(s', x)$$, we have 
+Plugging in the above inequality to $$e(s', x)$$, we have
 
 $$
 \begin{align*}

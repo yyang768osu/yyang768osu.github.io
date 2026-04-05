@@ -29,10 +29,10 @@ $(document).ready(function () {
     $("body").scrollspy({
       target: navSelector,
     });
-    $('a.tldr').click(function() {
-        $(this).parent().parent().find(".tldr.hidden").toggleClass('open');
+    $("a.tldr").click(function () {
+      $(this).parent().parent().find(".tldr.hidden").toggleClass("open");
     });
-    $('.navbar-nav').find('a').removeClass('waves-effect waves-light');
+    $(".navbar-nav").find("a").removeClass("waves-effect waves-light");
   }
 
   // add css to jupyter notebooks

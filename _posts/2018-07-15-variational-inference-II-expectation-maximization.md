@@ -3,12 +3,12 @@ layout: post
 title: "A step-by-step guide to variational inference (2): expectation maximization"
 date: 2018-07-15
 comments: true
-description: how to optimize ELBO when your approx posterior can be easily obtained 
+description: how to optimize ELBO when your approx posterior can be easily obtained
 ---
 
 In the previous post we went through the derivation of variational lower-bound, and showed how it helps convert the Bayesian inference and density estimation problem to an optimization problem. Let's briefly recap the problem setup and restate some key points.
 
-Consider a very general generative graphic model where each data point $$x^{(n)}$$ is generated from a latent variable $$z^{(n)}$$ conforming to a given distribution $$p(X\|Z;\theta)$$, with $$z^{(n)}$$ itself drawn from a given prior distribution $$p(Z; \theta)$$. $$\theta$$ captures the set of variables that the two probabilities are parameterized with. Two fundamental problems are to (1) estimate the density of existing dataset $$X$$, i.e. $$p(X;\theta)$$ and (2) derive the posterior probability of the latent variable $$Z$$ given the observed data $$X$$, i.e., $$p(Z\|X;\theta)$$. The exact solution of both problems requires the evaluation of the often intractable integral $$\int P(X\| Z;\theta)P(Z;\theta)dZ$$. 
+Consider a very general generative graphic model where each data point $$x^{(n)}$$ is generated from a latent variable $$z^{(n)}$$ conforming to a given distribution $$p(X\|Z;\theta)$$, with $$z^{(n)}$$ itself drawn from a given prior distribution $$p(Z; \theta)$$. $$\theta$$ captures the set of variables that the two probabilities are parameterized with. Two fundamental problems are to (1) estimate the density of existing dataset $$X$$, i.e. $$p(X;\theta)$$ and (2) derive the posterior probability of the latent variable $$Z$$ given the observed data $$X$$, i.e., $$p(Z\|X;\theta)$$. The exact solution of both problems requires the evaluation of the often intractable integral $$\int P(X\| Z;\theta)P(Z;\theta)dZ$$.
 
 With the introduction of a variational/free distribution function $$q(Z)$$, we have the following identity:
 
@@ -23,7 +23,7 @@ which says that the marginalized probability of dataset $$X$$ can be decomposed 
 $$
 \begin{align*}
 \mathcal{L}(q,\theta)=\int q(Z) \ln \frac{P(Z,X;\theta)}{q(Z)}dZ,
-\end{align*} 
+\end{align*}
 $$
 
 which is referred to as the variational lower bound: it is called a lower-bound as it is always less than $$\ln p(X;\theta)$$ due to the non-negativity of KL divergence, and it is called variational as it is itself a functional that maps a variational/free distribution function $$q$$ to a scalar value. This identity is quite exquisite in that it turns both the density estimation problem and the latent variable inference problem into an optimization problem, evident from the two equations below
@@ -51,9 +51,9 @@ $$
 \end{align*}
 $$
 
-A natural question is: why would this be any easier to evaluate compared with maximizing $$\ln p(X;\theta)$$ head on? did we increase our burden by considering a nested-maximization optimization problem rather than a single-maximization one? 
+A natural question is: why would this be any easier to evaluate compared with maximizing $$\ln p(X;\theta)$$ head on? did we increase our burden by considering a nested-maximization optimization problem rather than a single-maximization one?
 
-To answer we need to have the objective function under scrutiny. Looking at the detailed expression of $$\mathcal{L}(q,\theta)$$, the main hurdle is the evaluation the log-likelihood of the joint observed-latent variable $$p(Z,X;\theta)$$. We want to emphasis that the two probability distributions $$p(Z;\theta)$$ and $$p(X\|Z;\theta)$$ are given as part of the model assumption, and they usually come in the form of well-known distributions, e.g., Gaussian, multinomial, exponential, etc. Thus, the joint likelihood of observed and hidden variable $$p(Z,X;\theta)=p(Z;\theta)p(X\|Z;\theta)$$ is in an amenable form. Also, quite often, taking logarithm on it would break up all the multiplicative terms as summation, resulting in quite tractable from. Better yet, the parameters $$\theta$$ that we need to compute gradient with, may naturally be decomposed into different terms in the summation, making the calculation of derivative easy with respect to individual parameters.  
+To answer we need to have the objective function under scrutiny. Looking at the detailed expression of $$\mathcal{L}(q,\theta)$$, the main hurdle is the evaluation the log-likelihood of the joint observed-latent variable $$p(Z,X;\theta)$$. We want to emphasis that the two probability distributions $$p(Z;\theta)$$ and $$p(X\|Z;\theta)$$ are given as part of the model assumption, and they usually come in the form of well-known distributions, e.g., Gaussian, multinomial, exponential, etc. Thus, the joint likelihood of observed and hidden variable $$p(Z,X;\theta)=p(Z;\theta)p(X\|Z;\theta)$$ is in an amenable form. Also, quite often, taking logarithm on it would break up all the multiplicative terms as summation, resulting in quite tractable from. Better yet, the parameters $$\theta$$ that we need to compute gradient with, may naturally be decomposed into different terms in the summation, making the calculation of derivative easy with respect to individual parameters.
 
 On the other hand, to compute the marginalized likelihood of the observed data only, i.e., $$P(X;\theta)$$, one need to sum or integrate out the effect of $$Z$$ from $$p(Z,X;\theta)$$, which may lead to complicated expression. While the evaluation of $$P(X;\theta)$$ may still be fine when, e.g., the marginalization only requires the summation of a finite number of terms (which is the case for the Gaussian mixture model), the real deal breaker is the difficulty in taking derivative of the log-likelihood with respective to the parameters: taking logarithm on $$P(X;\theta)$$ almost surely won't result in nice decomposition, as the logarithm is gated by the integral or summation, and the log-sum expression is a lot harder to break when we compute the derivative with respect to the parameters $$\theta$$.
 
@@ -62,7 +62,7 @@ Coming back to the maximization-maximization problem, it is natural to devise an
 $$
 \begin{align*}
 \text{E step: }&q^{(t)} = \arg\max_{q}\mathcal{L}(q,\theta^{(t)})\\
-\text{M step: }&\theta^{(t+1)} = \arg\max_{\theta}\mathcal{L}(q^{(t)}, \theta) 
+\text{M step: }&\theta^{(t+1)} = \arg\max_{\theta}\mathcal{L}(q^{(t)}, \theta)
 \end{align*}
 $$
 
@@ -70,7 +70,7 @@ It is worth mentioning that the first optimization problem is in general a very 
 
 To proceed, we make a very strong assumption that $$p(Z\|X;\theta^{(t)})$$ can be easily obtained. As we will see later that with certain simple model (e.g., Gaussian mixture model), it is indeed a valid assumption, nevertheless it is the key assumption that significantly limits the application of the expectation maximization algorithm.
 
-Anyway, for now let us live with this strong assumption, then the E-step results in the following  expression 
+Anyway, for now let us live with this strong assumption, then the E-step results in the following expression
 
 $$
 \begin{align*}
@@ -78,7 +78,7 @@ $$
 \end{align*}
 $$
 
-Coming back to the second maximization problem (M-step), with $$q^{(t)}$$ fixed, we can decompose the variational lower bound as 
+Coming back to the second maximization problem (M-step), with $$q^{(t)}$$ fixed, we can decompose the variational lower bound as
 
 $$
 \begin{align*}
@@ -86,17 +86,17 @@ $$
 \end{align*}
 $$
 
-The second term above is just a constant term reflecting the entropy of $$q^{(t)}$$, so let us ignore it, and then the second maximization problem reduces to 
+The second term above is just a constant term reflecting the entropy of $$q^{(t)}$$, so let us ignore it, and then the second maximization problem reduces to
 
 $$
 \begin{align*}
-\text{M step: }\theta^{(t+1)} =&\max_{\theta} \int p(Z|X;\theta^{(t)}) \ln P(Z,X;\theta)dZ. 
+\text{M step: }\theta^{(t+1)} =&\max_{\theta} \int p(Z|X;\theta^{(t)}) \ln P(Z,X;\theta)dZ.
 \end{align*}
 $$
 
 The maximization target above can be viewed as finding the expectation of complete data (combining observed variable and latent variable) log likelihood, where the expectation is with respect to a fixed distribution on the latent variable $$Z$$.
 
-Let's put the two steps together and review the whole iterative process. We are given a model with a set of parameters captured in $$\theta$$. The task is find the values of the parameters $$\theta$$ such that the model best explain the existing observed data at hand. At the beginning, we take a random guess on the value of the parameters. With that initial parameters, we find the posterior probability of the latent variable for each data point $$x$$ in the training data set $$X$$. Then, using that posterior probability, we calculate the expected complete-data log-likelihood, and try to find parameters $$\theta$$ so that the complete-data log-likelihood is maximized. With $$\theta$$ updated, we refresh our calculation of the posterior probability and iterative the process. 
+Let's put the two steps together and review the whole iterative process. We are given a model with a set of parameters captured in $$\theta$$. The task is find the values of the parameters $$\theta$$ such that the model best explain the existing observed data at hand. At the beginning, we take a random guess on the value of the parameters. With that initial parameters, we find the posterior probability of the latent variable for each data point $$x$$ in the training data set $$X$$. Then, using that posterior probability, we calculate the expected complete-data log-likelihood, and try to find parameters $$\theta$$ so that the complete-data log-likelihood is maximized. With $$\theta$$ updated, we refresh our calculation of the posterior probability and iterative the process.
 
 In fact, K-means clustering algorithm is one instance of expectation-maximization procedure with certain model assumption. It is helpful to think of the E-M iterative process from the perspective of K-means clustering: for K-means clustering, the latent variable is one-dimensional with value from $$1$$ to $$K$$, implying the registration to one of the $$K$$ clusters. The parameter of the model is the center of the clusters, denoted as $$\theta=\{c_1, \ldots, c_K\}$$. In the initial setup, we randomly set these $$K$$ cluster centers. For each data, we assign it to the nearest cluster, which is effectively assigning its latent variable. This step corresponds to finding the posterior distribution (E-step), with one of the clustering having probability $$1$$. After each data is assigned to its cluster with the initial values of the cluster centers, which gives us complete data in the form of (observed data, latent variable) pair, the next step is to adjust the center based on its constituent. This step corresponds to the maximizing of the expected complete-data log-likelihood (M-step), although this expectation is taken in a degenerated form as the posterior probability for the latent variable is in the form of $$0/1$$.
 
@@ -117,7 +117,6 @@ with slightly modified procedure below
 $$
 \begin{align*}
 \text{E step: }&q^{(t)} = p(Z|X,\theta^{(t)})\\
-\text{M step: }&\theta^{(t+1)} =\max_{\theta} \int p(Z|X,\theta^{(t)}) \ln P(Z,X|\theta)dZ {\color{red} + \ln p_\text{prior}(\theta)}. 
+\text{M step: }&\theta^{(t+1)} =\max_{\theta} \int p(Z|X,\theta^{(t)}) \ln P(Z,X|\theta)dZ {\color{red} + \ln p_\text{prior}(\theta)}.
 \end{align*}
 $$
-

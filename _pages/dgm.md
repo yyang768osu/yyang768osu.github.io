@@ -5,7 +5,7 @@ permalink: /deep_generative_models/
 ---
 
 Yang Yang and [Jongha Jon Ryu](https://jongharyu.github.io/)
- 
+
 <br>
 
 **Chapter 1** Introduction
