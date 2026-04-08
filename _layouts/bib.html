@@ -25,13 +25,15 @@
       {%- for author in entry.author_array -%} {%- assign author_is_self = false -%} {%- if author.last == site.scholar.last_name%} {%- if
       site.scholar.first_name contains author.first -%} {%- assign author_is_self = true -%} {%- endif -%} {%- endif -%} {%- assign coauthor_url = nil
       -%} {%- if site.data.coauthors[author.last] -%} {%- for coauthor in site.data.coauthors[author.last] -%} {%- if coauthor.firstname contains
-      author.first -%} {%- assign coauthor_url = coauthor.url -%} {%- break -%} {%- endif -%} {%- endfor -%} {%- endif -%} {%- assign display_first = author.first | remove: '*' -%} {%- if author.first contains '*' -%} {%- assign display_last = author.last | append: '*' -%} {%- else -%} {%- assign display_last = author.last -%} {%- endif -%} {%- if forloop.length == 1
-      -%} {%- if author_is_self %}
+      author.first -%} {%- assign coauthor_url = coauthor.url -%} {%- break -%} {%- endif -%} {%- endfor -%} {%- endif -%} {%- assign display_first =
+      author.first | remove: '*' -%} {%- if author.first contains '*' -%} {%- assign display_last = author.last | append: '*' -%} {%- else -%} {%-
+      assign display_last = author.last -%} {%- endif -%} {%- if forloop.length == 1 -%} {%- if author_is_self %}
       <strong>{{display_first}} {{display_last}}</strong>
       {%- else -%} {{display_first}} {{display_last}} {%- endif -%} {%- else -%} {%- unless forloop.last -%} {% if author_is_self %}
       <strong>{{display_first}} {{display_last}}</strong>,&nbsp; {%- else -%} {% if coauthor_url -%}
-      <a href="{{coauthor_url}}">{{display_first}} {{display_last}}</a>,&nbsp; {%- else -%} {{display_first}} {{display_last}},&nbsp; {%- endif -%} {%-
-      endif -%} {%- else -%} {% if author_is_self -%} and <strong>{{display_first}} {{display_last}}</strong> {% else -%} {%- if coauthor_url -%} and
+      <a href="{{coauthor_url}}">{{display_first}} {{display_last}}</a>,&nbsp; {%- else -%} {{display_first}} {{display_last}},&nbsp; {%- endif -%}
+      {%- endif -%} {%- else -%} {% if author_is_self -%} and <strong>{{display_first}} {{display_last}}</strong> {% else -%} {%- if coauthor_url -%}
+      and
       <a href="{{coauthor_url}}">{{display_first}} {{display_last}}</a>
       {% else -%} and {{display_first}} {{display_last}} {%- endif -%} {%- endif -%} {%- endunless -%} {%- endif -%} {%- endfor %}
     </div>
