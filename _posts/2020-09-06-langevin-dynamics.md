@@ -6,7 +6,7 @@ comments: true
 description: stochastic differential equation, Fokker Plank equation, and their connections to Bayesian inference
 ---
 
-In this post we visit some technical details centered around Langevin Dynamics in the context of stochastic Bayesian learning, assuming minimal background on conventional calculus and Brownian motion. Starting with quadratic variation, we gradually show how Ito's Lemma and Fokker-Planck equation can be derived. Using Fokker-Planck equation, it is revealed that an Langevian dynamic can be used as a MCMC method to generate samples from an un-normalized distribution. Lastly, [stochastic gradient Langevin dynamics](https://www.ics.uci.edu/~welling/publications/papers/stoclangevin_v6.pdf) method is discussed.
+In this post we visit some technical details centered around Langevin Dynamics in the context of stochastic Bayesian learning, assuming minimal background on conventional calculus and Brownian motion. Starting with quadratic variation, we gradually show how Ito's Lemma and Fokker-Planck equation can be derived. Using Fokker-Planck equation, it is revealed that a Langevin dynamic can be used as an MCMC method to generate samples from an un-normalized distribution. Lastly, [stochastic gradient Langevin dynamics](https://www.ics.uci.edu/~welling/publications/papers/stoclangevin_v6.pdf) method is discussed.
 
 The following materials are taken as references:
 
@@ -160,7 +160,7 @@ $$
 
 Since the discretization is only an approximation to the original continuous stochastic process, it does not in itself lead to desired stationary distribution (unless $$\epsilon$$ becomes infinitesimal) and thus should be corrected by Metropolis-Hastings to enforce detailed balance condition.
 
-One lingering question is: does the discretization of Langevin dynamics satisfy detailed balance equation in $$\epsilon\to0$$ asymptote? The fact that it converges to a desirable distribution does not indicate that it is a time-reversible Markov chain. Even thought it is claimed by some source that the asymptotic acceptance ratio approaches 1, I was not able to show that it is the case and is stuck at the following derivation.
+One lingering question is: does the discretization of Langevin dynamics satisfy detailed balance equation in $$\epsilon\to0$$ asymptote? The fact that it converges to a desirable distribution does not indicate that it is a time-reversible Markov chain. Even though some sources claim that the asymptotic acceptance ratio approaches 1, this does not follow directly from the derivation below, which is left as an open question.
 
 $$
 \begin{align*}

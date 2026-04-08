@@ -74,7 +74,7 @@ $$
 
 It is easy to argue that to have an accurate alignment, we need accurate recognition, and to train an accurate recognition, we have to rely on accurate alignment/segmentation.
 
-In a convention ASR system, to bootstrap the training procedure, we have to start with a dataset that has human curated phoneme boundary/segmentation. Once the system is capacitated with reasonable recognition/inference, it is no longer confined with human aligned dataset and a much larger dataset can be used with just waveform and the corresponding phoneme transcription. Eventually, after the system is able to deliver robust segmentation, we can make hard decision on the alignment, and only focus on improving the recognition performance with potentially a different system that has a much larger capacity, e.g., a DNN replacing the GMM model.
+In a conventional ASR system, to bootstrap the training procedure, we have to start with a dataset that has human curated phoneme boundary/segmentation. Once the system is capacitated with reasonable recognition/inference, it is no longer confined with human aligned dataset and a much larger dataset can be used with just waveform and the corresponding phoneme transcription. Eventually, after the system is able to deliver robust segmentation, we can make hard decision on the alignment, and only focus on improving the recognition performance with potentially a different system that has a much larger capacity, e.g., a DNN replacing the GMM model.
 
 ## Decoding
 

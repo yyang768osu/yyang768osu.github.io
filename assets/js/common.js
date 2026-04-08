@@ -15,6 +15,9 @@ $(document).ready(function () {
     $(this).parent().parent().find(".award.hidden.open").toggleClass("open");
     $(this).parent().parent().find(".bibtex.hidden").toggleClass("open");
   });
+  $("a.tldr").click(function () {
+    $(this).parent().parent().find(".tldr.hidden").toggleClass("open");
+  });
   $("a").removeClass("waves-effect waves-light");
 
   // bootstrap-toc
@@ -28,9 +31,6 @@ $(document).ready(function () {
     Toc.init($myNav);
     $("body").scrollspy({
       target: navSelector,
-    });
-    $("a.tldr").click(function () {
-      $(this).parent().parent().find(".tldr.hidden").toggleClass("open");
     });
     $(".navbar-nav").find("a").removeClass("waves-effect waves-light");
   }

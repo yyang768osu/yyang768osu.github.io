@@ -6,7 +6,7 @@ comments: true
 description: what is variational lower bound, why it is important, and how to derive it
 ---
 
-Graphic models describe the factorization of probability distributions. The detailed form of the graphic model encodes one's belief/hypothesis regarding the underlying structure of the data. In this article, we confine the discussion to a general form of directed graphic model as illustrate below.
+Graphic models describe the factorization of probability distributions. The detailed form of the graphic model encodes one's belief/hypothesis regarding the underlying structure of the data. In this article, we confine the discussion to a general form of directed graphic model as illustrated below.
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
@@ -24,7 +24,7 @@ There are two intertwined problems associated with this form of generative model
 
 For the problem of Bayesian inference, we want to infer the posterior probability of the unobserved hidden/latent variable given the observed data, or more precisely $$p(Z\|X;\theta)$$. It is easy to see that these two problems are naturally intertwined from Bayes rule: $$p(Z\|X) = \frac{p(X\|Z)p(Z)}{P(X)}$$: since $$p(X\|Z)$$ and $$p(Z)$$ are already given as part of the model assumption, if we solve one of the two problems, then the other one can be solved as well. Conceptually, the solution to the problems can be viewed as trying to find a reverse graph in the generative model.
 
-Let's now take a step back and ask the question: why do we bother with the introduction of latent/hidden variable? Can we just propose a model that captures $$p(X;\theta)$$ directly, and save the trouble of Bayesian inference for the latent variable all together? Anyway, even with the direct characterization of $$p(X;\theta)$$, the discussion above should still holds: the larger the $$p(X;\theta)$$, the better our model explains the given data, and with a good model we can apply sampling to generate artificial data.
+Let's now take a step back and ask the question: why do we bother with the introduction of latent/hidden variable? Can we just propose a model that captures $$p(X;\theta)$$ directly, and save the trouble of Bayesian inference for the latent variable all together? Anyway, even with the direct characterization of $$p(X;\theta)$$, the discussion above should still hold: the larger the $$p(X;\theta)$$, the better our model explains the given data, and with a good model we can apply sampling to generate artificial data.
 
 The benefits of the hidden/latent variables are two-fold:
 

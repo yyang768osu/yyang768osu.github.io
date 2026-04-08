@@ -77,3 +77,13 @@ Essentially, _the Gumbel max trick converts the sampling operation from a catego
         {% include figure.liquid path="assets/img/blog_img/gumbel/gumbel.png" class="img-fluid rounded z-depth-1" zoomable=false %}
     </div>
 </div>
+
+The Gumbel softmax, also known as the concrete distribution, is a continuous relaxation of the Gumbel max trick that enables gradient-based optimization through discrete sampling. While the argmax operation in the Gumbel max trick is not differentiable, replacing it with a softmax over the perturbed logits yields a differentiable approximation:
+
+$$
+\begin{align*}
+y_i = \frac{\exp\left((\alpha_i + g_i)/\tau\right)}{\sum_{j=1}^n \exp\left((\alpha_j + g_j)/\tau\right)}, \quad i = 1, \ldots, n,
+\end{align*}
+$$
+
+where $$\tau > 0$$ is a temperature parameter. As $$\tau \to 0$$, the Gumbel softmax output approaches a one-hot vector corresponding to the argmax, recovering the original discrete sample. For larger $$\tau$$, the output is smoother and the gradient flows more easily. In practice, one typically anneals $$\tau$$ during training, starting large and decreasing gradually. This trick is widely used in training models with discrete latent variables, such as discrete variational autoencoders.

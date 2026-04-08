@@ -28,7 +28,7 @@ $$
 \end{align*}
 $$
 
-An important consequence with the bijective assumption is that $$z$$ and $$x$$ must have the same dimension: if $$z$$ is a $$d-$$dimensional vector $$z=[z_1, z_2, \ldots, z_d]$$, the corresponds $$x$$ must also be a $$d-$$dimensional vector $$x=[x_1, x_2, \ldots, x_d]$$. It is worth emphasizing that the bijective assumption is essential to the tractability of the change-of-variable operation, and the resulting dimension invariance is a key restriction in flow-based methods.
+An important consequence with the bijective assumption is that $$z$$ and $$x$$ must have the same dimension: if $$z$$ is a $$d-$$dimensional vector $$z=[z_1, z_2, \ldots, z_d]$$, the corresponding $$x$$ must also be a $$d-$$dimensional vector $$x=[x_1, x_2, \ldots, x_d]$$. It is worth emphasizing that the bijective assumption is essential to the tractability of the change-of-variable operation, and the resulting dimension invariance is a key restriction in flow-based methods.
 
 The above equation, albeit tractable, looks by no means familiar or friendly --- what is with the absolute value? the determinant? the Jacobian? the inverse? The whole equation screams for an intuitive explanation. So here we go --- let's gain some insights into the meaning of the formula.
 
@@ -40,7 +40,7 @@ $$
 \end{align*}
 $$
 
-In the last equation, we get ride of the inverse by resorting to the identity that the determinant of an inverse is the inverse of the determinant, the intuition of which will become clear later.
+In the last equation, we get rid of the inverse by resorting to the identity that the determinant of an inverse is the inverse of the determinant, the intuition of which will become clear later.
 
 To understand the above equation, we start with a fundamental invariance in the change of probability random variables: **the probability mass of the random variable $$z$$ in any subset of $$\mathcal{Z}$$ must be the same as the probability mass of $$x$$ in the corresponding subset of $$\mathcal{X}$$ induced by transformation from $$z$$ to $$x$$**, and vice versa.
 

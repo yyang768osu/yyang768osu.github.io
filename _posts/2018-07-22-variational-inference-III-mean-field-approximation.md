@@ -6,7 +6,7 @@ comments: true
 description: posterior approximation before age of deep learning
 ---
 
-We have learned in the previous post that E-M algorithm tries to find a ML or MAP solution to the parameters of a generative model. It is build on top of two major premises:
+We have learned in the previous post that E-M algorithm tries to find a ML or MAP solution to the parameters of a generative model. It is built on top of two major premises:
 
 1. $$\ln p(X,Z;\theta)$$ is in a much simpler form than $$\ln P(X;\theta)$$,
 2. $$\ln p(Z\|X;\theta)$$ is easy to obtain.
@@ -33,9 +33,9 @@ $$
 
 However, this optimization problem above is still very hard and it does not lend itself to any easy solution. Here, the objective $$\mathcal{L}(q)$$, called the variational lower-bound, is a functional as it maps a function into a scalar value, whose domain is the space of all functions.
 
-Since it is hard to optimize the variational lower bound as is, one may wonder, how about constraining the search space of $$q$$ from all potential functions to within a limited function space? Could that make the problem simpler? Even though we may not find the optimal solution after restricting the set of functions we could search from, the hope is that by doing so we can device practical algorithms with solutions that are reasonably close to the true posterior. This is exactly the idea behind mean field approximation.
+Since it is hard to optimize the variational lower bound as is, one may wonder, how about constraining the search space of $$q$$ from all potential functions to within a limited function space? Could that make the problem simpler? Even though we may not find the optimal solution after restricting the set of functions we could search from, the hope is that by doing so we can devise practical algorithms with solutions that are reasonably close to the true posterior. This is exactly the idea behind mean field approximation.
 
-In the mean field method, we add a constraint to the domain of the optimization: instead of allowing $$q(Z)$$ to be in arbitrary form, we only look at cases when it can be factorized into a product form with disjoint latent variables in each multiplicative factor. More specifically, we divide the dimension of latent variables into $$K$$ groups $$Z=[Z_1, Z_2, \ldots, Z_K]$$ and enforce $$q$$ to have the form of $$q(Z)=q_1(Z_1)q_2(Z_2)\ldots q_K(Z_K)$$. Put it in precise math, we have
+In the mean field method, we add a constraint to the domain of the optimization: instead of allowing $$q(Z)$$ to be in arbitrary form, we only look at cases when it can be factorized into a product form with disjoint latent variables in each multiplicative factor. More specifically, we divide the dimension of latent variables into $$K$$ groups $$Z=[Z_1, Z_2, \ldots, Z_K]$$ and enforce $$q$$ to have the form of $$q(Z)=q_1(Z_1)q_2(Z_2)\ldots q_K(Z_K)$$. In precise mathematical terms, we have
 
 $$
 \begin{align*}
@@ -92,7 +92,7 @@ $$
 
 This result tells us that, among the $$K$$ factors, if we have all but one factor fixed, then the optimal solution of that left out function that maximize the variation lower bound (or equivalently, minimizes the KL divergence to the true posterior distribution) can be written in the above form as a function of all the other factors.
 
-This leads to a nice iterative solution that iteratively visits each factor, and maximize the variational lower bound with respect to the target factor treating all the other factors as known. In special cases, the normalization constant term in the dominator of the above equation could be directly inferred if the numerator term already suggests certain type of known distribution.
+This leads to a nice iterative solution that iteratively visits each factor, and maximize the variational lower bound with respect to the target factor treating all the other factors as known. In certain special cases, the normalization constant term in the denominator of the above equation could be directly inferred if the numerator term already suggests certain type of known distribution.
 
 It is interesting to note that, to apply this mean-field-approximation method, one only need to make the assumption on how to partition the latent variable dimensions into disjoint groups, one for each factor, without making any assumption on the detailed function form of any factor. The detail form of the factorized distribution would be obtained as a result of the iterative procedure.
 

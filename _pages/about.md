@@ -2,7 +2,7 @@
 layout: about
 title: about
 permalink: /
-subtitle: Deep Learning Researcher/Engineer
+subtitle: Applied AI Researcher
 
 profile:
   align: right
@@ -10,11 +10,11 @@ profile:
   image_circular: false # crops the image to make it circular
   more_info: >
 
-news: true # includes a list of news items
+news: false # includes a list of news items
 selected_papers: true # includes a list of papers marked as "selected={true}"
 social: true # includes social icons at the bottom of the page
 ---
 
-I work as Sr. Staff Deep Learning Engineer at [Qualcomm AI Research](https://www.qualcomm.com/research/artificial-intelligence/ai-research?cmpid=fofyus221808&gclid=Cj0KCQiA0p2QBhDvARIsAACSOOM3Dpz826NbHIO_FaBcb4FDeoXz0nVAd4w5zkCrpDe2F_V2syhq07waAs3VEALw_wcB) in San Diego. My research interests include deep generative models, neural data compression (image/video/speech compression), and machine learning for combinatorial optimization (e.g., graph-level compiler optimization). I am passionate about designing deep learning solutions to challenging problems and deploying them to edge devices.
+I am a Staff Software Engineer at Google based in San Diego, specializing in the intersection of generative AI and on-device deployment. My current work focuses on neural speech synthesis, enhancement, and audio codecs, and I previously worked on neural video compression. I am passionate about the full lifecycle of AI—from generative modeling research to the engineering rigor required to bring features into production.
 
-I received my Ph.D. from the Ohio State University in 2015 on wireless networking. Before joining AI Research, I worked on wireless physical layer design (reference signal, channel estimation, tracking loop), channel coding design, and standardization for 5G NR ([patent]({{ site.baseurl }}{% link _pages/patent.md %})).
+Prior to Google, I spent several years at Qualcomm in both the Wireless R&D ([patents]({{ site.baseurl }}{% link _pages/patent.md %})) and AI Research divisions. I hold a Ph.D. in Wireless Networking from The Ohio State University (2015) and a Bachelor's degree from Shanghai Jiao Tong University (2009).

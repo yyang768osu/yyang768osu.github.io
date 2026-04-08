@@ -8,7 +8,15 @@
 
 "Lu":
   - firstname: ["Yadong", "Yadong*"]
-    url: https://www.ics.uci.edu/~yadongl1/
+    url: https://scholar.google.com/citations?user=Y69ahdAAAAAJ&hl=en
+
+"Li":
+  - firstname: ["Yunpeng"]
+    url: https://scholar.google.com/citations?user=2vaDEYAAAAAJ&hl=en
+
+"Erdogan":
+  - firstname: ["Hakan"]
+    url: https://scholar.google.com/citations?user=Ar0No6YAAAAJ&hl=tr
 
 "Said":
   - firstname: ["Amir"]

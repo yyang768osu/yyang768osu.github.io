@@ -24,7 +24,7 @@ p(Z|X;\theta) &= \underset{q}{\arg\max} \mathcal{L}(q,\theta),
 \end{aligned}
 $$
 
-which testified the claim that both density estimation (LHS of the first equation) and Bayesian inference (LHS of the second equation) are linked with the same optimization function. There are two implications if we increases the value of $$\mathcal{L}$$ by tweaking the distribution $$q$$: (1) $$\mathcal{L}$$ becomes a tighter lower bound of $$\ln p(X;\theta)$$, meaning that it is closer to the true data log-likelihood in value (2) the distribution function $$q$$ itself is closer to the true posterior distribution measured in KL divergence.
+which testifies the claim that both density estimation (LHS of the first equation) and Bayesian inference (LHS of the second equation) are linked with the same optimization function. There are two implications if we increases the value of $$\mathcal{L}$$ by tweaking the distribution $$q$$: (1) $$\mathcal{L}$$ becomes a tighter lower bound of $$\ln p(X;\theta)$$, meaning that it is closer to the true data log-likelihood in value (2) the distribution function $$q$$ itself is closer to the true posterior distribution measured in KL divergence.
 
 Often, we are also given the task of finding the ML estimate of the parameter $$\theta$$ (or MAP estimate of the parameter $$\theta$$), which requires taking the maximum of $$\ln p(X;\theta)$$ (or $$\ln p(X\|\theta) + \ln p_\text{prior}(\theta)$$ for the MAP case) with respect to $$\theta$$, yielding the following problem
 
@@ -34,7 +34,7 @@ $$
 \end{align*}
 $$
 
-By increasing the variation lower bound $$\mathcal{L}$$ with respect to $$\theta$$, by which the model is parameterized, we are essentially searching for model that can better fit to the data.
+By increasing the variational lower bound $$\mathcal{L}$$ with respect to $$\theta$$, by which the model is parameterized, we are essentially searching for model that can better fit to the data.
 
 It should be clear that is it desirable to maximize $$\mathcal{L}$$ with respect to both the variational distribution $$q$$ and the generative parameter $$\theta$$: maximize it with respect to $$q$$ would yield a better inference function; maximize it with respect to $$\theta$$ would give us a better model.
 
@@ -50,7 +50,7 @@ Note that we used to express the variational lower bound in terms of the complet
 
 As discussed before, to obtain a better model and to obtain a closer approximation to the true posterior inference function, one needs to differentiate and optimize $$\sum_{i=1}^N\mathcal{L}(\phi, \theta, x^{(i)})$$ with respect to both $$\phi$$, the parameter of the inference function, and $$\theta$$, the parameter of the model. Here's a plan: let us calculate the gradient for the lower bound with respect to both parameters, and be done with the problem by applying our favorite stochastic gradient descent algorithm to find a solution. Actually we will show later that such a stochastic training framework is analogous to using an auto-encoder architecture with a specific regularization function.
 
-Soon enough you will realize a major challenge: it is not clear how to differentiate against $$\phi$$. There is very little chance for us to expect a close-form expression if we directly differentiate what is inside the integral, as the integral itself is hard even without the differentiation. We will spend some time here to dig into the issue, which is the key to the understanding of the variational auto-encoding algorithm.
+A major challenge arises: it is not clear how to differentiate against $$\phi$$. There is very little chance of obtaining a closed-form expression by directly differentiating inside the integral, as the integral itself is hard even without the differentiation. We now examine this issue carefully, as it is the key to understanding the variational auto-encoding algorithm.
 
 Since the lower-bound exists in the form of the expectation with respect to the variational distribution $$q_\phi$$, the work-around here is to seek for Monte-Carlo estimation for the integral with the sampling from distribution $$q_\phi\left(z^{(i)}\|x^{(i)}\right)$$. Let us focus on the general problem of $$\nabla_\phi \mathbb{E}\_{q_\phi(z\|x)}\left[f(z)\right]$$, for which there are two approaches that use sampling to approximate the expectation:
 
@@ -97,7 +97,7 @@ To enforce a closed form expression for $$q_\phi$$, we have two general design c
 
 In the context of variational auto encoder in the original paper, the second design choice is picked: $$p_\epsilon$$ is chosen as the standard normal distribution and $$g_\phi$$ is a linear function of $$\epsilon$$, whose slope and intercept is an arbitrary function of $$x$$ and $$\phi$$ characterized using a neural network. In this case the induced distribution $$q_\phi$$ is a normal distribution whose mean and variances is determined by a neural network with the input $$x$$ and parameter $$\phi$$.
 
-Now that we went through what _the reparameterization trick_ is, let us return back to the problem of finding the gradient of $$\mathcal{L}(\phi, \theta, x^{(i)})$$ with respect to $$\phi$$ and $$\theta$$. Applying the reparameterization trick, we obtain the following gradient-friendly Monte Carlo estimate of the variational lower bound
+Now that we went through what _the reparameterization trick_ is, let us return to the problem of finding the gradient of $$\mathcal{L}(\phi, \theta, x^{(i)})$$ with respect to $$\phi$$ and $$\theta$$. Applying the reparameterization trick, we obtain the following gradient-friendly Monte Carlo estimate of the variational lower bound
 
 $$
 \begin{align*}

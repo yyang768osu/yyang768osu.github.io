@@ -35,7 +35,7 @@ p(Z|X;\theta) &= \arg\max_{q}\mathcal{L}(q,\theta).
 \end{align*}
 $$
 
-The problem that Expectation Maximization algorithm designs to solve is the maximum-likelihood (ML) estimate of the parameter $$\theta$$. Mind you that $$\theta$$ is the parameter of the graphic model, and the task is to find a $$\theta$$ such that the model best explain the existing data. In precise term, the problem is
+The problem that Expectation Maximization algorithm is designed to solve is the maximum-likelihood (ML) estimate of the parameter $$\theta$$. Note that $$\theta$$ is the parameter of the graphic model, and the task is to find a $$\theta$$ such that the model best explains the existing data. In precise term, the problem is
 
 $$
 \begin{align*}
@@ -51,13 +51,13 @@ $$
 \end{align*}
 $$
 
-A natural question is: why would this be any easier to evaluate compared with maximizing $$\ln p(X;\theta)$$ head on? did we increase our burden by considering a nested-maximization optimization problem rather than a single-maximization one?
+A natural question is: why would this be any easier to evaluate compared with maximizing $$\ln p(X;\theta)$$ head on? Have we increased our burden by considering a nested-maximization optimization problem rather than a single-maximization one?
 
-To answer we need to have the objective function under scrutiny. Looking at the detailed expression of $$\mathcal{L}(q,\theta)$$, the main hurdle is the evaluation the log-likelihood of the joint observed-latent variable $$p(Z,X;\theta)$$. We want to emphasis that the two probability distributions $$p(Z;\theta)$$ and $$p(X\|Z;\theta)$$ are given as part of the model assumption, and they usually come in the form of well-known distributions, e.g., Gaussian, multinomial, exponential, etc. Thus, the joint likelihood of observed and hidden variable $$p(Z,X;\theta)=p(Z;\theta)p(X\|Z;\theta)$$ is in an amenable form. Also, quite often, taking logarithm on it would break up all the multiplicative terms as summation, resulting in quite tractable from. Better yet, the parameters $$\theta$$ that we need to compute gradient with, may naturally be decomposed into different terms in the summation, making the calculation of derivative easy with respect to individual parameters.
+To answer we need to have the objective function under scrutiny. Looking at the detailed expression of $$\mathcal{L}(q,\theta)$$, the main hurdle is the evaluation the log-likelihood of the joint observed-latent variable $$p(Z,X;\theta)$$. We wish to emphasize that the two probability distributions $$p(Z;\theta)$$ and $$p(X\|Z;\theta)$$ are given as part of the model assumption, and they usually come in the form of well-known distributions, e.g., Gaussian, multinomial, exponential, etc. Thus, the joint likelihood of observed and hidden variable $$p(Z,X;\theta)=p(Z;\theta)p(X\|Z;\theta)$$ is in an amenable form. Also, quite often, taking logarithm on it would break up all the multiplicative terms as summation, resulting in quite tractable from. Moreover, the parameters $$\theta$$ that we need to compute gradient with, may naturally be decomposed into different terms in the summation, making the calculation of derivative easy with respect to individual parameters.
 
 On the other hand, to compute the marginalized likelihood of the observed data only, i.e., $$P(X;\theta)$$, one need to sum or integrate out the effect of $$Z$$ from $$p(Z,X;\theta)$$, which may lead to complicated expression. While the evaluation of $$P(X;\theta)$$ may still be fine when, e.g., the marginalization only requires the summation of a finite number of terms (which is the case for the Gaussian mixture model), the real deal breaker is the difficulty in taking derivative of the log-likelihood with respective to the parameters: taking logarithm on $$P(X;\theta)$$ almost surely won't result in nice decomposition, as the logarithm is gated by the integral or summation, and the log-sum expression is a lot harder to break when we compute the derivative with respect to the parameters $$\theta$$.
 
-Coming back to the maximization-maximization problem, it is natural to devise an iterative algorithm that maximize the objective function $$\mathcal{L}(q,\theta)$$ with alternating axis:
+Returning to the maximization-maximization problem, it is natural to devise an iterative algorithm that maximize the objective function $$\mathcal{L}(q,\theta)$$ with alternating axis:
 
 $$
 \begin{align*}
@@ -70,7 +70,7 @@ It is worth mentioning that the first optimization problem is in general a very 
 
 To proceed, we make a very strong assumption that $$p(Z\|X;\theta^{(t)})$$ can be easily obtained. As we will see later that with certain simple model (e.g., Gaussian mixture model), it is indeed a valid assumption, nevertheless it is the key assumption that significantly limits the application of the expectation maximization algorithm.
 
-Anyway, for now let us live with this strong assumption, then the E-step results in the following expression
+For now, let us proceed with this strong assumption, and the E-step results in the following expression
 
 $$
 \begin{align*}
@@ -78,7 +78,7 @@ $$
 \end{align*}
 $$
 
-Coming back to the second maximization problem (M-step), with $$q^{(t)}$$ fixed, we can decompose the variational lower bound as
+Turning to the second maximization problem (M-step), with $$q^{(t)}$$ fixed, we can decompose the variational lower bound as
 
 $$
 \begin{align*}

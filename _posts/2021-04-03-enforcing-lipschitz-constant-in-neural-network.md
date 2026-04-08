@@ -8,7 +8,7 @@ description: how to enforce lipschitz constraint in neural networks?
 
 A function $$g(x)$$ is Lipschitz continuous if there exists a constant $$L$$ such that $$\|g(x_1) - g(x_2)\| < L \|x_1 - x_2\|$$ for any $$x_1$$ and $$x_2$$ in its domain. $$L$$ is referred to as a Lipschitz constant of $$g$$. The need to enforce a certain Lipschitz constant of neural networks arises in many cases, with some examples listed below. Here we introduce a common technique used in many existing literatures.
 
-- Guarantee invertibility in normalizing flows build with residual blocks
+- Guarantee invertibility in normalizing flows built with residual blocks
   - [iResNet(ICML2019)](https://arxiv.org/abs/1811.00995)
 - Discriminator regularization in GAN training
   - [Wasserstein-GAN(ICML2017)](https://arxiv.org/abs/1701.07875)
@@ -20,7 +20,7 @@ A small note before we proceed: Lipschitz continuous/constant is defined with re
 
 ## Lipschitz constant vs spectral norm of matrices
 
-Deep neural networks are typically build with interleaved linear layers (such as Conv, TConv, Pooling) and nonlinear activations (such as ReLU, sigmoid). The Lipschitz constant of most activation functions are either constant or easy to control, so we will only focus on linear operations. Linear operations in general can be expressed as in the form of matrix-vector product $$y = g(x) = Wx$$ where $$W$$ denotes a matrix. In this case, the smallest Lipschitz constant of $$g$$ can be expressed as
+Deep neural networks are typically built with interleaved linear layers (such as Conv, TConv, Pooling) and nonlinear activations (such as ReLU, sigmoid). The Lipschitz constant of most activation functions are either constant or easy to control, so we will only focus on linear operations. Linear operations in general can be expressed as in the form of matrix-vector product $$y = g(x) = Wx$$ where $$W$$ denotes a matrix. In this case, the smallest Lipschitz constant of $$g$$ can be expressed as
 
 \begin{equation}
 \label{eq:lipconst}
@@ -112,7 +112,7 @@ $$
 
 While it is easy to compute vector norm as done in step 2, it is not immediately clear how to easily compute $$W^TWv^{(k-1)}$$ in step 1, since expressing $$W$$ explicitly for a general linear layer can be involved. For instance, for a 2D convolution operation, expressing it in the matrix-vector product form requires unpacking the convolution kernel into a doubly Toeplitz matrix. We know that $$Wv^{(k-1)}$$ is just the output of the linear operator $$g$$ when $$v^{(k-1)}$$ is used as input, but seemingly there is no easy way to multiply by $$W^T$$ without knowing $$W$$ explicitly.
 
-Here's the trick: we can express $$W^TWx$$ as the derivative of another another function and compute it with auto-differentiation.
+Here's the trick: we can express $$W^TWx$$ as the derivative of another function and compute it with auto-differentiation.
 
 $$
 \begin{align*}

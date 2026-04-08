@@ -98,7 +98,7 @@ Metropolis-Hasting algorithm itself is just a MCMC framework; it still relies on
 
 ## Hamiltonian Monte Carlo
 
-Let's now image a high dimensional surface for which the potential energy at each point $$x$$ is defined as $$V(x)\triangleq -\log\pi(x)$$. Here we introduce an auxiliary variable $$p$$ with the same dimension as $$x$$, and interpret the pair of variable $$(x, p)$$ as describing the position and momentum of an object on the high dimensional space.
+Let's now imagine a high-dimensional surface for which the potential energy at each point $$x$$ is defined as $$V(x)\triangleq -\log\pi(x)$$. Here we introduce an auxiliary variable $$p$$ with the same dimension as $$x$$, and interpret the pair of variable $$(x, p)$$ as describing the position and momentum of an object on the high dimensional space.
 
 The kinetic energy of the object with mass $$m$$ and momentum $$p$$ is known as $$K(p)=\frac{p^2}{2m}$$ (e.g., $$\frac{1}{2}mv^2 = (mv)^2/2m$$). We now construct a joint probability distribution of $$(x,p)$$ as
 

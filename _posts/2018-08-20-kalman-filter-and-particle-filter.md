@@ -6,13 +6,13 @@ comments: true
 description: Kalman filter 101
 ---
 
-Kalman filter and particle filter are concepts that are intimidating for new learners due to its involved mathmatical discription, and are straightforward once you grasp the main idea and get used to Gaussian distributions. The goal of this post is to take a journey to Kalman filter by dissecting its idea and operation into pieces that are easy to absorb, and then assemble them together to give the whole picture. As a last step, we will see that particle filter achieves the same goal for non-Gaussian system resorting to Monte Carlo sampling.
+Kalman filter and particle filter are concepts that are intimidating for new learners due to their involved mathematical description, and are straightforward once you grasp the main idea and get used to Gaussian distributions. The goal of this post is to take a journey to Kalman filter by dissecting its idea and operation into pieces that are easy to absorb, and then assemble them together to give the whole picture. As a last step, we will see that particle filter achieves the same goal for non-Gaussian system resorting to Monte Carlo sampling.
 
 Below let's walk through three simple problems and their solutions stemming from Gaussian distributions, and then stitching them together to form the problem that Kalman filter tries to solve and present its solution.
 
 ## A. Conditional Gaussian distribution
 
-Here I assume you have a basic knowledge regarding multi-variant Gaussian distribution. A multi-variant Gaussian distribution is captured by its mean vector and covariance matrix, often denoted as $$\mu$$ and $$\Sigma$$. Below let us consider the bi-variant Gaussian vector $$[z,x]^T$$, with the following general notation:
+Here I assume you have a basic knowledge regarding multivariate Gaussian distributions. A multivariate Gaussian distribution is captured by its mean vector and covariance matrix, often denoted as $$\mu$$ and $$\Sigma$$. Below let us consider the bivariate Gaussian vector $$[z,x]^T$$, with the following general notation:
 
 $$
 \begin{align*}
@@ -80,7 +80,7 @@ The off-diagonal term represents the cross covariance between the two random var
     </div>
 </div>
 
-The figure above illustrates the joint distribution of a bivariant Gaussian distribution with $$\mu_z=\mu_x=0$$, $$\Sigma_z=\Sigma_x=1$$, and $$\Sigma_{zx}=\Sigma_{xz}=0.8$$. The marginal distributions of both $$x$$ and $$z$$ are $$\mathcal{N}(0,1)$$. The contour of the distribution forms a thin ellipse, reflecting the strong covariance $$\Sigma_{zx}=\Sigma_{xz}=0.8$$ between the two random variables $$x$$ and $$z$$. To testify the claim that knowing one variable would help us estimating the other, let us take a look at the the conditional distribution of $$z$$ given $$x=1$$, and compare it with the marginal distribution of $$z$$. As can be seen from the figure above, the distribution of $$z\|x=1$$ has much narrow span than $$z$$ with a shift in the mean. The reduction of variance of $$z$$ after observing $$x=1$$ is an evident that the observation of $$x$$ narrows down the potential values of $$z$$.
+The figure above illustrates the joint distribution of a bivariate Gaussian distribution with $$\mu_z=\mu_x=0$$, $$\Sigma_z=\Sigma_x=1$$, and $$\Sigma_{zx}=\Sigma_{xz}=0.8$$. The marginal distributions of both $$x$$ and $$z$$ are $$\mathcal{N}(0,1)$$. The contour of the distribution forms a thin ellipse, reflecting the strong covariance $$\Sigma_{zx}=\Sigma_{xz}=0.8$$ between the two random variables $$x$$ and $$z$$. To verify that knowing one variable helps estimate the other, let us take a look at the conditional distribution of $$z$$ given $$x=1$$, and compare it with the marginal distribution of $$z$$. As can be seen from the figure above, the distribution of $$z\|x=1$$ has much narrower span than $$z$$, with a shift in the mean. The reduction of variance of $$z$$ after observing $$x=1$$ is evidence that the observation of $$x$$ narrows down the potential values of $$z$$.
 
 An important fact here is that the conditional distribution of a joint-Gaussian distribution is also Gaussian
 
@@ -369,7 +369,7 @@ In general cases, seldom do we have a system being linear. Even with a linear sy
 
 In this type of systems, instead of trying to deriving the exact distributions of hidden variables, it is more practical to characterize them using sets of samples. The sample update are achieved by a scheme often referred to as sequential Monte Carlo sampling, which we will introduce next.
 
-Again we emphasis that the problem at hand is the inference of hidden variables in a non-linear dynamic system. The goal is to characterize the posterior probability of the system state $$z_n$$ given all previous observations $$x_1^n\triangleq x_1,x_2,\ldots x_n$$. Specifically, we want to have an iterative procedure that update the system belief at time-slot $$n$$: $$p(z_n\|x_1^n)$$ from the belief in the previous time instance $$n-1$$ ($$p(z_{n-1}\|x_1^{n-1}$$) by considering both the system evolution $$p(z_n\|z_{n-1)}$$ and the updated noisy observations $$p(x_n\|z_n)$$.
+Again we emphasize that the problem at hand is the inference of hidden variables in a non-linear dynamic system. The goal is to characterize the posterior probability of the system state $$z_n$$ given all previous observations $$x_1^n\triangleq x_1,x_2,\ldots x_n$$. Specifically, we want to have an iterative procedure that update the system belief at time-slot $$n$$: $$p(z_n\|x_1^n)$$ from the belief in the previous time instance $$n-1$$ ($$p(z_{n-1}\|x_1^{n-1}$$) by considering both the system evolution $$p(z_n\|z_{n-1)}$$ and the updated noisy observations $$p(x_n\|z_n)$$.
 
 Drawing similarity to Kalman filter, we can represent the problem as the following:
 
@@ -419,7 +419,7 @@ Eventually, according to the above equation, to obtain samples $$\color{blue}{\\
 
 With this we complete the derivation of the particle filter. In essence, it can be viewed as the sampling counterpart of Kalman filter, that generalizes to non-linear systems. The sequential Monte Carlo method is also referred to as sampling-importance-resampling in the literature.
 
-To link the math with a specific example, i recommend [this video](https://www.youtube.com/watch?v=aUkBa1zMKv4).
+To link the math with a specific example, I recommend [this video](https://www.youtube.com/watch?v=aUkBa1zMKv4).
 
 ## Generalization
 
