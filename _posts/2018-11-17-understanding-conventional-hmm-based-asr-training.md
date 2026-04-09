@@ -3,7 +3,7 @@ layout: post
 title: "Understanding conventional HMM-based ASR training"
 date: 2018-11-17
 comments: true
-description: call me an archeologist
+description: how acoustic models, pronunciation lexicons, and language models combine in classical HMM-based speech recognition
 ---
 
 Conventional HMM-based ASR system assumes a generative model comprised of a language model, a lexicon (e.g., pronunciation dictionary), and an acoustic model, as illustrated below. Here $$\theta$$ denotes the parameters to be learned and it comprises of the HMM state transition probabilities and GMM/DNN parameters.

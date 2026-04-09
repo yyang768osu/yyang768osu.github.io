@@ -3,7 +3,7 @@ layout: post
 title: Quantization for Neural Networks
 date: 2022-03-05
 comments: true
-description: how to properly quantize neural networks for efficient hardware inference?
+description: a walkthrough of PTQ and QAT techniques for efficient on-device inference
 ---
 
 > This post is a guided walkthrough of the paper [A White Paper on Neural Network Quantization](https://arxiv.org/abs/2106.08295) [[Nagel et al. 2021]](#Nagel_et_al_2021), with additional illustrations and explanations. The same material can be found in the paper and the references therein; you are highly encouraged to read the paper directly for deeper treatment of individual topics.

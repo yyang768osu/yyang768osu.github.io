@@ -3,7 +3,7 @@ layout: post
 title: Gumbel max and Gumbel softmax
 date: 2018-11-05
 comments: true
-description: sampling of softmax == max of (logit + Gumbel noise)
+description: the Gumbel-max trick, its continuous relaxation via Gumbel-softmax, and applications to discrete latent variables
 ---
 
 Before we talk about Gumbel distribution, let's refresh our knowledge on exponential distribution. It is well-known that the exponential distribution is min-stable: the min of $$n$$ I.I.D. exponential random variables $$X_i\sim \text{Exp}(\lambda_i), i=1,2,\ldots, n$$ is also exponentially distributed with decay rate $$\sum_{1\leq i\leq n} \lambda_i$$, as can be seen from the equation below.

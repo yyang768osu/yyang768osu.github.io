@@ -3,7 +3,7 @@ layout: post
 title: Arithmetic Coding (AC) Implementation
 date: 2020-06-24
 comments: true
-description: python implementation of arithmetic coding
+description: a from-scratch Python implementation of arithmetic coding for lossless data compression
 ---
 
 ## Arithmetic Encoder (infinite precision)

@@ -3,7 +3,7 @@ layout: post
 title: "A step-by-step guide to variational inference (4): variational auto encoder"
 date: 2018-07-29
 comments: true
-description: learned amortized posterior == encoder
+description: how amortized variational inference gives rise to the encoder-decoder architecture of the VAE
 ---
 
 The variational lower bound $$\mathcal{L}$$ sits in the core of variational inference. It connects the density estimation problem with the Bayesian inference problem through a variational (free to vary) distribution $$q$$, and it converts both problems into an optimization problem. Here let's briefly revisit the identity associated with variational lower bound

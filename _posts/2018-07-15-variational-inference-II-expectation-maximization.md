@@ -3,7 +3,7 @@ layout: post
 title: "A step-by-step guide to variational inference (2): expectation maximization"
 date: 2018-07-15
 comments: true
-description: how to optimize ELBO when your approx posterior can be easily obtained
+description: deriving the EM algorithm as coordinate ascent on the ELBO with a closed-form posterior
 ---
 
 In the previous post we went through the derivation of variational lower-bound, and showed how it helps convert the Bayesian inference and density estimation problem to an optimization problem. Let's briefly recap the problem setup and restate some key points.

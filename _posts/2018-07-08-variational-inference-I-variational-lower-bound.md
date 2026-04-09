@@ -3,7 +3,7 @@ layout: post
 title: "A step-by-step guide to variational inference (1): variational lower bound"
 date: 2018-07-08
 comments: true
-description: what is variational lower bound, why it is important, and how to derive it
+description: deriving the ELBO from KL divergence and understanding why it underlies variational inference
 ---
 
 Graphic models describe the factorization of probability distributions. The detailed form of the graphic model encodes one's belief/hypothesis regarding the underlying structure of the data. In this article, we confine the discussion to a general form of directed graphic model as illustrated below.

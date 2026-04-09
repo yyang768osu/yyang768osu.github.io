@@ -3,7 +3,7 @@ layout: post
 title: Comparison of end-to-end ASR models
 date: 2018-11-13
 comments: true
-description: how CTC, RNN-transducer, and Attention factor probabilities
+description: a probabilistic perspective on CTC, RNN-Transducer, and attention-based encoder-decoder models
 ---
 
 <div class="row mt-3">

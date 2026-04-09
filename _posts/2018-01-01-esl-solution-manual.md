@@ -3,7 +3,7 @@ layout: post
 title: "A solution manual to the Elements of Statistical Learning (ESL)"
 date: 2018-01-01
 comments: true
-description: my solution to selected problems
+description: solutions to selected exercises from Hastie, Tibshirani & Friedman's classic machine learning textbook
 ---
 
 - [Chapter 3]({{ site.baseurl }}{% link /assets/pdf/esl_solution_manual/chapter3.pdf %})

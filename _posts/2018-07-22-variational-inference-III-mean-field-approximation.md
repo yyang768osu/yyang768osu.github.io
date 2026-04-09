@@ -3,7 +3,7 @@ layout: post
 title: "A step-by-step guide to variational inference (3): mean field approximation"
 date: 2018-07-22
 comments: true
-description: posterior approximation before age of deep learning
+description: approximating intractable posteriors by assuming factorized independence across latent variables
 ---
 
 We have learned in the previous post that E-M algorithm tries to find a ML or MAP solution to the parameters of a generative model. It is built on top of two major premises:

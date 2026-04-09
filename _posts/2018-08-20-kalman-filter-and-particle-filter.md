@@ -3,7 +3,7 @@ layout: post
 title: An introduction to Kalman filter and particle filter
 date: 2018-08-20
 comments: true
-description: Kalman filter 101
+description: state estimation in linear and nonlinear dynamical systems via Kalman and particle filtering
 ---
 
 Kalman filter and particle filter are concepts that are intimidating for new learners due to their involved mathematical description, and are straightforward once you grasp the main idea and get used to Gaussian distributions. The goal of this post is to take a journey to Kalman filter by dissecting its idea and operation into pieces that are easy to absorb, and then assemble them together to give the whole picture. As a last step, we will see that particle filter achieves the same goal for non-Gaussian system resorting to Monte Carlo sampling.
