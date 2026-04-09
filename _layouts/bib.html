@@ -5,9 +5,9 @@
 <div class="row">
   <div class="col-sm-2 abbr">
     {%- if entry.abbr -%} {%- if site.data.venues[entry.abbr] -%}
-    <abbr class="badge"><a href="{{site.data.venues[entry.abbr].url}}">{{entry.abbr}}</a></abbr>
+    <abbr class="badge"><a href="{{site.data.venues[entry.abbr].url}}">{{entry.abbr}} {{entry.year}}</a></abbr>
     {%- else -%}
-    <abbr class="badge">{{entry.abbr}}</abbr>
+    <abbr class="badge">{{entry.abbr}} {{entry.year}}</abbr>
     {%- endif -%} {%- endif -%}
 
     <div class="teaser">

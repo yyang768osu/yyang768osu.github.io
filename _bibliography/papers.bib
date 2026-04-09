@@ -12,6 +12,7 @@
   html={https://arxiv.org/abs/2506.22362},
   selected={true},
   abbr={arXiv},
+  image={/assets/img/pub_img/diffss.png},
   tldr={DiffSoundStream halves the required token rate of a neural speech codec by conditioning acoustic tokens on semantic tokens to reduce redundancy, then using a distilled latent diffusion decoder to reconstruct high-quality waveforms from semantic and coarse acoustic tokens in as few as four steps.},
   abstract={Token-based language modeling is a prominent approach for speech generation, where tokens are obtained by quantizing features from self-supervised learning (SSL) models and extracting codes from neural speech codecs, generally referred to as semantic tokens and acoustic tokens. These tokens are often modeled autoregressively, with the inference speed being constrained by the token rate. In this work, we propose DiffSoundStream, a solution that improves the efficiency of speech tokenization in non-streaming scenarios through two techniques: (1) conditioning the neural codec on semantic tokens to minimize redundancy between semantic and acoustic tokens, and (2) leveraging latent diffusion models to synthesize high-quality waveforms from semantic and coarse-level acoustic tokens. Experiments show that at 50 tokens per second, DiffSoundStream achieves speech quality on par with a standard SoundStream model operating at twice the token rate. Additionally, we achieve step-size distillation using just four diffusion sampling steps with only a minor quality loss.},
 }
@@ -27,6 +28,7 @@
   html={https://ieeexplore.ieee.org/abstract/document/10446587},
   selected={true},
   abbr={ICASSP},
+  image={/assets/img/pub_img/basnet.png},
   google_blog={https://research.google/blog/contrastive-neural-audio-separation/},
   tldr={A two-microphone speech separation model trained entirely on simulated RIRs that exploits TDOA "delay contrast" for angular source separation, generalizing across device geometries and running in real time on-device.},
   abstract={We propose a neural network model that can separate target speech sources from interfering sources at different angular regions using two microphones. The model is trained with simulated room impulse responses (RIRs) using omnidirectional microphones without needing to collect real RIRs. By relying on specific angular regions and multiple room simulations, the model utilizes consistent time difference of arrival (TDOA) cues, or what we call delay contrast, to separate target and interference sources while remaining robust in various reverberation environments. We demonstrate the model is not only generalizable to a commercially available device with a slightly different microphone geometry, but also outperforms our previous work which uses one additional microphone on the same device. The model runs in real-time on-device and is suitable for low-latency streaming applications such as telephony and video conferencing.},
@@ -43,6 +45,7 @@
   html={https://ieeexplore.ieee.org/document/10446863},
   selected={true},
   abbr={ICASSP},
+  image={/assets/img/pub_img/streamvc.png},
   poster={https://google-research.github.io/seanet/stream_vc/poster/streamvc_poster.pdf},
   samples={https://google-research.github.io/seanet/stream_vc/},
   tldr={StreamVC converts voice timbre in real time on mobile devices by combining causal soft speech units, whitened pitch features for speaker-agnostic prosody, and the SoundStream codec architecture for low-latency, high-quality synthesis.},
@@ -60,6 +63,7 @@
   html={https://ieeexplore.ieee.org/abstract/document/10096763},
   selected={true},
   abbr={ICASSP},
+  image={/assets/img/pub_img/gsenet.png},
   tldr={GSENet takes both raw microphone signals and beamformer output as input, using a contrastive training scheme to let the neural network learn spatial rejection cues from the beamformer while remaining a transferable standalone module across device form factors.},
   abstract={High quality speech capture has been widely studied for both voice communication and human computer interface reasons. To improve the capture performance, we can often find multi-microphone speech enhancement techniques deployed on various devices. Multi-microphone speech enhancement problem is often decomposed into two decoupled steps: a beamformer that provides spatial filtering and a single-channel speech enhancement model that cleans up the beamformer output. In this work, we propose a speech enhancement solution that takes both the raw microphone and beamformer outputs as the input for an ML model. We devise a simple yet effective training scheme that allows the model to learn from the cues of the beamformer by contrasting the two inputs and greatly boost its capability in spatial rejection, while conducting the general tasks of denoising and dereverberation. The proposed solution takes advantage of classical spatial filtering algorithms instead of competing with them. By design, the beamformer module then could be selected separately and does not require a large amount of data to be optimized for a given form factor, and the network model can be considered as a standalone module which is highly transferable independently from the microphone array. We name the ML module in our solution as GSENet, short for Guided Speech Enhancement Network. We demonstrate its effectiveness on real world data collected on multi-microphone devices in terms of the suppression of noise and interfering speech.},
 }
@@ -73,6 +77,7 @@
   html={https://proceedings.neurips.cc/paper_files/paper/2022/hash/6ef586bdf0af0b609b1d0386a3ce0e4b-Abstract-Conference.html},
   selected={true},
   abbr={NeurIPS},
+  image={/assets/img/pub_img/topoformer.png},
   tldr={Topoformer, an attention-based GNN encoder paired with a priority-based decoder, learns to minimize memory usage during computation graph scheduling by generating near-optimal topological orderings of DAGs, outperforming heuristic baselines on both synthetic and real-world compiler graphs.},
   abstract={Recent works on machine learning for combinatorial optimization have shown that learning based approaches can outperform heuristic methods in terms of speed and performance. In this paper, we consider the problem of finding an optimal topological order on a directed acyclic graph (DAG) with focus on the memory minimization problem which arises in compilers. We propose an end-to-end machine learning based approach for topological ordering using an encoder-decoder framework. Our encoder is a novel attention based graph neural network architecture called Topoformer which uses different topological transforms of a DAG for message passing. The node embeddings produced by the encoder are converted into node priorities which are used by the decoder to generate a probability distribution over topological orders. We train our model on a dataset of synthetically generated graphs called layered graphs. We show that our model outperforms, or is on-par, with several topological ordering baselines while being significantly faster on synthetic graphs with up to 2k nodes. We also train and test our model on a set of real-world computation graphs, showing performance improvements.},
 }
