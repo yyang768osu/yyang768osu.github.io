@@ -1,0 +1,2231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Collective Communication in Distributed LLM Training</title>
+<style>
+  /* ============================================================
+     DESIGN SYSTEM
+     Direction: "network operations console" — this is a reference
+     for someone who works with GPUs and fabrics. The aesthetic
+     borrows from telemetry dashboards and EE schematics: a deep
+     slate canvas, signal-cyan and amber as the two data states
+     (un-reduced vs reduced), monospace for any quantity that a
+     machine would emit, and a humanist sans for prose.
+     ============================================================ */
+  :root{
+    --bg:#0e1419;
+    --bg-raised:#161e26;
+    --bg-panel:#1b2630;
+    --ink:#dde6ec;
+    --ink-dim:#8da0ae;
+    --ink-faint:#5e7282;
+    --rule:#26333f;
+    --rule-bright:#334452;
+    /* signal states */
+    --signal:#38d6e0;      /* cyan  — data in flight / un-aggregated */
+    --reduced:#f5a623;     /* amber — fully reduced / final */
+    --partial:#7b9bd1;     /* blue  — partial sum */
+    --accent:#c2f24a;      /* lime  — highlights, links */
+    --danger:#ff6b6b;
+    --gpu:#2a3946;
+    --gpu-active:#34506a;
+    font-synthesis:none;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Inter","Helvetica Neue",system-ui,sans-serif;
+    line-height:1.6;font-size:16px;letter-spacing:.005em;
+    -webkit-font-smoothing:antialiased;
+  }
+  .mono{font-family:"SF Mono","JetBrains Mono","Fira Code",ui-monospace,monospace;}
+
+  /* ---- layout shell ---- */
+  .wrap{max-width:1020px;margin:0 auto;padding:0 28px;}
+
+  /* ---- hero ---- */
+  header.hero{
+    border-bottom:1px solid var(--rule);
+    background:
+      radial-gradient(1200px 400px at 80% -10%, rgba(56,214,224,.10), transparent 60%),
+      radial-gradient(900px 500px at 10% 0%, rgba(245,166,35,.06), transparent 55%);
+    padding:72px 0 56px;
+  }
+  .eyebrow{
+    font-family:"SF Mono",ui-monospace,monospace;font-size:12.5px;
+    letter-spacing:.22em;text-transform:uppercase;color:var(--signal);
+    display:flex;align-items:center;gap:12px;margin-bottom:26px;
+  }
+  .eyebrow::before{content:"";width:34px;height:1px;background:var(--signal);display:inline-block;}
+  h1{
+    font-size:clamp(34px,5.4vw,58px);line-height:1.02;margin:0 0 22px;
+    font-weight:700;letter-spacing:-.02em;
+  }
+  h1 .b{color:var(--reduced);}
+  .lede{font-size:19px;color:var(--ink-dim);max-width:62ch;margin:0;}
+  .herometa{
+    display:flex;gap:34px;margin-top:38px;flex-wrap:wrap;
+    font-family:"SF Mono",ui-monospace,monospace;font-size:13px;color:var(--ink-faint);
+  }
+  .herometa b{color:var(--ink);font-weight:500;display:block;font-size:22px;margin-bottom:2px;letter-spacing:-.01em;}
+
+  /* ---- reading-path callout ---- */
+  .youare{
+    margin:30px 0 0;padding:18px 22px;border:1px solid var(--rule);
+    border-left:3px solid var(--accent);background:var(--bg-raised);border-radius:4px;
+    font-size:15px;color:var(--ink-dim);
+  }
+  .youare b{color:var(--ink);}
+
+  /* ---- section ---- */
+  section{padding:56px 0;border-bottom:1px solid var(--rule);}
+  .secnum{
+    font-family:"SF Mono",ui-monospace,monospace;font-size:13px;color:var(--signal);
+    letter-spacing:.18em;margin-bottom:14px;
+  }
+  h2{font-size:clamp(26px,3.6vw,38px);margin:0 0 10px;font-weight:700;letter-spacing:-.018em;line-height:1.08;}
+  h2 + .sub{color:var(--ink-dim);font-size:17px;margin:0 0 8px;max-width:64ch;}
+  h3{font-size:21px;margin:38px 0 12px;font-weight:650;letter-spacing:-.01em;}
+  h4{font-size:15px;margin:24px 0 8px;font-weight:650;color:var(--reduced);
+     font-family:"SF Mono",ui-monospace,monospace;letter-spacing:.04em;text-transform:uppercase;}
+  p{margin:0 0 16px;}
+  a{color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(194,242,74,.3);}
+  strong{color:#fff;font-weight:600;}
+  ul,ol{margin:0 0 16px;padding-left:22px;}
+  li{margin:0 0 9px;}
+  code{font-family:"SF Mono",ui-monospace,monospace;font-size:.88em;
+    background:var(--bg-panel);padding:2px 6px;border-radius:4px;color:var(--accent);border:1px solid var(--rule);}
+
+  /* ---- TOC ---- */
+  nav.toc{background:var(--bg-raised);border:1px solid var(--rule);border-radius:8px;padding:24px 26px;margin:38px 0 0;}
+  nav.toc h5{margin:0 0 16px;font-family:"SF Mono",ui-monospace,monospace;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint);font-weight:600;}
+  nav.toc ol{list-style:none;padding:0;margin:0;counter-reset:t;}
+  nav.toc li{margin:0;border-top:1px solid var(--rule);}
+  nav.toc li:first-child{border-top:none;}
+  nav.toc a{display:flex;align-items:baseline;gap:14px;padding:11px 0;border:none;color:var(--ink);font-size:15.5px;}
+  nav.toc a:hover{color:var(--accent);}
+  nav.toc a::before{counter-increment:t;content:counter(t,decimal-leading-zero);
+    font-family:"SF Mono",ui-monospace,monospace;font-size:12px;color:var(--signal);min-width:24px;}
+  nav.toc a .tag{margin-left:auto;font-family:"SF Mono",ui-monospace,monospace;font-size:11px;color:var(--ink-faint);
+    border:1px solid var(--rule);padding:2px 8px;border-radius:20px;}
+
+  /* ---- viz panel ---- */
+  .viz{background:var(--bg-raised);border:1px solid var(--rule);border-radius:10px;
+    margin:26px 0;overflow:hidden;}
+  .viz-head{display:flex;align-items:center;justify-content:space-between;gap:16px;
+    padding:14px 18px;border-bottom:1px solid var(--rule);background:var(--bg-panel);}
+  .viz-title{font-family:"SF Mono",ui-monospace,monospace;font-size:13px;letter-spacing:.06em;color:var(--ink-dim);
+    display:flex;align-items:center;gap:9px;}
+  .viz-title .dot{width:8px;height:8px;border-radius:50%;background:var(--signal);box-shadow:0 0 8px var(--signal);}
+  .viz-stage{padding:20px 18px 8px;}
+  svg{display:block;width:100%;height:auto;}
+  .viz-controls{display:flex;align-items:center;gap:10px;padding:12px 18px 18px;flex-wrap:wrap;}
+  button.ctl{font-family:"SF Mono",ui-monospace,monospace;font-size:13px;cursor:pointer;
+    background:var(--gpu-active);color:var(--ink);border:1px solid var(--rule-bright);
+    padding:8px 16px;border-radius:6px;transition:.15s;}
+  button.ctl:hover{background:#3e5b78;border-color:var(--signal);}
+  button.ctl.primary{background:var(--signal);color:#06222a;border-color:var(--signal);font-weight:600;}
+  button.ctl.primary:hover{background:#54e3ec;}
+  button.ctl:disabled{opacity:.4;cursor:not-allowed;}
+  .viz-status{font-family:"SF Mono",ui-monospace,monospace;font-size:12.5px;color:var(--ink-dim);margin-left:auto;}
+  .viz-status b{color:var(--reduced);}
+  .phasebar{display:flex;gap:0;margin-left:6px;}
+  .phasebar span{font-family:"SF Mono",ui-monospace,monospace;font-size:11px;padding:3px 10px;color:var(--ink-faint);
+    border:1px solid var(--rule);border-right:none;}
+  .phasebar span:last-child{border-right:1px solid var(--rule);}
+  .phasebar span.on{background:var(--gpu-active);color:var(--signal);border-color:var(--signal);}
+
+  .legend{display:flex;gap:18px;flex-wrap:wrap;padding:0 18px 16px;font-size:12.5px;color:var(--ink-dim);
+    font-family:"SF Mono",ui-monospace,monospace;}
+  .legend span{display:inline-flex;align-items:center;gap:7px;}
+  .legend i{width:13px;height:13px;border-radius:3px;display:inline-block;}
+
+  /* ---- callouts ---- */
+  .note{border:1px solid var(--rule);border-left:3px solid var(--signal);background:var(--bg-raised);
+    padding:16px 20px;border-radius:4px;margin:22px 0;font-size:15px;color:var(--ink-dim);}
+  .note.warn{border-left-color:var(--reduced);}
+  .note .lbl{font-family:"SF Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--signal);display:block;margin-bottom:6px;}
+  .note.warn .lbl{color:var(--reduced);}
+
+  /* ---- mnemonic callout: the distilled, catchy one-liners ---- */
+  .mnemonic{position:relative;margin:26px 0;padding:18px 22px 18px 56px;border-radius:8px;
+    background:linear-gradient(95deg, rgba(194,242,74,.10), rgba(56,214,224,.05));
+    border:1px solid rgba(194,242,74,.30);color:var(--ink);}
+  .mnemonic::before{content:"\01F9E0";position:absolute;left:18px;top:16px;font-size:20px;line-height:1;}
+  .mnemonic .lbl{font-family:"SF Mono",ui-monospace,monospace;font-size:10.5px;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--accent);display:block;margin-bottom:7px;}
+  .mnemonic .phrase{font-size:19px;line-height:1.35;font-weight:650;letter-spacing:-.01em;color:#fff;}
+  .mnemonic .gloss{font-size:14px;color:var(--ink-dim);margin-top:8px;}
+  .mnemonic .phrase em{color:var(--accent);font-style:normal;}
+
+  /* ---- table ---- */
+  .tbl{width:100%;border-collapse:collapse;margin:22px 0;font-size:14.5px;}
+  .tbl th,.tbl td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--rule);vertical-align:top;}
+  .tbl th{font-family:"SF Mono",ui-monospace,monospace;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-faint);font-weight:600;}
+  .tbl td.mono{color:var(--accent);}
+  .tbl tr:hover td{background:var(--bg-raised);}
+
+  /* ---- cost formula chip ---- */
+  .cost{display:inline-flex;align-items:center;gap:8px;font-family:"SF Mono",ui-monospace,monospace;
+    font-size:13px;background:var(--bg-panel);border:1px solid var(--rule);border-radius:6px;
+    padding:6px 12px;color:var(--reduced);margin:4px 8px 4px 0;}
+  .cost b{color:var(--ink-faint);font-weight:400;}
+
+  /* ---- interview Q ---- */
+  .qa{border:1px solid var(--rule);border-radius:8px;margin:14px 0;overflow:hidden;background:var(--bg-raised);}
+  .qa summary{cursor:pointer;padding:15px 20px;font-weight:600;list-style:none;display:flex;gap:12px;align-items:flex-start;color:var(--ink);}
+  .qa summary::-webkit-details-marker{display:none;}
+  .qa summary::before{content:"Q";font-family:"SF Mono",ui-monospace,monospace;color:#06222a;background:var(--signal);
+    width:22px;height:22px;border-radius:5px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;font-weight:700;}
+  .qa[open] summary{border-bottom:1px solid var(--rule);}
+  .qa .ans{padding:16px 20px 18px 54px;color:var(--ink-dim);font-size:15px;}
+  .qa .ans p:last-child{margin-bottom:0;}
+
+  footer{padding:48px 0 80px;color:var(--ink-faint);font-size:14px;}
+  footer .mono{color:var(--ink-dim);}
+
+  ::selection{background:var(--signal);color:#06222a;}
+
+  @media (max-width:640px){
+    .wrap{padding:0 18px;}
+    .herometa{gap:22px;}
+    .viz-status{margin-left:0;width:100%;order:5;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:.001ms!important;transition-duration:.001ms!important;}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Distributed Systems · Reference</div>
+    <h1>Collective Communication<br>for <span class="b">Large-Scale LLM Training</span></h1>
+    <p class="lede">The data-movement primitives that decide whether ten thousand GPUs behave like one machine or ten thousand machines waiting on each other. A technical walkthrough of every collective, the parallelism strategy that summons it, and its cost model — with each algorithm animated step by step.</p>
+    <div class="herometa">
+      <div><b>7</b>core collectives</div>
+      <div><b>4D</b>parallelism context</div>
+      <div><b>2(N−1)/N</b>ring all-reduce passes</div>
+      <div><b>α–β</b>cost model throughout</div>
+    </div>
+    <div class="youare">
+      <b>How to read this.</b> The assumption is familiarity with plain data parallelism — knowing <em>why</em> all-reduce exists because you've seen it average gradients. The piece builds outward from there: how all-reduce is actually implemented at the wire level, and then the collectives that only appear once a model no longer fits on one device (reduce-scatter, all-gather, all-to-all, point-to-point).
+    </div>
+
+    <nav class="toc">
+      <h5>Contents</h5>
+      <ol>
+        <li><a href="#mental">The mental model: parallelism summons collectives<span class="tag">framing</span></a></li>
+        <li><a href="#costmodel">The α–β cost model<span class="tag">theory</span></a></li>
+        <li><a href="#allreduce">All-Reduce &amp; the ring decomposition<span class="tag">data parallel</span></a></li>
+        <li><a href="#rs-ag">Reduce-Scatter + All-Gather (ZeRO / FSDP)<span class="tag">sharded</span></a></li>
+        <li><a href="#tp">All-Reduce in tensor parallelism<span class="tag">intra-op</span></a></li>
+        <li><a href="#a2a">All-to-All for Mixture-of-Experts<span class="tag">expert</span></a></li>
+        <li><a href="#p2p">Point-to-point &amp; pipeline parallelism<span class="tag">pipeline</span></a></li>
+        <li><a href="#combined">Composing TP × FSDP on four GPUs<span class="tag">combined</span></a></li>
+        <li><a href="#topology">Putting it together: topology &amp; overlap<span class="tag">systems</span></a></li>
+        <li><a href="#interview">Self-check: questions to test understanding<span class="tag">review</span></a></li>
+      </ol>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ============================================ 1 -->
+<section id="mental">
+  <div class="secnum">SECTION 01</div>
+  <h2>The mental model: parallelism summons collectives</h2>
+  <p class="sub">You never pick a collective directly. You pick a way to split the model across devices, and that choice <em>generates</em> a specific communication pattern. Get this mapping straight and the rest is detail.</p>
+
+  <p>Every collective in this report is the consequence of one decision: <strong>what did you split, and across which devices?</strong> When work is divided, the pieces have to be reconciled, and the shape of that reconciliation is the collective. Here is the whole map before we zoom in:</p>
+
+  <table class="tbl">
+    <thead><tr><th>Parallelism</th><th>What's split</th><th>Communication it generates</th><th>Dominant collective</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Data (DP)</strong></td><td>The batch. Every device holds a full model replica.</td><td>Gradients must be averaged across replicas each step.</td><td class="mono">all-reduce</td></tr>
+      <tr><td><strong>Sharded DP</strong> (ZeRO/FSDP)</td><td>The batch <em>and</em> the params/optimizer state.</td><td>Gather full layer before use; scatter gradients after.</td><td class="mono">all-gather + reduce-scatter</td></tr>
+      <tr><td><strong>Tensor (TP)</strong></td><td>Individual weight matrices, within a layer.</td><td>Partial activations summed mid-forward and mid-backward.</td><td class="mono">all-reduce (intra-node)</td></tr>
+      <tr><td><strong>Pipeline (PP)</strong></td><td>The layer stack, into sequential stages.</td><td>Activations forward, gradients backward, stage to stage.</td><td class="mono">point-to-point send/recv</td></tr>
+      <tr><td><strong>Expert (EP)</strong></td><td>MoE experts across devices.</td><td>Tokens routed to wherever their expert lives.</td><td class="mono">all-to-all</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <span class="lbl">Why this framing matters</span>
+    A common failure mode is reciting "all-reduce sums gradients" without being able to say <em>why a different parallelism produces a different collective.</em> Deriving the collective from the split means never having to memorize the table — it can be reconstructed from first principles.
+  </div>
+
+  <div class="mnemonic">
+    <span class="lbl">Remember this</span>
+    <div class="phrase">What you <em>split</em> is what you must <em>reconcile</em>.</div>
+    <div class="gloss">Every collective is the repair bill for a division of labor. Split the batch → reconcile gradients (all-reduce). Split the params → reconcile by gathering them (all-gather). Split the experts → reconcile by routing tokens (all-to-all). Find the split, and the collective follows.</div>
+  </div>
+</section>
+
+<!-- ============================================ 2 -->
+<section id="costmodel">
+  <div class="secnum">SECTION 02</div>
+  <h2>The α–β cost model</h2>
+  <p class="sub">One small piece of theory makes every "why is this algorithm optimal" answer fall out automatically. Worth memorizing cold.</p>
+
+  <p>The time to send a message of <code>n</code> bytes between two devices is modeled as two terms:</p>
+  <p style="text-align:center;font-size:20px;margin:24px 0;" class="mono"><span style="color:var(--reduced)">T(n) = α + n·β</span></p>
+  <ul>
+    <li><strong>α (alpha)</strong> — <em>latency</em>: the fixed cost to initiate any transfer, regardless of size. Per-hop, per-message. Dominated by software stack + link setup.</li>
+    <li><strong>β (beta)</strong> — <em>inverse bandwidth</em>: seconds per byte. The marginal cost of each additional byte once the pipe is open.</li>
+  </ul>
+  <p>A third term, <strong>γ (gamma)</strong>, is sometimes added for the per-byte cost of the reduction <em>arithmetic</em> (the actual summing), but on modern hardware the network dominates, so we'll keep γ in the background.</p>
+
+  <p>The whole game of collective-algorithm design is this tradeoff:</p>
+  <ul>
+    <li><strong>Latency-bound regime</strong> (small messages, many devices): minimize the <em>number of α's</em> — i.e. the number of communication steps / hops. <strong>Tree</strong> and <strong>recursive-doubling</strong> algorithms win here: <code>log₂(N)</code> steps.</li>
+    <li><strong>Bandwidth-bound regime</strong> (large messages — gradients in LLMs): minimize total <em>bytes each link carries</em>. <strong>Ring</strong> algorithms win here: every link moves the minimal <code>(N−1)/N</code> of the data and no more.</li>
+  </ul>
+
+  <div class="note warn">
+    <span class="lbl">The key result you should be able to state</span>
+    Ring all-reduce moves <code>2·(N−1)/N · n</code> bytes <em>per device</em> regardless of N — it is <strong>bandwidth-optimal</strong>. Its cost is <code>2(N−1)α + 2·(N−1)/N·nβ</code>. The downside is the <code>2(N−1)</code> latency term: with thousands of GPUs the α's pile up, which is exactly why large clusters switch to hierarchical/tree schemes for the latency-sensitive part.
+  </div>
+
+  <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;">
+    <span class="cost"><b>ring all-reduce:</b> 2(N−1)α + 2·(N-1)/N·nβ</span>
+    <span class="cost"><b>tree all-reduce:</b> 2·log₂(N)·α + 2nβ</span>
+    <span class="cost"><b>all-gather (ring):</b> (N−1)α + (N-1)/N·nβ</span>
+  </div>
+
+  <div class="mnemonic">
+    <span class="lbl">Remember this</span>
+    <div class="phrase"><em>Ring</em> for bytes, <em>tree</em> for hops.</div>
+    <div class="gloss">Big messages are bandwidth-bound → ring (every link moves the minimum, but pays 2(N−1) latency steps). Small messages are latency-bound → tree/recursive-doubling (log N steps, slightly more bytes). α counts hops; β counts bytes. Pick the algorithm that minimizes whichever term dominates.</div>
+  </div>
+</section>
+
+<!-- ============================================ 3  ALL-REDUCE -->
+<section id="allreduce">
+  <div class="secnum">SECTION 03</div>
+  <h2>All-Reduce &amp; the ring decomposition</h2>
+  <p class="sub">The collective you already use. Here's what NCCL is actually doing underneath <code>loss.backward()</code> + optimizer step in DDP.</p>
+
+  <p><strong>Definition.</strong> All-reduce takes one array per device, applies an associative reduction (sum, for gradients) element-wise across all devices, and leaves the <em>identical</em> reduced result on every device. Input: N arrays. Output: N copies of their sum.</p>
+
+  <p>The naive implementation — every device sends its array to one root, which sums and broadcasts back — is a disaster at scale: the root's link carries <code>(N−1)·n</code> bytes and becomes a bottleneck. The elegant result is that all-reduce decomposes exactly into two bandwidth-optimal halves:</p>
+  <p style="text-align:center;font-size:17px;margin:20px 0;" class="mono"><span style="color:var(--signal)">all-reduce</span> = <span style="color:var(--partial)">reduce-scatter</span> + <span style="color:var(--reduced)">all-gather</span></p>
+
+  <div class="mnemonic">
+    <span class="lbl">Remember this</span>
+    <div class="phrase">All-reduce is <em>reduce-scatter, then all-gather</em>.</div>
+    <div class="gloss">This one identity unlocks half the field. It's why ZeRO can split DDP's all-reduce in two and shard the middle; why ring all-reduce runs in two phases; why FSDP's bandwidth equals DDP's. Internalize it and the rest cascades.</div>
+  </div>
+
+  <p>Watch it run. Four GPUs in a logical ring, each starting with a chunked array. Phase 1 (reduce-scatter) circulates and accumulates partial sums until each GPU owns one fully-reduced chunk. Phase 2 (all-gather) circulates those final chunks until everyone has the complete result.</p>
+
+  <div class="viz">
+    <div class="viz-head">
+      <div class="viz-title"><span class="dot"></span>RING ALL-REDUCE · N=4 · chunked array</div>
+      <div class="phasebar" id="ar-phases">
+        <span data-p="0" class="on">IDLE</span>
+        <span data-p="1">REDUCE-SCATTER</span>
+        <span data-p="2">ALL-GATHER</span>
+        <span data-p="3">DONE</span>
+      </div>
+    </div>
+    <div class="viz-stage">
+      <svg id="ar-svg" viewBox="0 0 720 380" role="img" aria-label="Ring all-reduce animation"></svg>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--signal)"></i>own un-reduced chunk</span>
+      <span><i style="background:var(--partial)"></i>partial sum (in flight)</span>
+      <span><i style="background:var(--reduced)"></i>fully reduced chunk</span>
+      <span><i style="background:#3a4654;border:1px dashed var(--danger)"></i>stale — will be overwritten</span>
+    </div>
+    <div class="viz-controls">
+      <button class="ctl primary" id="ar-play">▶ Play</button>
+      <button class="ctl" id="ar-step">Step →</button>
+      <button class="ctl" id="ar-reset">↺ Reset</button>
+      <div class="viz-status" id="ar-status">Ready. 4 GPUs, array split into 4 chunks.</div>
+    </div>
+  </div>
+
+  <h3>Phase 1 — Reduce-Scatter, step by step</h3>
+  <p>The array on each GPU is split into <code>N</code> chunks. The ring runs for <code>N−1</code> steps. On each step, every GPU simultaneously sends one chunk to its clockwise neighbor and receives one from its counter-clockwise neighbor, <em>adding</em> the incoming chunk into its local copy. The chunks are offset so that after <code>N−1</code> steps, GPU <code>i</code> holds the complete sum of chunk <code>i</code> — and crucially, the work is perfectly balanced: every link carried exactly <code>(N−1)/N · n</code> bytes.</p>
+
+  <h3>Phase 2 — All-Gather, step by step</h3>
+  <p>Now each GPU owns one finished chunk but is missing the other <code>N−1</code>. The same ring runs <code>N−1</code> more steps, but this time incoming chunks <em>overwrite</em> (no addition needed — they're already final). After <code>N−1</code> steps every GPU has every finished chunk: the full reduced array. Same <code>(N−1)/N · n</code> bytes per link.</p>
+
+  <div class="note">
+    <span class="lbl">Why the ✕ slots can be discarded — and why no extra memory is needed</span>
+    Staleness happens <strong>progressively</strong>, not all at once. In the animation, a slot flips to <b style="color:var(--danger)">✕</b> the moment a GPU forwards it for the <em>last time</em> — because the ring schedule guarantees that chunk index is never sent from that GPU again, and the live, still-accumulating copy now lives on the neighbor. So one slot per GPU goes stale at each reduce-scatter step, and you can watch the working set shrink as the ring rotates. By the phase boundary, each GPU holds exactly <em>one</em> fully-reduced chunk and <code>N−1</code> stale slots. All-gather then <strong>overwrites the ✕ slots in place</strong> with finished chunks arriving from neighbors. The precise rule for staleness is <em>"forwarded for the last time it will ever be needed"</em> — in the ring algorithm that coincides with "forwarded at all," but in other algorithms (e.g. recursive-halving) a buffer can be reused across rounds, so forwarding alone wouldn't imply staleness. The payoff: ring all-reduce runs in a <strong>single <code>n</code>-sized buffer per rank</strong> for the whole operation — bandwidth-optimal <em>and</em> memory-optimal, with "discard" happening implicitly as overwrites.
+  </div>
+
+  <div class="note">
+    <span class="lbl">Connecting to what you know</span>
+    In PyTorch DDP, this fires automatically. Gradients are bucketed (typically 25&nbsp;MB) and an async all-reduce launches on each bucket <em>as soon as its gradients are ready during backprop</em> — so communication overlaps with the rest of the backward pass. That overlap is the single most important performance property of DDP, and it's why bucket size is a tuning knob. The collective itself is exactly the ring above.
+  </div>
+
+  <h3>Two nested decompositions: buckets vs ring chunks</h3>
+  <p>A common point of confusion: the DDP <strong>bucket</strong> and the ring <strong>chunk</strong> are not the same thing — they live at different layers. A bucket is <em>one whole all-reduce</em>; the ring chunking happens <em>inside</em> it. The hierarchy is nested four levels deep:</p>
+
+  <div class="viz">
+    <div class="viz-head">
+      <div class="viz-title"><span class="dot"></span>GRANULARITY HIERARCHY · backward → bucket → ring chunk → pipeline slot</div>
+    </div>
+    <div class="viz-stage">
+      <svg id="nest-svg" viewBox="0 0 720 300" role="img" aria-label="Nested granularity of DDP bucketing and ring chunking"></svg>
+    </div>
+    <div class="viz-controls">
+      <button class="ctl primary" id="nest-play">▶ Reveal layers</button>
+      <button class="ctl" id="nest-reset">↺ Reset</button>
+      <div class="viz-status" id="nest-status">Ready. Each layer subdivides the one above it.</div>
+    </div>
+  </div>
+
+  <p>The two boundaries are <em>independent</em>: bucketing is PyTorch's knob for <strong>overlap with compute</strong> (start communicating before backward finishes); ring chunking is NCCL's mechanism for <strong>bandwidth optimality within a single collective</strong>. A 25&nbsp;MB bucket is never "sent on a link" as a unit — it becomes one all-reduce, and that payload is diced into <code>N</code> chunks of <code>~25/N</code>&nbsp;MB that rotate around the ring for <code>2(N−1)</code> steps. Different buckets are separate all-reduces, pipelined against the ongoing backward pass.</p>
+
+  <div class="note warn">
+    <span class="lbl">Why 25 MB — and why not scale it with N?</span>
+    <p style="margin:0 0 12px">A natural guess is that bucket size should grow with the DDP degree <code>N</code> to equalize per-link transfer. But per-link transfer is <strong>already N-invariant</strong>: a bucket's all-reduce moves <code>2·(N−1)/N·S</code> bytes per link, which asymptotes to <code>2S</code> and barely changes with N. The ring <em>already</em> equalized the per-link load across all N — there's nothing to compensate for by scaling S.</p>
+    <p style="margin:0 0 12px">What actually sets the 25&nbsp;MB default is the <strong>latency-vs-overlap tradeoff</strong>, not N. Too small → you pay the fixed α (launch) cost too often and the per-step chunks <code>S/N</code> are too tiny to reach peak bandwidth (latency-dominated regime). Too large → you wait longer in backprop before a bucket fills, shrinking the compute/comm overlap window. 25&nbsp;MB is the empirical sweet spot for that balance; it's tunable via <code>bucket_cap_mb</code>.</p>
+    <p style="margin:0">Where the N-intuition <em>is</em> right: the quantity that degrades with N is the per-step chunk <code>S/N</code>, which shrinks as N grows and can push each ring step into the latency-bound regime. So large clusters <em>do</em> care about N — but the fix is usually to <strong>switch algorithms</strong> (tree/hierarchical all-reduce, with a <code>log N</code> latency term instead of <code>2(N−1)</code>) or use multiple NCCL channels, rather than inflating the bucket. The trap: assuming per-link <em>volume</em> grows with N. It doesn't — the ring made it constant; only the per-step <em>chunk</em> shrinks.</p>
+  </div>
+</section>
+
+<!-- ============================================ 4  RS + AG -->
+<section id="rs-ag">
+  <div class="secnum">SECTION 04</div>
+  <h2>Reduce-Scatter + All-Gather as standalone tools — ZeRO &amp; FSDP</h2>
+  <p class="sub">The two halves of all-reduce are also powerful on their own. Splitting them apart is the entire idea behind sharded data parallelism, the technique that lets a model far larger than one GPU's memory still train.</p>
+
+  <p>In plain DP, every GPU holds a <em>full</em> copy of parameters, gradients, and optimizer state (for Adam in mixed precision that's the largest consumer of memory — fp32 master weights plus two moment estimates, the <code>16Φ</code> term below). That replication is pure waste. <strong>ZeRO</strong> (DeepSpeed) and <strong>FSDP</strong> (PyTorch) shard those tensors across the data-parallel group so each GPU stores only <code>1/N</code> of them, then reconstruct what's needed <em>just in time</em>.</p>
+
+  <div class="note">
+    <span class="lbl">Terminology check — reduce-scatter vs scatter-reduce</span>
+    These live at different levels. <strong>reduce-scatter</strong> is the name of the <em>collective primitive</em> (<code>MPI_Reduce_scatter</code>, <code>ncclReduceScatter</code>) — reduce across ranks, scatter so each keeps one slice. <strong>scatter-reduce</strong> is the colloquial name (from Baidu's 2017 ring all-reduce post) for <em>phase 1 of the ring all-reduce algorithm</em>. They describe the same data movement, but when naming the standalone collective the standard term is <strong>reduce-scatter</strong> — that's what this report uses.
+  </div>
+
+  <div class="note">
+    <span class="lbl">FSDP ≡ which ZeRO?</span>
+    When people say "FSDP" without qualification they mean the <strong>ZeRO-3 equivalent</strong> (full sharding of parameters, gradients, and optimizer states). PyTorch FSDP exposes a <code>sharding_strategy</code> knob: <code>FULL_SHARD</code> = ZeRO-3, while <code>SHARD_GRAD_OP</code> behaves like ZeRO-2 (shards gradients + optimizer state, keeps parameters replicated). So "ZeRO/FSDP" as synonyms is shorthand for ZeRO-3 ↔ FSDP FULL_SHARD.
+  </div>
+
+  <h4>All-Gather — reconstruct the layer right before you need it</h4>
+  <p>Before a layer's forward pass, each GPU holds only its shard of that layer's weights. An <strong>all-gather</strong> collects all shards so every GPU briefly holds the full layer, runs the compute, then <em>frees</em> the gathered weights immediately. Watch the shards assemble:</p>
+
+  <div class="viz">
+    <div class="viz-head">
+      <div class="viz-title"><span class="dot"></span>ALL-GATHER · 4 GPUs each holding 1 shard</div>
+    </div>
+    <div class="viz-stage">
+      <svg id="ag-svg" viewBox="0 0 720 300" role="img" aria-label="All-gather animation"></svg>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--signal)"></i>this GPU's own shard</span>
+      <span><i style="background:var(--reduced)"></i>shard received from peer</span>
+      <span><i style="background:var(--gpu)"></i>not yet present</span>
+    </div>
+    <div class="viz-controls">
+      <button class="ctl primary" id="ag-play">▶ Play</button>
+      <button class="ctl" id="ag-reset">↺ Reset</button>
+      <div class="viz-status" id="ag-status">Ready. Each GPU owns shard k; after gather all hold all 4.</div>
+    </div>
+  </div>
+
+  <h4>Reduce-Scatter — the gradient mirror image</h4>
+  <p>After the backward pass each GPU has computed gradients for the <em>full</em> layer, but only needs to keep the slice matching its parameter shard. <strong>Reduce-scatter</strong> sums gradients across GPUs <em>and</em> leaves each GPU with only its slice in one fused operation — strictly cheaper than an all-reduce followed by a discard. Watch chunks accumulate and land:</p>
+
+  <div class="viz">
+    <div class="viz-head">
+      <div class="viz-title"><span class="dot"></span>REDUCE-SCATTER · sum across GPUs, keep one slice each</div>
+    </div>
+    <div class="viz-stage">
+      <svg id="rs-svg" viewBox="0 0 720 300" role="img" aria-label="Reduce-scatter animation"></svg>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--signal)"></i>local contribution</span>
+      <span><i style="background:var(--partial)"></i>partial sum in flight</span>
+      <span><i style="background:var(--reduced)"></i>final reduced slice (kept)</span>
+    </div>
+    <div class="viz-controls">
+      <button class="ctl primary" id="rs-play">▶ Play</button>
+      <button class="ctl" id="rs-reset">↺ Reset</button>
+      <div class="viz-status" id="rs-status">Ready. Each GPU will keep only chunk k of the summed gradient.</div>
+    </div>
+  </div>
+
+  <h3>The three stages, precisely</h3>
+  <p>The stages differ by <strong>what is sharded</strong> — and that, in turn, dictates which collective replaces DDP's all-reduce and how much gradient memory each GPU must hold. This is the distinction worth getting exactly right:</p>
+
+  <h4>ZeRO-1 — shard optimizer state only</h4>
+  <p>Only the optimizer state is partitioned. Each GPU still computes and <strong>holds the full gradient</strong>, but it only needs the summed gradient <em>for its own shard</em> to run the optimizer step — so the gradient synchronization is a <strong>reduce-scatter</strong>, not an all-reduce. (An all-reduce would broadcast every other shard's summed gradient back to every GPU, which ZeRO-1 would immediately throw away — pure waste.) Each GPU then updates its <code>1/N</code> shard of optimizer state and parameters, and an <strong>all-gather</strong> republishes the updated weights for the next forward pass. The full gradient is still <em>materialized in memory</em> only because gradients aren't sharded and the backward pass writes the whole tensor before the single end-of-backward reduce-scatter consumes it — a memory fact, not a communication one. The saving is entirely in optimizer state (the <code>12Φ → 12Φ/N</code> term, the biggest single consumer for Adam). <strong>Communication volume equals DDP</strong> (reduce-scatter + all-gather = one all-reduce's worth, by the decomposition identity).</p>
+
+  <h4>ZeRO-2 — additionally shard gradients</h4>
+  <p>The gradient synchronization is the <strong>same reduce-scatter as ZeRO-1</strong> — the collective does not change between the two stages. What changes is purely the <strong>memory axis</strong>: ZeRO-2 shards the gradient itself, so each GPU keeps only the <code>1/N</code> slice matching its optimizer/parameter shard and <em>frees the rest as it goes</em>. This is the correction to the common mental model — the ZeRO-1→ZeRO-2 difference is <em>not</em> "when the reduce-scatter fires" or "all-reduce vs reduce-scatter," but simply <strong>whether the gradient is sharded in memory at all</strong>. ZeRO-1 materializes the full gradient tensor and reduce-scatters it once at end-of-backward; ZeRO-2 buckets the reduce-scatter so each slice is reduced and the rest released <em>incrementally during the backward pass</em>, never holding the whole gradient at once. That cuts the gradient-memory term ZeRO-1 leaves untouched (the <code>2Φ → 2Φ/N</code> term), at <strong>no extra communication cost</strong> — volume is still exactly DDP's.</p>
+
+  <h4>ZeRO-3 (= FSDP FULL_SHARD) — additionally shard parameters</h4>
+  <p>Parameters are now sharded too, so no GPU ever holds the whole model. Weights for a layer are <strong>all-gathered just before they're needed and discarded right after</strong>. Crucially this happens <em>twice</em> per iteration — once in forward, once again in backward — because the gathered weights are freed after the forward pass and must be re-collected to compute gradients. So a ZeRO-3 step issues <strong>three collectives: two all-gathers (weights, fwd + bwd) and one reduce-scatter (gradients)</strong>, which works out to roughly <strong>1.5× the communication volume of DDP</strong> in exchange for memory that now scales linearly with N. Here is the per-iteration timeline:</p>
+
+  <div class="viz">
+    <div class="viz-head">
+      <div class="viz-title"><span class="dot"></span>ZeRO-3 / FSDP · collectives issued per training iteration</div>
+    </div>
+    <div class="viz-stage">
+      <svg id="z3-svg" viewBox="0 0 720 230" role="img" aria-label="ZeRO-3 per-iteration collective timeline"></svg>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--reduced)"></i>all-gather (weights)</span>
+      <span><i style="background:var(--partial)"></i>reduce-scatter (grads)</span>
+      <span><i style="background:var(--gpuActive)"></i>compute</span>
+    </div>
+    <div class="viz-controls">
+      <button class="ctl primary" id="z3-play">▶ Play</button>
+      <button class="ctl" id="z3-reset">↺ Reset</button>
+      <div class="viz-status" id="z3-status">Ready. Watch the 2× all-gather + 1× reduce-scatter pattern.</div>
+    </div>
+  </div>
+
+  <div class="note warn">
+    <span class="lbl">The identity that ties it together</span>
+    Because <code>all-reduce = reduce-scatter + all-gather</code>, ZeRO-1 and ZeRO-2 move the <em>same total bytes</em> as DDP — they only change <em>where</em> the gradient lives and how much memory it costs. ZeRO-3 adds one extra all-gather of parameters (the forward one; the backward all-gather replaces work DDP didn't have to do because DDP kept weights resident), landing at ~1.5× DDP's volume. The through-line: <strong>memory savings are large and monotonic across stages; communication is free through stage 2 and modestly more expensive at stage 3.</strong>
+  </div>
+
+  <table class="tbl">
+    <thead><tr><th>Stage</th><th>Sharded</th><th>Full gradient in memory?</th><th>Collective replacing DDP all-reduce</th><th>Comm vs DDP</th></tr></thead>
+    <tbody>
+      <tr><td><strong>ZeRO-1</strong></td><td>Optimizer state</td><td>Yes</td><td class="mono">reduce-scatter (grads) + all-gather (params)</td><td>1×</td></tr>
+      <tr><td><strong>ZeRO-2</strong></td><td>+ Gradients</td><td>No — freed per bucket</td><td class="mono">reduce-scatter</td><td>1×</td></tr>
+      <tr><td><strong>ZeRO-3</strong> = FSDP</td><td>+ Parameters</td><td>No</td><td class="mono">2× all-gather + reduce-scatter</td><td>~1.5×</td></tr>
+    </tbody>
+  </table>
+
+  <div class="mnemonic">
+    <span class="lbl">Remember this</span>
+    <div class="phrase">ZeRO shards <em>memory</em>, not <em>math</em>.</div>
+    <div class="gloss">Each stage stores less per GPU (optimizer state → +gradients → +parameters) while computing the exact same thing. Stages 1–2 are free in bandwidth; stage 3 (= FSDP) costs ~1.5× DDP for an extra parameter all-gather. The win is memory; the math never changes.</div>
+  </div>
+
+  <div class="note">
+    <span class="lbl">Further reading</span>
+    For an animated walk-through of all-gather specifically, this video is a clear companion to the interactive figure above: <a href="https://www.youtube.com/watch?v=JFTvY7siOtk">youtube.com/watch?v=JFTvY7siOtk</a>. (It shows each rank's shard propagating around the ring until every rank holds the full tensor — the same <code>N−1</code> step structure animated here.)
+  </div>
+
+<!-- ============================================ 5  TP -->
+<section id="tp">
+  <div class="secnum">SECTION 05</div>
+  <h2>All-Reduce inside tensor parallelism</h2>
+  <p class="sub">Same collective as data parallelism, completely different character — high-frequency, latency-critical, and pinned to the fastest links in the box.</p>
+
+  <p>Tensor parallelism (Megatron-LM style) splits the weight matrices <em>within</em> a layer across GPUs. Unlike FSDP — which all-gathers shards back to full weights and then computes — TP keeps the weights <strong>sharded through the computation itself</strong>. That single difference is the source of everything below: because each GPU multiplies only its slice, it produces a <em>partial</em> result, and the shard axis you chose determines exactly what reduction is needed to make it whole.</p>
+
+  <h3>The transformer MLP block, as matrix algebra</h3>
+  <p>A transformer's feed-forward block is two matmuls with a nonlinearity between: <code>Z = GeLU(X·A)·B</code>, where <code>X</code> is <code>[s × h]</code> (sequence × hidden), <code>A</code> is <code>[h × 4h]</code> (expand), and <code>B</code> is <code>[4h × h]</code> (contract). Megatron shards these two matmuls with <em>conjugate</em> axes — <code>A</code> by columns, <code>B</code> by rows — and that pairing is the whole trick. Watch the block shapes:</p>
+
+  <div class="viz">
+    <div class="viz-head">
+      <div class="viz-title"><span class="dot"></span>MEGATRON MLP · column-parallel A · row-parallel B · matrix blocks</div>
+    </div>
+    <div class="viz-stage">
+      <svg id="tpm-svg" viewBox="0 0 720 430" role="img" aria-label="Tensor parallel MLP matrix algebra"></svg>
+    </div>
+    <div class="viz-controls">
+      <button class="ctl primary" id="tpm-play">▶ Play</button>
+      <button class="ctl" id="tpm-step">Step →</button>
+      <button class="ctl" id="tpm-reset">↺ Reset</button>
+      <div class="viz-status" id="tpm-status">Ready. Two GPUs; follow the block shapes through both matmuls.</div>
+    </div>
+  </div>
+
+  <p>Why this specific pairing? <strong>Column-parallel <code>A</code></strong> splits the <code>4h</code> (output) dimension, so GPU <code>i</code> holds columns <code>A_i</code> and computes <code>Y_i = X·A_i</code> — a full-height, <em>narrow</em> slice of the hidden activations. GeLU is element-wise, so it runs <strong>locally on each slice with no communication</strong> — this only works because the split is along the output dimension, keeping each activation column intact. Then <strong>row-parallel <code>B</code></strong> splits the <code>4h</code> (input) dimension to <em>match</em> <code>Y</code>'s split: GPU <code>i</code> computes <code>Y_i·B_i</code>, a full-size but <em>partial</em> output. The true result is the sum <code>Z₁+Z₂</code>, so exactly one <strong>all-reduce</strong> closes the block. The conjugate split means the only communication in the entire block is that single reduction.</p>
+
+  <h4>The forward/backward collective asymmetry: what <code>f</code> and <code>g</code> are</h4>
+  <p>Megatron labels two spots in the dataflow where communication <em>might</em> be needed — two "gates" that bracket the parallel region of a block. <code>f</code> sits at the <strong>input</strong> (where <code>X</code> enters); <code>g</code> sits at the <strong>output</strong> (where the partial <code>Z</code>s come out). They are not different operations to memorize — each is simply <em>an all-reduce in one direction and a no-op in the other</em>:</p>
+  <ul>
+    <li><strong><code>g</code> (output gate):</strong> <em>forward</em> = all-reduce (the <code>Z₁+Z₂</code> sum you just saw); <em>backward</em> = no-op (the gradient passes straight through to each GPU).</li>
+    <li><strong><code>f</code> (input gate):</strong> <em>forward</em> = no-op (<code>X</code> is already replicated on every GPU, so nothing happens); <em>backward</em> = all-reduce.</li>
+  </ul>
+  <p>So one forward+backward of a block costs exactly <strong>one all-reduce forward (at <code>g</code>) and one all-reduce backward (at <code>f</code>)</strong> — two total, at opposite ends.</p>
+  <p><strong>Why does <code>f</code> need an all-reduce in backward, when forward needed nothing there?</strong> Because <code>X</code> is one tensor used by <em>both</em> GPUs in forward — each multiplies the same <code>X</code> by its own weight shard. When gradients flow back, each GPU computes a <em>different partial</em> gradient of <code>X</code> (one from each path <code>X</code> fed into). By the chain rule, the true gradient of <code>X</code> is the <strong>sum</strong> of those partials — and the layers <em>before</em> this block need that complete sum to continue backprop. Summing partials across GPUs is an all-reduce; that is <code>f</code>'s backward job.</p>
+
+  <div class="viz">
+    <div class="viz-head">
+      <div class="viz-title"><span class="dot"></span>f &amp; g GATES · all-reduce in one direction, no-op in the other</div>
+    </div>
+    <div class="viz-stage">
+      <svg id="tpfg-svg" viewBox="0 0 720 340" role="img" aria-label="f and g conjugate operators forward and backward"></svg>
+    </div>
+    <div class="viz-controls">
+      <button class="ctl primary" id="tpfg-fwd">▶ Forward</button>
+      <button class="ctl" id="tpfg-bwd">◀ Backward</button>
+      <button class="ctl" id="tpfg-reset">↺ Reset</button>
+      <div class="viz-status" id="tpfg-status">Ready. Toggle direction to see which gate becomes an all-reduce.</div>
+    </div>
+  </div>
+
+  <div class="note">
+    <span class="lbl">The duality to remember</span>
+    <code>f</code> and <code>g</code> are mirror images of one rule: <strong>replicated forward ⟺ all-reduce backward</strong>, and <strong>all-reduce forward ⟺ replicated backward</strong>. A tensor copied to all GPUs in forward (like <code>X</code>) has a summed gradient in backward (that's <code>f</code>); a tensor summed in forward (like <code>Z</code>) just passes its gradient through in backward (that's <code>g</code>). They're the same conjugate pair seen from the input vs. output side. Megatron names them only because manual TP requires inserting these all-reduces by hand — a compiler like XLA/GSPMD <em>derives</em> them for you, which is why the JAX version has no explicit <code>f</code>/<code>g</code>.
+  </div>
+
+  <div class="mnemonic">
+    <span class="lbl">Remember this</span>
+    <div class="phrase">Replicated one way ⟺ <em>all-reduced</em> the other.</div>
+    <div class="gloss">If a tensor is copied across GPUs in the forward pass, its gradient must be summed (all-reduced) in the backward pass — and vice versa. That single symmetry is all <code>f</code> and <code>g</code> encode: one gate per end of the block, each a no-op going one way and an all-reduce going the other.</div>
+  </div>
+
+  <h3>Attention is even more natural</h3>
+  <p>Self-attention shards along an axis the architecture hands you for free: <strong>attention heads</strong>. Each head computes <code>softmax(QKᵀ/√d)V</code> completely independently, so Megatron places whole heads on different GPUs — GPU <code>i</code> owns a subset of heads and computes them end to end with no cross-GPU communication inside the attention score/softmax/value path. The per-head outputs are concatenated along the hidden dimension, then the output projection <code>W_O</code> is <strong>row-parallel</strong> (matching the head split), producing partial outputs that — same as the MLP — need a single <strong>all-reduce</strong>. So attention is column-parallel on QKV (by heads) and row-parallel on the output projection: structurally identical communication to the MLP.</p>
+
+  <div class="viz">
+    <div class="viz-head">
+      <div class="viz-title"><span class="dot"></span>ATTENTION · heads partitioned across GPUs · QKV → output proj</div>
+    </div>
+    <div class="viz-stage">
+      <svg id="tpa-svg" viewBox="0 0 720 320" role="img" aria-label="Tensor parallel attention heads"></svg>
+    </div>
+    <div class="viz-controls">
+      <button class="ctl primary" id="tpa-play">▶ Play</button>
+      <button class="ctl" id="tpa-reset">↺ Reset</button>
+      <div class="viz-status" id="tpa-status">Ready. 4 heads split across 2 GPUs.</div>
+    </div>
+  </div>
+
+  <div class="note warn">
+    <span class="lbl">The systems consequence</span>
+    Because these all-reduces are tiny, frequent, and block compute, their cost is <strong>α-dominated, not β-dominated</strong>. You cannot tolerate inter-node latency for them. This is why tensor parallelism is almost always confined to <strong>within a single node</strong> (8 GPUs over NVLink/NVSwitch, ~hundreds of GB/s and sub-microsecond hops), while data and pipeline parallelism span the slower inter-node InfiniBand/Ethernet fabric. TP degree rarely exceeds the GPUs-per-node count for exactly this reason.
+  </div>
+
+  <h3>Why TP is latency-bound: the chain of reasoning</h3>
+  <p>Unpacking "small, frequent, latency-bound," because the three are causally linked — and the real discriminator is the last one, not the first two.</p>
+  <p><strong>Small.</strong> A TP all-reduce sums an <em>activation</em> tensor of shape <code>[b × s × h]</code> — one block's output for the current microbatch — not the whole gradient. The DP gradient all-reduce, by contrast, covers <em>every parameter</em> in the model. So per individual collective call, the TP payload is far smaller, small enough that it doesn't saturate the link: the bandwidth term <code>nβ</code> is tiny.</p>
+  <p><strong>Frequent.</strong> Each transformer layer has two TP blocks (attention + MLP), each ending in an all-reduce, plus the conjugate one in backward — so ≈ <code>4 × num_layers</code> all-reduces per step, i.e. hundreds. DP fires its gradient reduction effectively once per step (bucketed into a few launches).</p>
+  <p><strong>Blocking — and this is the one that matters.</strong> The all-reduce output <em>is</em> the input to the next operation (the residual add, the next sublayer). There is no independent work to run while it completes, so compute stalls on it. The cost becomes <code>(hundreds) × α</code> — the fixed per-hop latency paid hundreds of times, with nothing hiding it. That is the latency-bound regime, and the only lever is shrinking <code>α</code> → NVLink.</p>
+
+  <div class="note">
+    <span class="lbl">The discriminator is overlappability, not frequency</span>
+    A natural objection: <strong>FSDP also communicates per layer</strong> (all-gather weights before each layer, reduce-scatter grads after) — so why isn't <em>it</em> latency-bound? Because FSDP's per-layer comm is <strong>overlappable</strong>: while layer <code>k</code> computes on its already-gathered weights, FSDP <em>prefetches</em> layer <code>k+1</code>'s all-gather concurrently. There's independent work to hide the latency behind, so it stays bandwidth-bound despite being frequent. TP's comm sits on a <strong>true data dependency</strong> inside the block — the next op needs the reduced result — so there's nothing to overlap. <strong>Frequency is shared between FSDP and TP; overlappability is what splits them.</strong> Message size is a contributing factor, but the causal root of the regime is whether compute can proceed while the bytes move.
+  </div>
+
+  <div class="mnemonic">
+    <span class="lbl">Remember this</span>
+    <div class="phrase">FSDP's comm <em>hides</em>; TP's comm <em>blocks</em>.</div>
+    <div class="gloss">What decides latency- vs bandwidth-bound isn't how often you communicate — it's whether compute can run alongside it. FSDP prefetches the next layer while computing the current one (hidden → bandwidth-bound, tolerates slow links). TP's all-reduce feeds the very next op, so the GPU waits (exposed → latency-bound, needs NVLink). Overlappable beats infrequent.</div>
+  </div>
+
+  <div class="viz">
+    <div class="viz-head">
+      <div class="viz-title"><span class="dot"></span>COMPUTE TIMELINE · overlappable vs blocking communication</div>
+    </div>
+    <div class="viz-stage">
+      <svg id="tpo-svg" viewBox="0 0 720 320" role="img" aria-label="DP vs FSDP vs TP communication overlap timeline"></svg>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--gpuActive)"></i>compute</span>
+      <span><i style="background:var(--signal)"></i>comm — hidden (overlapped)</span>
+      <span><i style="background:var(--danger)"></i>comm — exposed (blocking)</span>
+      <span><i style="background:var(--gpu)"></i>GPU idle (stall)</span>
+    </div>
+    <div class="viz-controls">
+      <button class="ctl primary" id="tpo-play">▶ Play</button>
+      <button class="ctl" id="tpo-reset">↺ Reset</button>
+      <div class="viz-status" id="tpo-status">Ready. Three regimes on the same compute timeline.</div>
+    </div>
+  </div>
+
+  <h3>Is TP architecture-specific, or generic? Both — at different layers</h3>
+  <p>This is the crux of a confusion worth resolving cleanly, because Megatron reads as transformer-specific while JAX/GSPMD lets you annotate <em>any</em> dimension as sharded. Both pictures are correct; they live at different levels.</p>
+  <p><strong>The mechanism is fully generic.</strong> At the linear-algebra level, a matmul can be sharded along essentially any dimension of any operand, and each choice has a <em>determinate</em> rule for the communication needed to keep the result correct. Sharding the <strong>contraction (inner) dimension</strong> of a matmul forces a reduction afterward → <strong>all-reduce</strong> (or reduce-scatter). Sharding a <strong>non-contracted (outer) dimension</strong> keeps outputs sharded with no reduction, but may need an <strong>all-gather</strong> later when a downstream op wants the full tensor. This is exactly what XLA/GSPMD automates: you annotate the "big" tensors with mesh axes, and the compiler <em>derives and inserts</em> the right collectives. Nothing here is transformer-specific — it's the algebra of distributing einsums.</p>
+  <p><strong>The Megatron scheme is a specific, expert-chosen set of those annotations.</strong> Its value isn't "TP for transformers exists" — it's the particular conjugate pairing (column-parallel then row-parallel) that makes an entire block cost just one all-reduce per direction, with the nonlinearity on the local side. In raw Megatron you hand-write those collectives; in JAX you'd reach the same result by annotating the same dimensions and letting GSPMD insert them. So: <strong>any axis is legal; only specific axes are cheap.</strong> The skill is choosing shardings whose collectives are few, small, and overlappable — what Megatron hand-derived, and what GSPMD's propagation tries to discover or you guide with annotations.</p>
+
+  <div class="viz">
+    <div class="viz-head">
+      <div class="viz-title"><span class="dot"></span>SAME MATMUL · which axis you shard determines the collective</div>
+    </div>
+    <div class="viz-stage">
+      <svg id="tpx-svg" viewBox="0 0 720 300" role="img" aria-label="Shard axis determines collective"></svg>
+    </div>
+    <div class="viz-controls">
+      <button class="ctl primary" id="tpx-shard-k">Shard contraction (k)</button>
+      <button class="ctl" id="tpx-shard-n">Shard output (n)</button>
+      <button class="ctl" id="tpx-reset">↺ Reset</button>
+      <div class="viz-status" id="tpx-status">Ready. Y = X·W, with X [m×k] and W [k×n]. Pick an axis to shard.</div>
+    </div>
+  </div>
+
+  <div class="note">
+    <span class="lbl">The clean contrast with FSDP</span>
+    The FSDP comparison is the cleanest discriminator. <strong>FSDP is shard-axis-agnostic</strong> because it always all-gathers shards back to full weights <em>before</em> computing — the math always runs on the unsharded tensor, so the shard axis only decides how storage is sliced, never what's computed. <strong>TP is shard-axis-sensitive</strong> because the tensor stays sharded <em>through</em> the matmul — so the axis determines what partial result comes out and therefore which collective repairs it. In one sentence: <strong>FSDP shards storage; TP shards computation.</strong>
+  </div>
+</section>
+
+<!-- ============================================ 6  A2A -->
+<section id="a2a">
+  <div class="secnum">SECTION 06</div>
+  <h2>All-to-All for Mixture-of-Experts</h2>
+  <p class="sub">The collective that defines MoE training cost. Every device sends a personalized chunk to every other device — the most communication-intensive primitive here.</p>
+
+  <p>In an MoE layer, a lightweight <em>router</em> assigns each token to one or a few <em>experts</em> (independent FFNs). With expert parallelism, experts live on different GPUs, so a token computed on GPU 0 may be routed to an expert on GPU 3. The fix is <strong>all-to-all</strong>: unlike all-gather (where everyone sends the <em>same</em> data to everyone), in all-to-all <em>each device sends a different chunk to each other device</em>. It is a full transpose of data across the group.</p>
+
+  <p>MoE uses <strong>two</strong> all-to-alls per layer:</p>
+  <ol>
+    <li><strong>Dispatch</strong> — after routing, send each token to the GPU hosting its assigned expert.</li>
+    <li><strong>Combine</strong> — after the experts compute, send each result back to the GPU where its token originated, to continue the forward pass.</li>
+  </ol>
+
+  <div class="viz">
+    <div class="viz-head">
+      <div class="viz-title"><span class="dot"></span>ALL-TO-ALL DISPATCH · tokens routed to expert GPUs</div>
+    </div>
+    <div class="viz-stage">
+      <svg id="a2a-svg" viewBox="0 0 720 360" role="img" aria-label="All-to-all animation"></svg>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--signal)"></i>token → expert 0/1</span>
+      <span><i style="background:var(--reduced)"></i>token → expert 2/3</span>
+    </div>
+    <div class="viz-controls">
+      <button class="ctl primary" id="a2a-play">▶ Play</button>
+      <button class="ctl" id="a2a-reset">↺ Reset</button>
+      <div class="viz-status" id="a2a-status">Ready. Each GPU's tokens are color-coded by destination expert.</div>
+    </div>
+  </div>
+
+  <div class="note warn">
+    <span class="lbl">Why MoE is hard — the key points</span>
+    <ul style="margin:8px 0 0;">
+      <li><strong>Load imbalance.</strong> Routing is data-dependent, so some experts get far more tokens than others. The all-to-all is bottlenecked by the busiest GPU. This is why MoE training uses an <em>auxiliary load-balancing loss</em> and a <em>capacity factor</em> that drops or pads tokens to keep buffers fixed-size.</li>
+      <li><strong>It doesn't overlap easily.</strong> The combine all-to-all sits squarely on the critical path between the experts and the rest of the layer. Hiding it requires careful kernel-level pipelining (e.g. overlapping dispatch of one chunk with compute of another).</li>
+      <li><strong>Bandwidth scaling.</strong> All-to-all moves <code>(N−1)/N · n</code> bytes per device like a ring, but with N−1 distinct destinations it is far more sensitive to topology and tends to dominate the comm budget in large MoE models.</li>
+    </ul>
+  </div>
+
+  <div class="mnemonic">
+    <span class="lbl">Remember this</span>
+    <div class="phrase">All-to-all is a <em>transpose</em>.</div>
+    <div class="gloss">All-gather sends everyone the <em>same</em> data; all-to-all sends everyone <em>different</em> data — each device hands every other device a personalized chunk. That's a distributed matrix transpose, and it's why MoE routing (tokens → experts → back) costs two of them per layer and dominates the communication budget.</div>
+  </div>
+</section>
+
+<!-- ============================================ 7  P2P -->
+<section id="p2p">
+  <div class="secnum">SECTION 07</div>
+  <h2>Point-to-point &amp; pipeline parallelism</h2>
+  <p class="sub">Not strictly a collective, but the backbone of pipeline parallelism and worth understanding as the contrast case — the bubble problem and how scheduling hides it.</p>
+
+  <p>Pipeline parallelism splits the <em>layer stack</em> into sequential stages, one group of layers per device. A microbatch flows stage 0 → 1 → 2 → 3 in the forward pass (each handoff a single <strong>send/recv</strong> of activations), then gradients flow back the other way. There's no group reduction here — just paired transfers between adjacent stages.</p>
+
+  <p>The challenge is the <strong>pipeline bubble</strong>: while stage 0 works on the first microbatch, stages 1–3 sit idle, and similarly at drain. The fix is to split the batch into many microbatches and schedule them so stages stay busy. Watch a naive fill/drain vs. the interleaved schedule:</p>
+
+  <div class="viz">
+    <div class="viz-head">
+      <div class="viz-title"><span class="dot"></span>PIPELINE SCHEDULE · 4 stages · microbatch flow &amp; the bubble</div>
+    </div>
+    <div class="viz-stage">
+      <svg id="pp-svg" viewBox="0 0 720 300" role="img" aria-label="Pipeline parallelism schedule animation"></svg>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--signal)"></i>forward pass</span>
+      <span><i style="background:var(--reduced)"></i>backward pass</span>
+      <span><i style="background:var(--gpu)"></i>bubble (idle)</span>
+    </div>
+    <div class="viz-controls">
+      <button class="ctl primary" id="pp-play">▶ Play</button>
+      <button class="ctl" id="pp-reset">↺ Reset</button>
+      <div class="viz-status" id="pp-status">Ready. 4 stages × 4 microbatches.</div>
+    </div>
+  </div>
+
+  <div class="note">
+    <span class="lbl">The bubble fraction formula</span>
+    For a naive (GPipe) schedule with <code>p</code> stages and <code>m</code> microbatches, the fraction of time wasted in the bubble is <code class="mono">(p−1)/(m + p−1)</code>. The takeaway: <strong>increase m relative to p</strong> to shrink the bubble. Advanced schedules — <em>1F1B</em> (one-forward-one-backward) and <em>interleaved 1F1B</em> (Megatron) — keep the same bubble fraction formula but slash peak activation memory by running backward passes earlier, which is usually the real constraint.
+  </div>
+
+  <div class="mnemonic">
+    <span class="lbl">Remember this</span>
+    <div class="phrase">More <em>microbatches</em>, smaller <em>bubble</em>.</div>
+    <div class="gloss">Pipeline idle time is (p−1)/(m+p−1) — fixed fill/drain cost amortized over m microbatches. Feed more microbatches and the bubble shrinks toward zero. 1F1B doesn't change the fraction; it cuts activation memory so you can afford the larger m that does.</div>
+  </div>
+</section>
+
+<!-- ============================================ 8  COMBINED TP+FSDP -->
+<section id="combined">
+  <div class="secnum">SECTION 08</div>
+  <h2>Composing TP × FSDP on four GPUs</h2>
+  <p class="sub">The two techniques run at once in real jobs. Here they are side by side on a 2×2 mesh — TP degree 2 crossed with FSDP degree 2 — one row per GPU, steppable so each moment can be inspected.</p>
+
+  <p>The mesh is <strong>2 × 2 = 4 GPUs</strong>. The horizontal axis is the <strong>TP group</strong> (two ranks that split each weight matrix and must all-reduce); the vertical axis is the <strong>FSDP group</strong> (two replicas that shard parameters and all-gather them on demand). Each of the four rows below is one GPU's local timeline through a single MLP block. Step through and watch the central contrast: <strong>the FSDP all-gather overlaps compute (it prefetches), while the TP all-reduce blocks it (the next op needs the result)</strong>.</p>
+
+  <div class="viz">
+    <div class="viz-head">
+      <div class="viz-title"><span class="dot"></span>TP×FSDP MESH · 4 GPUs · one MLP block, step by step</div>
+      <div class="phasebar" id="cmb-phases">
+        <span data-p="0" class="on">0 · IDLE</span>
+        <span data-p="1">1 · AG</span>
+        <span data-p="2">2 · FWD</span>
+        <span data-p="3">3 · AR</span>
+        <span data-p="4">4 · RS</span>
+      </div>
+    </div>
+    <div class="viz-stage">
+      <svg id="cmb-svg" viewBox="0 0 760 600" role="img" aria-label="Combined tensor-parallel and FSDP on a 2x2 GPU mesh"></svg>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--gpuActive)"></i>compute</span>
+      <span><i style="background:var(--signal)"></i>FSDP all-gather (overlaps)</span>
+      <span><i style="background:var(--partial)"></i>FSDP reduce-scatter (overlaps)</span>
+      <span><i style="background:var(--reduced)"></i>TP all-reduce (BLOCKS)</span>
+      <span><i style="background:#3a4654;border:1px dashed var(--danger)"></i>stall / idle</span>
+    </div>
+    <div class="viz-controls">
+      <button class="ctl primary" id="cmb-step">Step →</button>
+      <button class="ctl" id="cmb-play">▶ Play all</button>
+      <button class="ctl" id="cmb-reset">↺ Reset</button>
+      <div class="viz-status" id="cmb-status">Ready. 4 GPUs as a 2×2 TP×FSDP mesh. Step through one MLP block.</div>
+    </div>
+  </div>
+
+  <p>Reading the mesh: the two GPUs in a row (same FSDP replica) form a <strong>TP pair</strong> — they hold complementary <em>column shards</em> of the weights and will all-reduce their partial outputs. The two GPUs in a column (same TP rank) form an <strong>FSDP pair</strong> — they each hold half of that shard's parameters on disk and all-gather to reconstruct the full shard before compute. So every weight is sharded <em>twice</em>: once by TP (which columns) and once by FSDP (which slice of those columns is resident).</p>
+
+  <div class="mnemonic">
+    <span class="lbl">Remember this</span>
+    <div class="phrase">FSDP shards <em>across</em> replicas; TP shards <em>within</em> the math.</div>
+    <div class="gloss">They're orthogonal. FSDP gathers a full shard, computes, and frees it — comm hidden by prefetch. TP keeps its slice sharded through the matmul and pays a blocking all-reduce to stitch partial outputs. One axis trades memory for overlappable bandwidth; the other trades latency for never materializing the full matrix. Stacked, they tile the GPU mesh.</div>
+  </div>
+</section>
+
+<!-- ============================================ 9  TOPOLOGY -->
+<section id="topology">
+  <div class="secnum">SECTION 09</div>
+  <h2>Putting it together: topology &amp; overlap</h2>
+  <p class="sub">Real frontier runs combine all of the above — "3D" or "4D parallelism." The art is mapping each collective onto the right slice of the network and overlapping it with compute.</p>
+
+  <p>A frontier training job composes these strategies into nested groups. A representative layout on a cluster of 8-GPU nodes:</p>
+  <ul>
+    <li><strong>Tensor parallel (×8)</strong> — within a node, over NVLink. Latency-critical all-reduces stay on the fastest fabric.</li>
+    <li><strong>Pipeline parallel (×several)</strong> — across a handful of nodes. Only thin activation tensors cross these links (cheap P2P).</li>
+    <li><strong>Data / sharded-data parallel (×many)</strong> — across the remaining nodes over InfiniBand. Bandwidth-heavy reduce-scatter/all-gather, but tolerant of latency and overlappable with backprop.</li>
+    <li><strong>Expert parallel</strong> — if MoE, all-to-all over a dimension chosen to balance against the others.</li>
+  </ul>
+
+  <p>The placement principle is consistent and worth stating crisply: <strong>match each collective's sensitivity to the link's strength.</strong> Put α-sensitive, high-frequency traffic (TP all-reduce) on the lowest-latency fabric; put β-heavy, latency-tolerant traffic (DP gradient reduction) on links where you have bandwidth to spare and computation to hide it behind.</p>
+
+  <div class="viz">
+    <div class="viz-head">
+      <div class="viz-title"><span class="dot"></span>OVERLAP · communication hidden behind computation</div>
+    </div>
+    <div class="viz-stage">
+      <svg id="ov-svg" viewBox="0 0 720 230" role="img" aria-label="Computation communication overlap"></svg>
+    </div>
+    <div class="viz-controls">
+      <button class="ctl primary" id="ov-play">▶ Play</button>
+      <button class="ctl" id="ov-reset">↺ Reset</button>
+      <div class="viz-status" id="ov-status">Ready. Compare exposed vs overlapped communication.</div>
+    </div>
+  </div>
+
+  <div class="note">
+    <span class="lbl">The one-sentence thesis</span>
+    A well-tuned training job is one where the GPUs are almost never waiting on the network — every byte that must move is moving <em>while</em> the GPUs compute something else. Every collective choice, topology decision, and bucket-size knob serves that single goal.
+  </div>
+</section>
+
+<!-- ============================================ 9  SELF-CHECK -->
+<section id="interview">
+  <div class="secnum">SECTION 10</div>
+  <h2>Self-check</h2>
+  <p class="sub">Questions that map directly onto the material above. Worth answering before expanding each one.</p>
+
+  <details class="qa"><summary>Why is ring all-reduce considered bandwidth-optimal, and what's its weakness?</summary>
+    <div class="ans"><p>Each link carries exactly <code>2·(N−1)/N · n</code> bytes per device — independent of N — which is provably the minimum any all-reduce must move, since every device's data must reach every other and be summed. No link is a hotspot. Its weakness is the latency term: <code>2(N−1)</code> sequential steps means <code>2(N−1)</code> α-costs, so at large N the fixed per-hop latency dominates and tree/hierarchical algorithms (<code>log N</code> steps) become preferable for small messages.</p></div>
+  </details>
+
+  <details class="qa"><summary>A model fits on one GPU but its optimizer state doesn't. Minimum change?</summary>
+    <div class="ans"><p>ZeRO Stage 1 — shard only the optimizer state across the data-parallel group. For Adam that's the biggest memory consumer (params + 2 moments in fp32), so sharding it alone gives a large saving with <strong>zero extra communication</strong>: the gradient all-reduce is unchanged; each GPU just updates its own shard of the optimizer state and the params are kept in sync. You only escalate to Stage 2/3 (FSDP) when you also need to shard gradients and parameters.</p></div>
+  </details>
+
+  <details class="qa"><summary>Why is tensor parallelism kept within a node but data parallelism spans nodes?</summary>
+    <div class="ans"><p>TP issues an all-reduce on the critical path per block — hundreds per step — and the key property is that they <strong>cannot overlap with compute</strong>: the reduced output is the input to the next op, so the GPU stalls until it returns. Cost becomes <code>(hundreds) × α</code>, i.e. <strong>latency-bound</strong>, so it demands NVLink's sub-microsecond hops. DP's gradient reduction is <strong>overlappable</strong> with the backward pass (hidden behind compute), so it's bandwidth-bound and tolerates inter-node InfiniBand latency. The discriminator is overlappability, not frequency: FSDP is <em>also</em> per-layer/frequent, but it prefetches each all-gather under the previous layer's compute, so it stays bandwidth-bound too. Place each collective on the fabric matching its bottleneck — and what sets the bottleneck is whether compute can proceed while the bytes move.</p></div>
+  </details>
+
+  <details class="qa"><summary>What makes all-to-all in MoE harder to optimize than all-reduce in DP?</summary>
+    <div class="ans"><p>Three things. (1) <strong>Data-dependent load imbalance</strong> — routing sends uneven token counts to experts, so the collective stalls on the busiest GPU; mitigated with a load-balancing aux loss and a capacity factor. (2) <strong>Poor overlap</strong> — the combine all-to-all sits between the experts and the rest of the layer on the critical path, unlike DP's all-reduce which overlaps with backprop. (3) <strong>N−1 distinct destinations</strong> make it topology-sensitive, so it often dominates the communication budget.</p></div>
+  </details>
+
+  <details class="qa"><summary>Derive the GPipe bubble fraction and explain how to reduce it.</summary>
+    <div class="ans"><p>With <code>p</code> stages, the pipeline takes <code>p−1</code> steps to fill and <code>p−1</code> to drain; with <code>m</code> microbatches the useful work spans <code>m</code> steps. Bubble fraction = idle/(idle+useful) = <code>(p−1)/(m+p−1)</code>. Reduce it by raising <code>m</code> relative to <code>p</code> (more microbatches). 1F1B scheduling doesn't change this fraction but cuts activation memory by interleaving backward passes early, which is usually the binding constraint that lets you raise <code>m</code> in the first place.</p></div>
+  </details>
+
+  <details class="qa"><summary>Why do ZeRO-1 and ZeRO-2 cost the same bandwidth as DDP, while ZeRO-3 costs ~1.5×?</summary>
+    <div class="ans"><p>By the identity <code>all-reduce = reduce-scatter + all-gather</code>. DDP does one all-reduce of gradients. ZeRO-1/2 just reorganize that: the reduction is still one reduce-scatter + one all-gather worth of traffic, only now each GPU keeps a shard instead of the full result — same bytes moved, less memory held. ZeRO-3 additionally shards parameters, so it must all-gather weights <em>twice</em> per iteration (once in forward, once in backward, since the gathered weights are freed after forward) on top of the gradient reduce-scatter. That extra parameter all-gather is what pushes it to roughly 1.5× DDP's volume — the price of also sharding parameters.</p></div>
+  </details>
+
+  <details class="qa"><summary>Precisely, what changes between ZeRO-1 and ZeRO-2?</summary>
+    <div class="ans"><p>What's <em>sharded</em>. ZeRO-1 shards only optimizer state; each GPU still computes and holds the <strong>full gradient</strong> before synchronizing, so gradient memory equals DDP's. ZeRO-2 additionally shards gradients via reduce-scatter, so each GPU keeps only its slice and frees the rest (bucketed during the backward pass). A common misconception is that the difference is <em>when</em> the reduce-scatter fires — it's actually <em>whether gradients are sharded at all</em>. The practical consequence: ZeRO-2 cuts the gradient-memory term that ZeRO-1 leaves untouched, at no extra communication cost.</p></div>
+  </details>
+
+  <details class="qa"><summary>Is it "reduce-scatter" or "scatter-reduce"? And is FSDP the same as ZeRO?</summary>
+    <div class="ans"><p><strong>reduce-scatter</strong> is the standard name of the collective primitive (<code>MPI_Reduce_scatter</code>, <code>ncclReduceScatter</code>). "scatter-reduce" is the informal name for phase 1 of the ring all-reduce algorithm (from Baidu's 2017 post) — same data movement, different level of abstraction. Use "reduce-scatter" when naming the collective. As for FSDP: unqualified, it means the <strong>ZeRO-3 equivalent</strong> (full sharding). PyTorch's <code>FULL_SHARD</code> = ZeRO-3 and <code>SHARD_GRAD_OP</code> = ZeRO-2, so "ZeRO/FSDP" as synonyms specifically means ZeRO-3 ↔ FSDP FULL_SHARD.</p></div>
+  </details>
+
+  <details class="qa"><summary>Should DDP's bucket size scale with the number of GPUs N to equalize per-link load?</summary>
+    <div class="ans"><p>No — and the reason is the trap. Per-link <em>volume</em> for a bucket's all-reduce is <code>2·(N−1)/N·S</code>, which asymptotes to <code>2S</code> and is essentially <strong>N-invariant</strong>: the ring already equalized it across all N, so there's nothing to compensate for. Bucket size (~25 MB default) is set by the <strong>latency-vs-overlap tradeoff</strong> instead — small buckets pay α-launch cost too often and underfill bandwidth; large buckets delay the first all-reduce and shrink the compute/comm overlap window. Where N <em>does</em> matter is the per-step chunk <code>S/N</code>, which shrinks with N and can push ring steps into the latency-bound regime — but that's handled by switching to tree/hierarchical algorithms (<code>log N</code> latency term) or more NCCL channels, not by inflating the bucket.</p></div>
+  </details>
+
+  <details class="qa"><summary>Distinguish a DDP bucket from a ring chunk.</summary>
+    <div class="ans"><p>Different layers. A <strong>bucket</strong> (~25 MB) is a PyTorch-level grouping of gradient tensors; each bucket becomes <em>one complete all-reduce</em>, fired as soon as it fills during backprop — its purpose is <strong>overlap with computation</strong>. A <strong>ring chunk</strong> is NCCL-internal: inside one bucket's all-reduce, the payload is split into <code>N</code> chunks (<code>~S/N</code> each) that rotate around the ring for <code>2(N−1)</code> steps — its purpose is <strong>bandwidth optimality within the collective</strong>. The boundaries are independent: a bucket is never sent as a unit on a link; it's diced into rotating chunks. (NCCL adds a third level — pipeline slots within each chunk — to keep the wire saturated.)</p></div>
+  </details>
+</section>
+
+</main>
+
+<footer class="wrap">
+  <p class="mono">A reference on collective communication in distributed LLM training</p>
+  <p>Cost models follow the standard α–β (Hockney) formulation. Algorithm step counts assume a logical ring of N participants. Figures are illustrative animations of the data-movement pattern, not wire-accurate traces of any specific NCCL/RCCL build.</p>
+</footer>
+
+<script>
+/* =====================================================================
+   Shared SVG helpers
+   ===================================================================== */
+const SVGNS="http://www.w3.org/2000/svg";
+const C={signal:"#38d6e0",reduced:"#f5a623",partial:"#7b9bd1",gpu:"#2a3946",
+         gpuActive:"#34506a",rule:"#26333f",ink:"#dde6ec",dim:"#8da0ae",
+         lime:"#c2f24a",ruleB:"#334452"};
+function el(tag,attrs){const e=document.createElementNS(SVGNS,tag);
+  for(const k in attrs)e.setAttribute(k,attrs[k]);return e;}
+function clear(svg){while(svg.firstChild)svg.removeChild(svg.firstChild);}
+function txt(x,y,s,attrs={}){const t=el("text",Object.assign(
+  {x,y,fill:C.ink,"font-family":"SF Mono, ui-monospace, monospace","font-size":12,
+   "text-anchor":"middle","dominant-baseline":"middle"},attrs));t.textContent=s;return t;}
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* color of a chunk by state */
+function chunkFill(state){
+  if(state==="own")return C.signal;
+  if(state==="partial")return C.partial;
+  if(state==="final")return C.reduced;
+  if(state==="stale")return "#3a4654";   // dead weight: forwarded already, awaiting overwrite
+  return C.gpu;
+}
+
+/* =====================================================================
+   1. RING ALL-REDUCE  (4 GPUs in a ring, 4 chunks each)
+   State model: grid[g][c] = state of chunk c on gpu g
+   ===================================================================== */
+(function(){
+  const svg=document.getElementById("ar-svg");
+  const status=document.getElementById("ar-status");
+  const phases=document.getElementById("ar-phases");
+  const N=4;
+  // ring positions (4 GPUs around a square)
+  const pos=[{x:360,y:70},{x:610,y:200},{x:360,y:330},{x:110,y:200}];
+  let grid, step, phase, busy=false;
+
+  function setPhase(p){
+    phase=p;
+    [...phases.children].forEach(s=>s.classList.toggle("on",+s.dataset.p===p));
+  }
+  function init(){
+    // each gpu g owns chunk g as "own", rest empty
+    grid=[];
+    for(let g=0;g<N;g++){grid.push([]);for(let c=0;c<N;c++)
+      grid[g].push(g===c?"own":"empty");}
+    step=0;setPhase(0);busy=false;
+    status.textContent="Ready. 4 GPUs, array split into 4 chunks.";
+    draw();
+  }
+  function draw(moving){
+    clear(svg);
+    // center label
+    svg.appendChild(txt(360,200,"RING",{fill:C.dim,"font-size":13,"letter-spacing":"3"}));
+    svg.appendChild(txt(360,218,"N=4",{fill:C.ruleB,"font-size":11}));
+    // ring arrows between consecutive gpus (clockwise)
+    for(let g=0;g<N;g++){
+      const a=pos[g],b=pos[(g+1)%N];
+      const mx=(a.x+b.x)/2,my=(a.y+b.y)/2;
+      const dx=b.x-a.x,dy=b.y-a.y,len=Math.hypot(dx,dy);
+      const ox=-dy/len*0,oy=dx/len*0;
+      const path=el("path",{d:`M ${a.x+dx*0.28} ${a.y+dy*0.28} L ${b.x-dx*0.28} ${b.y-dy*0.28}`,
+        stroke:C.ruleB,"stroke-width":1.5,fill:"none","marker-end":"url(#arh)"});
+      svg.appendChild(path);
+    }
+    // arrowhead marker
+    const defs=el("defs",{});
+    const mk=el("marker",{id:"arh",markerWidth:8,markerHeight:8,refX:6,refY:3,orient:"auto"});
+    mk.appendChild(el("path",{d:"M0,0 L6,3 L0,6 Z",fill:C.ruleB}));
+    defs.appendChild(mk);svg.appendChild(defs);
+
+    // each GPU as a node with 4 chunk cells
+    for(let g=0;g<N;g++){
+      const p=pos[g];
+      const w=92,h=58,x=p.x-w/2,y=p.y-h/2;
+      svg.appendChild(el("rect",{x,y,width:w,height:h,rx:8,fill:C.gpuActive,
+        stroke:C.ruleB,"stroke-width":1.5}));
+      svg.appendChild(txt(p.x,y-9,"GPU "+g,{fill:C.dim,"font-size":11}));
+      // 4 chunk cells in a row
+      const cw=18,gap=2,startx=p.x-(N*cw+(N-1)*gap)/2;
+      for(let c=0;c<N;c++){
+        const cx=startx+c*(cw+gap),cy=p.y-9;
+        const st=grid[g][c];
+        const isStale = st==="stale";
+        svg.appendChild(el("rect",{x:cx,y:cy,width:cw,height:18,rx:3,
+          fill:st==="empty"?"#0e1419":chunkFill(st),
+          stroke:isStale?C.danger:(st==="empty"?C.ruleB:"none"),
+          "stroke-width":isStale?1.2:1,
+          "stroke-dasharray":isStale?"2 2":"none",
+          opacity:st==="empty"?.6:(isStale?.45:1)}));
+        if(st!=="empty"&&!isStale)
+          svg.appendChild(txt(cx+cw/2,cy+9,String(c),{fill:"#06222a","font-size":10,"font-weight":700}));
+        if(isStale)
+          svg.appendChild(txt(cx+cw/2,cy+9,"✕",{fill:C.danger,"font-size":10,"font-weight":700}));
+      }
+    }
+  }
+
+  // one reduce-scatter step: gpu g sends chunk (g - step) to g+1, who adds it.
+  // The slot gpu g just sent is forwarded-for-the-last-time => it goes STALE
+  // immediately (the live accumulating copy now lives on the neighbor).
+  async function rsStep(){
+    setPhase(1);
+    const sendIdx=g=>((g- step)%N+N)%N;          // chunk index gpu g sends this step
+    const flights=[];
+    for(let g=0;g<N;g++){
+      flights.push({from:pos[g],to:pos[(g+1)%N],idx:sendIdx(g)});
+    }
+    await animateFlights(flights,"partial");
+    const isLast = (step===N-2);                 // this send completes the phase
+    for(let g=0;g<N;g++){
+      const r=(g+1)%N, idx=sendIdx(g);
+      // 1) receiver accumulates the incoming chunk
+      if(isLast && idx===((r+1)%N)){
+        // this receive completes the receiver's owned chunk -> fully reduced
+        grid[r][idx]="final";
+      }else{
+        grid[r][idx]="partial";
+      }
+      // 2) sender's just-forwarded slot is now dead weight
+      grid[g][idx]="stale";
+    }
+    step++;
+    draw();
+  }
+
+  // all-gather step: circulate final chunks
+  async function agStep(){
+    setPhase(2);
+    const sendIdx=g=>(((g+1)%N) - (step-(N-1)) +2*N)%N;
+    const flights=[];
+    for(let g=0;g<N;g++){
+      flights.push({from:pos[g],to:pos[(g+1)%N],idx:sendIdx(g)});
+    }
+    await animateFlights(flights,"final");
+    for(let g=0;g<N;g++){
+      const r=(g+1)%N,idx=sendIdx(g);
+      grid[r][idx]="final";
+    }
+    step++;
+    draw();
+    if(step===2*(N-1)){setPhase(3);}
+  }
+
+  async function animateFlights(flights,colorState){
+    if(prefersReduced)return;
+    const dots=flights.map(f=>{
+      const d=el("circle",{cx:f.from.x,cy:f.from.y,r:7,
+        fill:chunkFill(colorState),stroke:"#06222a","stroke-width":1.5});
+      svg.appendChild(d);return d;});
+    const T=520,t0=performance.now();
+    await new Promise(res=>{
+      function frame(now){
+        let k=Math.min(1,(now-t0)/T);
+        const e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+        dots.forEach((d,i)=>{
+          const f=flights[i];
+          d.setAttribute("cx",f.from.x+(f.to.x-f.from.x)*e);
+          d.setAttribute("cy",f.from.y+(f.to.y-f.from.y)*e);
+        });
+        if(k<1)requestAnimationFrame(frame);else{dots.forEach(d=>d.remove());res();}
+      }
+      requestAnimationFrame(frame);
+    });
+  }
+
+  async function doStep(){
+    if(busy)return;
+    if(step>=2*(N-1)){return;}
+    busy=true;
+    if(step<N-1){
+      const s=step+1;
+      status.innerHTML=`Phase 1 · Reduce-Scatter — step <b>${s}/${N-1}</b>: each GPU sends a chunk clockwise; the receiver <b>adds</b> it, and the sender's just-forwarded slot goes <b style="color:#ff6b6b">stale (✕)</b> — it will never be read again.`;
+      await rsStep();
+      if(step===N-1){
+        status.innerHTML=`<b>Reduce-scatter done.</b> Watch what happened over the phase: slots went <b style="color:#ff6b6b">stale (✕)</b> <em>one per step</em> as each was forwarded for the last time — the working set shrank as the ring rotated. Each GPU now holds exactly one <b style="color:#f5a623">fully-reduced</b> chunk; all-gather will <b>overwrite the ✕ slots in place</b>.`;
+      }
+    }else{
+      status.innerHTML=`Phase 2 · All-Gather — step <b>${step-(N-1)+1}/${N-1}</b>: finished chunks circulate and overwrite the stale (<b style="color:#ff6b6b">✕</b>) slots; no addition needed.`;
+      await agStep();
+    }
+    if(step>=2*(N-1))
+      status.innerHTML="<b>Complete.</b> Every GPU now holds the full reduced array, in the same single buffer it started with. Each link moved only 2·(N−1)/N·n bytes.";
+    busy=false;
+  }
+  async function play(){
+    if(busy)return;
+    if(step>=2*(N-1))init();
+    while(step<2*(N-1)){
+      const before=step;
+      await doStep();
+      // linger when reduce-scatter completes so the shrinking-working-set result registers
+      const justCompletedRS = (before===N-2 && step===N-1);
+      await sleep(justCompletedRS ? 1700 : 620);
+    }
+  }
+  document.getElementById("ar-play").onclick=play;
+  document.getElementById("ar-step").onclick=doStep;
+  document.getElementById("ar-reset").onclick=init;
+  init();
+})();
+
+/* =====================================================================
+   1b. NESTED GRANULARITY  backward -> bucket -> ring chunk -> pipeline slot
+   ===================================================================== */
+(function(){
+  const svg=document.getElementById("nest-svg");
+  if(!svg)return;
+  const status=document.getElementById("nest-status");
+  let busy;
+  const layers=[
+    {y:34, h:28, n:1,  label:"backward pass — full gradient", fill:C.gpuActive, tc:C.ink,
+     note:"Level 0: the whole gradient produced by one backward pass."},
+    {y:96, h:28, n:4,  label:"DDP buckets (~25 MB each) — one all-reduce per bucket", fill:C.reduced, tc:"#06222a",
+     note:"Level 1: PyTorch groups gradients into ~25 MB buckets. Each is a separate all-reduce, fired as soon as it fills during backprop (overlap knob)."},
+    {y:158,h:28, n:16, label:"ring chunks (bucket ÷ N) — rotate 2(N−1) steps", fill:C.signal, tc:"#06222a",
+     note:"Level 2: inside ONE bucket, NCCL splits the payload into N chunks that rotate around the ring (bandwidth-optimal). Shown: 4 chunks per bucket."},
+    {y:220,h:28, n:48, label:"pipeline slots — keep the link saturated", fill:C.partial, tc:"#06222a",
+     note:"Level 3: each chunk is sub-sliced into slots so the wire transmits slot i while the GPU reduces slot i−1 (hides per-step latency)."}
+  ];
+  const x0=40, x1=680, W=x1-x0;
+  function draw(upTo){
+    clear(svg);
+    layers.forEach((L,i)=>{
+      const on=i<=upTo;
+      // label
+      svg.appendChild(txt(x0,L.y-6,["LEVEL 0","LEVEL 1","LEVEL 2","LEVEL 3"][i],
+        {fill:on?L.fill:C.ruleB,"font-size":9,"text-anchor":"start","letter-spacing":"1.5"}));
+      // segmented bar
+      const seg=W/L.n, pad=L.n>8?0.5:1.5;
+      for(let k=0;k<L.n;k++){
+        svg.appendChild(el("rect",{x:x0+k*seg+pad,y:L.y,width:seg-2*pad,height:L.h,rx:L.n>8?1:3,
+          fill:on?L.fill:"#0e1419",stroke:C.ruleB,"stroke-width":.6,opacity:on?1:.4}));
+      }
+      // caption to the right is too tight; put below-left under bar instead
+      svg.appendChild(txt(x0,L.y+L.h+12,L.label,
+        {fill:on?C.dim:C.ruleB,"font-size":10.5,"text-anchor":"start"}));
+    });
+    // bracket showing one parent contains many children (level1 -> level2)
+    if(upTo>=2){
+      svg.appendChild(txt(x1,280,"one bucket → N ring chunks → many slots",
+        {fill:C.dim,"font-size":10,"text-anchor":"end","font-style":"italic"}));
+    }
+  }
+  function init(){busy=false;draw(-1);status.textContent="Ready. Each layer subdivides the one above it.";}
+  async function play(){
+    if(busy)return;busy=true;draw(-1);await sleep(200);
+    for(let i=0;i<layers.length;i++){draw(i);status.innerHTML=layers[i].note;await sleep(1100);}
+    status.innerHTML="<b>Nested, independent boundaries:</b> bucket size tunes overlap with compute; ring-chunk count (=N) gives bandwidth optimality; slots hide per-step latency.";
+    busy=false;
+  }
+  document.getElementById("nest-play").onclick=play;
+  document.getElementById("nest-reset").onclick=init;
+  init();
+})();
+
+/* =====================================================================
+   2. ALL-GATHER  (each GPU owns 1 shard, collect all 4)
+   ===================================================================== */
+(function(){
+  const svg=document.getElementById("ag-svg");
+  const status=document.getElementById("ag-status");
+  const N=4;
+  const cols=[120,290,460,630]; // gpu x positions (we'll use vertical stacks)
+  let grid,busy;
+  function init(){
+    grid=[];
+    for(let g=0;g<N;g++){grid.push([]);for(let s=0;s<N;s++)grid[g].push(g===s?"own":"empty");}
+    busy=false;status.textContent="Ready. Each GPU owns shard k; after gather all hold all 4.";
+    draw();
+  }
+  function draw(){
+    clear(svg);
+    const topY=40,cellH=42,cellW=58;
+    for(let g=0;g<N;g++){
+      const cx=cols[g];
+      svg.appendChild(txt(cx,22,"GPU "+g,{fill:C.dim,"font-size":12}));
+      for(let s=0;s<N;s++){
+        const y=topY+s*(cellH+6);
+        const st=grid[g][s];
+        svg.appendChild(el("rect",{x:cx-cellW/2,y,width:cellW,height:cellH,rx:6,
+          fill:st==="empty"?"#0e1419":chunkFill(st==="own"?"own":"final"),
+          stroke:st==="empty"?C.ruleB:"none","stroke-width":1.2,opacity:st==="empty"?.5:1}));
+        svg.appendChild(txt(cx,y+cellH/2,st==="empty"?"·":("S"+s),
+          {fill:st==="empty"?C.ruleB:"#06222a","font-size":13,"font-weight":st==="empty"?400:700}));
+      }
+    }
+  }
+  async function play(){
+    if(busy)return;busy=true;init();await sleep(150);
+    // N-1 ring steps; each step every gpu forwards a shard clockwise
+    for(let step=0;step<N-1;step++){
+      status.innerHTML=`All-Gather — ring step <b>${step+1}/${N-1}</b>: forward one shard to the clockwise neighbour.`;
+      const sendIdx=g=>((g-step)%N+N)%N;
+      const flights=[];
+      for(let g=0;g<N;g++)flights.push({from:cols[g],to:cols[(g+1)%N],idx:sendIdx(g)});
+      await fly(flights);
+      for(let g=0;g<N;g++){const r=(g+1)%N,idx=sendIdx(g);grid[r][idx]="final";}
+      draw();await sleep(220);
+    }
+    status.innerHTML="<b>Complete.</b> Every GPU holds all 4 shards — the full tensor, briefly, for compute.";
+    busy=false;
+  }
+  async function fly(flights){
+    if(prefersReduced)return;
+    const topY=40,cellH=42;
+    const dots=flights.map(f=>{const y=topY+f.idx*(cellH+6)+cellH/2;
+      const d=el("circle",{cx:f.from,cy:y,r:9,fill:C.reduced,stroke:"#06222a","stroke-width":1.5});
+      svg.appendChild(d);return {d,y};});
+    const T=480,t0=performance.now();
+    await new Promise(res=>{function fr(now){let k=Math.min(1,(now-t0)/T);
+      const e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+      dots.forEach((o,i)=>o.d.setAttribute("cx",flights[i].from+(flights[i].to-flights[i].from)*e));
+      if(k<1)requestAnimationFrame(fr);else{dots.forEach(o=>o.d.remove());res();}}
+      requestAnimationFrame(fr);});
+  }
+  document.getElementById("ag-play").onclick=play;
+  document.getElementById("ag-reset").onclick=init;
+  init();
+})();
+
+/* =====================================================================
+   3. REDUCE-SCATTER  (sum across gpus, each keeps one chunk)
+   ===================================================================== */
+(function(){
+  const svg=document.getElementById("rs-svg");
+  const status=document.getElementById("rs-status");
+  const N=4;
+  const cols=[120,290,460,630];
+  let grid,busy;
+  // grid[g][c]: 'local' contribution everywhere initially
+  function init(){
+    grid=[];
+    for(let g=0;g<N;g++){grid.push([]);for(let c=0;c<N;c++)grid[g].push("own");}
+    busy=false;status.textContent="Ready. Each GPU will keep only chunk k of the summed gradient.";
+    draw();
+  }
+  function draw(){
+    clear(svg);
+    const topY=40,cellH=42,cellW=58;
+    for(let g=0;g<N;g++){
+      const cx=cols[g];
+      svg.appendChild(txt(cx,22,"GPU "+g,{fill:C.dim,"font-size":12}));
+      for(let c=0;c<N;c++){
+        const y=topY+c*(cellH+6),st=grid[g][c];
+        svg.appendChild(el("rect",{x:cx-cellW/2,y,width:cellW,height:cellH,rx:6,
+          fill:st==="empty"?"#0e1419":chunkFill(st),
+          stroke:st==="empty"?C.ruleB:"none","stroke-width":1.2,opacity:st==="empty"?.4:1}));
+        svg.appendChild(txt(cx,y+cellH/2,st==="empty"?"":("c"+c),
+          {fill:st==="empty"?C.ruleB:"#06222a","font-size":12,"font-weight":700}));
+      }
+    }
+  }
+  async function play(){
+    if(busy)return;busy=true;init();await sleep(150);
+    for(let step=0;step<N-1;step++){
+      status.innerHTML=`Reduce-Scatter — step <b>${step+1}/${N-1}</b>: send a chunk clockwise; receiver <em>adds</em> it.`;
+      const sendIdx=g=>((g-step)%N+N)%N;
+      const flights=[];
+      for(let g=0;g<N;g++)flights.push({from:cols[g],to:cols[(g+1)%N],idx:sendIdx(g)});
+      await fly(flights);
+      for(let g=0;g<N;g++){const r=(g+1)%N,idx=sendIdx(g);
+        grid[r][idx]="partial";
+        // sender's sent chunk is now "consumed" visually (fades) except keeper
+      }
+      // fade non-kept chunks on senders to show data being scattered away
+      draw();await sleep(220);
+    }
+    // finalize: gpu g keeps chunk (g+1)%N as final; clear others
+    for(let g=0;g<N;g++)for(let c=0;c<N;c++)
+      grid[g][c]= (c===(g+1)%N)?"final":"empty";
+    draw();
+    status.innerHTML="<b>Complete.</b> Each GPU keeps only its summed slice — fused reduce + scatter, half the bytes of all-reduce.";
+    busy=false;
+  }
+  async function fly(flights){
+    if(prefersReduced)return;
+    const topY=40,cellH=42;
+    const dots=flights.map(f=>{const y=topY+f.idx*(cellH+6)+cellH/2;
+      const d=el("circle",{cx:f.from,cy:y,r:9,fill:C.partial,stroke:"#06222a","stroke-width":1.5});
+      svg.appendChild(d);return d;});
+    const T=480,t0=performance.now();
+    await new Promise(res=>{function fr(now){let k=Math.min(1,(now-t0)/T);
+      const e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+      dots.forEach((d,i)=>d.setAttribute("cx",flights[i].from+(flights[i].to-flights[i].from)*e));
+      if(k<1)requestAnimationFrame(fr);else{dots.forEach(d=>d.remove());res();}}
+      requestAnimationFrame(fr);});
+  }
+  document.getElementById("rs-play").onclick=play;
+  document.getElementById("rs-reset").onclick=init;
+  init();
+})();
+
+/* =====================================================================
+   4a. MEGATRON MLP MATRIX ALGEBRA
+   X[s x h] · A[h x 4h]  (col-parallel) -> GeLU -> · B[4h x h] (row-parallel)
+   Shows block shapes & shard colors per GPU, all-reduce at the end.
+   ===================================================================== */
+(function(){
+  const svg=document.getElementById("tpm-svg");
+  if(!svg)return;
+  const status=document.getElementById("tpm-status");
+  const G0=C.signal, G1=C.reduced;   // gpu0 / gpu1 shard colors
+  let stepi, busy;
+  const STEPS=5;
+  // helper: a labelled matrix block, optionally split into vertical/horizontal halves
+  function mat(x,y,w,h,label,opts={}){
+    const o=Object.assign({split:null,colorA:C.gpuActive,colorB:C.gpuActive,
+      dim:false,sub:""},opts);
+    if(o.split==="col"){ // two side-by-side columns
+      svg.appendChild(el("rect",{x,y,width:w/2,height:h,fill:o.dim?"#0e1419":o.colorA,
+        stroke:C.ruleB,"stroke-width":1}));
+      svg.appendChild(el("rect",{x:x+w/2,y,width:w/2,height:h,fill:o.dim?"#0e1419":o.colorB,
+        stroke:C.ruleB,"stroke-width":1}));
+    }else if(o.split==="row"){ // two stacked rows
+      svg.appendChild(el("rect",{x,y,width:w,height:h/2,fill:o.dim?"#0e1419":o.colorA,
+        stroke:C.ruleB,"stroke-width":1}));
+      svg.appendChild(el("rect",{x,y:y+h/2,width:w,height:h/2,fill:o.dim?"#0e1419":o.colorB,
+        stroke:C.ruleB,"stroke-width":1}));
+    }else{
+      svg.appendChild(el("rect",{x,y,width:w,height:h,fill:o.dim?"#0e1419":o.colorA,
+        stroke:C.ruleB,"stroke-width":1.2,opacity:o.dim?.5:1}));
+    }
+    svg.appendChild(txt(x+w/2,y+h/2,label,{fill:o.dim?C.ruleB:"#06222a","font-size":13,"font-weight":700}));
+    if(o.sub)svg.appendChild(txt(x+w/2,y+h+12,o.sub,{fill:C.dim,"font-size":10}));
+  }
+  function lbl(x,y,s,col){svg.appendChild(txt(x,y,s,{fill:col||C.dim,"font-size":11,"text-anchor":"middle"}));}
+  function op(x,y,s){svg.appendChild(txt(x,y,s,{fill:C.ink,"font-size":18,"font-weight":700}));}
+
+  function draw(){
+    clear(svg);
+    // GPU color key at top
+    svg.appendChild(el("rect",{x:40,y:14,width:12,height:12,rx:2,fill:G0}));
+    lbl(95,21,"GPU 0 shard"); 
+    svg.appendChild(el("rect",{x:160,y:14,width:12,height:12,rx:2,fill:G1}));
+    lbl(215,21,"GPU 1 shard");
+
+    // Row 1: first matmul  X · A = Y
+    const y1=56;
+    lbl(360,44,"① First matmul:  X · A  (A is COLUMN-parallel — split the 4h output dim)",C.ink);
+    mat(60,y1,52,60,"X",{sub:"[s × h]"});
+    op(122,y1+34,"·");
+    mat(146,y1,120,60,"",{split:"col",colorA:G0,colorB:G1});
+    svg.appendChild(txt(176,y1+34,"A₁",{fill:"#06222a","font-size":13,"font-weight":700}));
+    svg.appendChild(txt(236,y1+34,"A₂",{fill:"#06222a","font-size":13,"font-weight":700}));
+    lbl(206,y1+72,"A [h × 4h]");
+    op(280,y1+34,"=");
+    mat(300,y1,120,60,"",{split:"col",colorA:G0,colorB:G1});
+    svg.appendChild(txt(330,y1+34,"Y₁",{fill:"#06222a","font-size":13,"font-weight":700}));
+    svg.appendChild(txt(390,y1+34,"Y₂",{fill:"#06222a","font-size":13,"font-weight":700}));
+    lbl(360,y1+72,"Y [s × 4h]");
+    if(stepi>=1){
+      svg.appendChild(txt(470,y1+18,"no comm: X replicated,",{fill:C.lime,"font-size":10.5,"text-anchor":"start"}));
+      svg.appendChild(txt(470,y1+33,"A split locally → each GPU",{fill:C.dim,"font-size":10.5,"text-anchor":"start"}));
+      svg.appendChild(txt(470,y1+48,"owns a narrow Y slice",{fill:C.dim,"font-size":10.5,"text-anchor":"start"}));
+    }
+
+    // Row 2: GeLU (local, element-wise)
+    const y2=170;
+    if(stepi>=2){
+      lbl(360,y2-2,"② GeLU(Y) — element-wise, runs LOCALLY on each column slice (no comm)",C.ink);
+      mat(300,y2+8,120,46,"",{split:"col",colorA:G0,colorB:G1});
+      svg.appendChild(txt(330,y2+31,"g(Y₁)",{fill:"#06222a","font-size":11,"font-weight":700}));
+      svg.appendChild(txt(390,y2+31,"g(Y₂)",{fill:"#06222a","font-size":11,"font-weight":700}));
+      svg.appendChild(txt(470,y2+31,"← split survives the nonlinearity",
+        {fill:C.lime,"font-size":11,"text-anchor":"start"}));
+    }
+
+    // Row 3: second matmul  g(Y) · B = Z (partial)
+    const y3=240;
+    if(stepi>=3){
+      lbl(360,y3-2,"③ Second matmul:  g(Y) · B  (B is ROW-parallel — split the 4h input dim to match Y)",C.ink);
+      mat(60,y3+8,120,56,"",{split:"col",colorA:G0,colorB:G1});
+      svg.appendChild(txt(90,y3+36,"g(Y₁)",{fill:"#06222a","font-size":10,"font-weight":700}));
+      svg.appendChild(txt(150,y3+36,"g(Y₂)",{fill:"#06222a","font-size":10,"font-weight":700}));
+      op(186,y3+36,"·");
+      mat(210,y3+8,52,56,"",{split:"row",colorA:G0,colorB:G1});
+      svg.appendChild(txt(236,y3+22,"B₁",{fill:"#06222a","font-size":11,"font-weight":700}));
+      svg.appendChild(txt(236,y3+50,"B₂",{fill:"#06222a","font-size":11,"font-weight":700}));
+      lbl(236,y3+78,"B [4h × h]");
+      op(276,y3+36,"=");
+      // partial products
+      mat(300,y3+8,60,56,"Z₁",{colorA:G0,sub:"partial"});
+      op(366,y3+36,"+");
+      mat(384,y3+8,60,56,"Z₂",{colorA:G1,sub:"partial"});
+      svg.appendChild(txt(470,y3+30,"each GPU: full-SIZE",{fill:C.dim,"font-size":11,"text-anchor":"start"}));
+      svg.appendChild(txt(470,y3+44,"but PARTIAL sum",{fill:C.dim,"font-size":11,"text-anchor":"start"}));
+    }
+
+    // Row 4: all-reduce
+    const y4=330;
+    if(stepi>=4){
+      svg.appendChild(el("rect",{x:300,y:y4+8,width:144,height:46,rx:8,fill:C.reduced,stroke:"none"}));
+      svg.appendChild(txt(372,y4+27,"ALL-REDUCE (sum)",{fill:"#06222a","font-size":12,"font-weight":700}));
+      svg.appendChild(txt(372,y4+44,"Z = Z₁ + Z₂",{fill:"#06222a","font-size":11}));
+      // arrows from partials down to all-reduce
+      svg.appendChild(el("line",{x1:330,y1:y3+64,x2:350,y2:y4+8,stroke:C.reduced,"stroke-width":1.5}));
+      svg.appendChild(el("line",{x1:414,y1:y3+64,x2:394,y2:y4+8,stroke:C.reduced,"stroke-width":1.5}));
+      svg.appendChild(txt(470,y4+30,"the block's ONLY",{fill:C.reduced,"font-size":11,"text-anchor":"start"}));
+      svg.appendChild(txt(470,y4+44,"communication",{fill:C.reduced,"font-size":11,"text-anchor":"start"}));
+    }
+  }
+  const notes=[
+    "Forward begins. X is replicated on both GPUs; A is split by columns so each GPU holds A₁ or A₂.",
+    "① X·Aᵢ → each GPU produces a narrow column-slice Yᵢ. No communication: the column split is purely local.",
+    "② GeLU is element-wise, so it runs on each slice independently — the column split survives the nonlinearity with no comm.",
+    "③ B is split by ROWS to match Y's columns. g(Yᵢ)·Bᵢ gives a full-size but PARTIAL output Zᵢ.",
+    "④ One ALL-REDUCE sums the partials: Z = Z₁+Z₂. That single reduction is the block's only communication (plus a conjugate one in backward)."
+  ];
+  function show(){draw();status.innerHTML=notes[Math.min(stepi,STEPS-1)];}
+  function init(){busy=false;stepi=0;draw();status.textContent="Ready. Two GPUs; follow the block shapes through both matmuls.";}
+  function stepFn(){if(busy)return;if(stepi<STEPS-1){stepi++;show();}}
+  async function play(){if(busy)return;busy=true;stepi=0;
+    for(let i=0;i<STEPS;i++){stepi=i;show();await sleep(1500);}busy=false;}
+  document.getElementById("tpm-play").onclick=play;
+  document.getElementById("tpm-step").onclick=stepFn;
+  document.getElementById("tpm-reset").onclick=init;
+  init();
+})();
+
+/* =====================================================================
+   4b. ATTENTION HEADS PARTITIONED  (4 heads -> 2 GPUs, output proj row-parallel)
+   ===================================================================== */
+(function(){
+  const svg=document.getElementById("tpa-svg");
+  if(!svg)return;
+  const status=document.getElementById("tpa-status");
+  const G=[C.signal,C.signal,C.reduced,C.reduced]; // heads 0,1 -> gpu0; 2,3 -> gpu1
+  const owner=[0,0,1,1];
+  let busy,phase;
+  function draw(){
+    clear(svg);
+    lbl(360,22,"4 attention heads · heads 0–1 on GPU 0, heads 2–3 on GPU 1");
+    // heads row
+    const hw=120,gap=18,startx=60,hy=44;
+    for(let hh=0;hh<4;hh++){
+      const x=startx+hh*(hw+gap);
+      svg.appendChild(el("rect",{x,y:hy,width:hw,height:64,rx:8,
+        fill:phase>=1?G[hh]:C.gpuActive,stroke:C.ruleB,"stroke-width":1.2}));
+      svg.appendChild(txt(x+hw/2,hy+22,"head "+hh,{fill:phase>=1?"#06222a":C.ink,"font-size":12,"font-weight":700}));
+      svg.appendChild(txt(x+hw/2,hy+44,"softmax(QKᵀ)V",{fill:phase>=1?"#06222a":C.dim,"font-size":10}));
+      svg.appendChild(txt(x+hw/2,hy-6,"GPU "+owner[hh],{fill:G[hh],"font-size":10}));
+    }
+    if(phase>=1)lbl(360,130,"each head computes end-to-end with NO cross-GPU comm (Q,K,V are column-parallel by head)",C.lime);
+
+    // concat + output projection (row-parallel)
+    const py=170;
+    if(phase>=2){
+      lbl(360,py-6,"Output projection W_O is ROW-parallel (matches the head split)",C.ink);
+      // gpu0 partial, gpu1 partial
+      svg.appendChild(el("rect",{x:170,y:py+6,width:160,height:48,rx:8,fill:C.signal,stroke:"none"}));
+      svg.appendChild(txt(250,py+24,"GPU0: [h0,h1]·W_O^(0)",{fill:"#06222a","font-size":11,"font-weight":700}));
+      svg.appendChild(txt(250,py+42,"partial output",{fill:"#06222a","font-size":10}));
+      svg.appendChild(el("rect",{x:390,y:py+6,width:160,height:48,rx:8,fill:C.reduced,stroke:"none"}));
+      svg.appendChild(txt(470,py+24,"GPU1: [h2,h3]·W_O^(1)",{fill:"#06222a","font-size":11,"font-weight":700}));
+      svg.appendChild(txt(470,py+42,"partial output",{fill:"#06222a","font-size":10}));
+    }
+    // all-reduce
+    const ay=250;
+    if(phase>=3){
+      svg.appendChild(el("rect",{x:280,y:ay+4,width:160,height:46,rx:8,fill:C.reduced,stroke:"none"}));
+      svg.appendChild(txt(360,ay+23,"ALL-REDUCE",{fill:"#06222a","font-size":12,"font-weight":700}));
+      svg.appendChild(txt(360,ay+40,"sum partial outputs",{fill:"#06222a","font-size":10}));
+      svg.appendChild(el("line",{x1:250,y1:py+54,x2:330,y2:ay+4,stroke:C.reduced,"stroke-width":1.5}));
+      svg.appendChild(el("line",{x1:470,y1:py+54,x2:390,y2:ay+4,stroke:C.reduced,"stroke-width":1.5}));
+    }
+  }
+  function init(){busy=false;phase=0;draw();status.textContent="Ready. 4 heads split across 2 GPUs.";}
+  async function play(){if(busy)return;busy=true;phase=0;draw();
+    const n=["Heads are assigned to GPUs: 0–1 on GPU0, 2–3 on GPU1.",
+      "Each head runs its full attention (QKᵀ, softmax, ·V) <b>locally</b> — no comm, because Q/K/V projections are column-parallel by head.",
+      "The output projection W_O is <b>row-parallel</b>, so each GPU produces a <b>partial</b> output over its heads.",
+      "A single <b>all-reduce</b> sums the partial outputs — structurally identical to the MLP block."];
+    for(let p=0;p<4;p++){phase=p+1; draw(); status.innerHTML=n[p]; await sleep(1500);}
+    busy=false;}
+  function lbl(x,y,s,col){svg.appendChild(txt(x,y,s,{fill:col||C.dim,"font-size":11}));}
+  document.getElementById("tpa-play").onclick=play;
+  document.getElementById("tpa-reset").onclick=init;
+  init();
+})();
+
+/* =====================================================================
+   4c. SHARD AXIS DETERMINES COLLECTIVE   Y = X[m x k] · W[k x n]
+   ===================================================================== */
+(function(){
+  const svg=document.getElementById("tpx-svg");
+  if(!svg)return;
+  const status=document.getElementById("tpx-status");
+  function lbl(x,y,s,col,anchor){svg.appendChild(txt(x,y,s,{fill:col||C.dim,"font-size":11,"text-anchor":anchor||"middle"}));}
+  function op(x,y,s){svg.appendChild(txt(x,y,s,{fill:C.ink,"font-size":18,"font-weight":700}));}
+  function draw(mode){
+    clear(svg);
+    lbl(360,24,"Y = X · W      X:[m × k]   W:[k × n]   Y:[m × n]",C.ink);
+    const y=70;
+    if(mode==="none"){
+      mat(220,y,60,70,"X",C.gpuActive); op(286,y+38,"·");
+      mat(310,y,70,70,"W",C.gpuActive); op(386,y+38,"=");
+      mat(410,y,80,70,"Y",C.gpuActive);
+      lbl(360,180,"Pick a sharding axis to see which collective is forced.",C.dim);
+      return;
+    }
+    if(mode==="k"){
+      // shard contraction dim k: X split by columns, W split by rows
+      lbl(360,52,"Shard the CONTRACTION dim k → X split by cols, W split by rows",C.signal);
+      // X two col halves
+      svg.appendChild(el("rect",{x:220,y,width:30,height:70,fill:C.signal,stroke:C.ruleB}));
+      svg.appendChild(el("rect",{x:250,y,width:30,height:70,fill:C.reduced,stroke:C.ruleB}));
+      svg.appendChild(txt(250,y-8,"X (split k)",{fill:C.dim,"font-size":10}));
+      op(286,y+38,"·");
+      svg.appendChild(el("rect",{x:310,y,width:70,height:35,fill:C.signal,stroke:C.ruleB}));
+      svg.appendChild(el("rect",{x:310,y:y+35,width:70,height:35,fill:C.reduced,stroke:C.ruleB}));
+      svg.appendChild(txt(345,y-8,"W (split k)",{fill:C.dim,"font-size":10}));
+      op(386,y+38,"=");
+      mat(410,y,80,70,"Y₀",C.signal); 
+      svg.appendChild(txt(450,y+82,"+ Y₁ (partial)",{fill:C.dim,"font-size":11,"text-anchor":"middle"}));
+      // result
+      svg.appendChild(el("rect",{x:230,y:198,width:260,height:34,rx:8,fill:C.reduced,stroke:"none"}));
+      svg.appendChild(txt(360,215,"⇒ ALL-REDUCE / reduce-scatter",{fill:"#06222a","font-size":13,"font-weight":700}));
+      svg.appendChild(txt(360,250,"each GPU has a partial sum → must reduce to get Y",{fill:C.dim,"font-size":11,"text-anchor":"middle"}));
+      lbl(360,275,"This is Megatron's row-parallel B / output-projection case.",C.lime);
+    }
+    if(mode==="n"){
+      // shard output dim n: W split by cols, X replicated
+      lbl(360,52,"Shard the OUTPUT dim n → W split by cols, X replicated",C.signal);
+      mat(220,y,60,70,"X",C.gpuActive); 
+      svg.appendChild(txt(250,y-8,"X (replicated)",{fill:C.dim,"font-size":10}));
+      op(286,y+38,"·");
+      svg.appendChild(el("rect",{x:310,y,width:35,height:70,fill:C.signal,stroke:C.ruleB}));
+      svg.appendChild(el("rect",{x:345,y,width:35,height:70,fill:C.reduced,stroke:C.ruleB}));
+      svg.appendChild(txt(345,y-8,"W (split n)",{fill:C.dim,"font-size":10}));
+      op(386,y+38,"=");
+      svg.appendChild(el("rect",{x:410,y,width:40,height:70,fill:C.signal,stroke:C.ruleB}));
+      svg.appendChild(el("rect",{x:450,y,width:40,height:70,fill:C.reduced,stroke:C.ruleB}));
+      svg.appendChild(txt(450,y-8,"Y (split n)",{fill:C.dim,"font-size":10}));
+      svg.appendChild(el("rect",{x:240,y:198,width:240,height:34,rx:8,fill:C.gpuActive,stroke:C.ruleB}));
+      svg.appendChild(txt(360,215,"⇒ NO reduction needed",{fill:C.ink,"font-size":13,"font-weight":700}));
+      svg.appendChild(txt(360,250,"Y stays sharded; all-gather only if a later op needs full Y",{fill:C.dim,"font-size":11,"text-anchor":"middle"}));
+      lbl(360,275,"This is Megatron's column-parallel A case (output stays split for GeLU).",C.lime);
+    }
+  }
+  function mat(x,y,w,h,label,fill){
+    svg.appendChild(el("rect",{x,y,width:w,height:h,fill:fill||C.gpuActive,stroke:C.ruleB,"stroke-width":1.2}));
+    svg.appendChild(txt(x+w/2,y+h/2,label,{fill:"#06222a","font-size":13,"font-weight":700}));
+  }
+  function init(){draw("none");status.textContent="Ready. Y = X·W, with X [m×k] and W [k×n]. Pick an axis to shard.";}
+  document.getElementById("tpx-shard-k").onclick=()=>{draw("k");
+    status.innerHTML="Sharding the <b>contraction dimension</b> gives each GPU a partial sum → a <b>reduction</b> (all-reduce / reduce-scatter) is forced.";};
+  document.getElementById("tpx-shard-n").onclick=()=>{draw("n");
+    status.innerHTML="Sharding a <b>non-contracted (output) dimension</b> needs no reduction; the output stays sharded (all-gather only if a later op wants it whole).";};
+  document.getElementById("tpx-reset").onclick=init;
+  init();
+})();
+
+/* =====================================================================
+   4d. OVERLAP TIMELINE  DP / FSDP / TP  — overlappable vs blocking comm
+   ===================================================================== */
+(function(){
+  const svg=document.getElementById("tpo-svg");
+  if(!svg)return;
+  const status=document.getElementById("tpo-status");
+  let busy;
+  const x0=195, x1=695, W=x1-x0;
+  // Each row: a list of compute blocks; comm drawn as a bar under/over.
+  // We model 4 "layers" of compute. unit = W/ (timeline length)
+  const rows=[
+    {name:"DP", tag:"infrequent · overlapped", regime:"bandwidth-bound",
+     y:70, kind:"dp"},
+    {name:"FSDP", tag:"frequent · overlapped (prefetch)", regime:"bandwidth-bound",
+     y:150, kind:"fsdp"},
+    {name:"TP", tag:"frequent · BLOCKING", regime:"latency-bound",
+     y:230, kind:"tp"}
+  ];
+  function rect(x,y,w,h,fill,o){svg.appendChild(el("rect",{x,y,width:Math.max(0,w),height:h,rx:3,
+    fill,stroke:"none",opacity:o==null?1:o}));}
+  function label(x,y,s,col,sz,anchor){svg.appendChild(txt(x,y,s,{fill:col||C.dim,
+    "font-size":sz||11,"text-anchor":anchor||"start"}));}
+
+  function drawRow(r,prog){
+    const ch=26;          // compute block height
+    const yc=r.y;         // compute baseline
+    // row labels
+    label(20,yc+ch/2-4,r.name,C.ink,14,"start");
+    label(20,yc+ch/2+12,r.tag,C.dim,9.5,"start");
+    label(x1,yc-14,r.regime, r.kind==="tp"?C.danger:C.signal,10.5,"end");
+
+    if(r.kind==="dp"){
+      // 4 compute blocks contiguous; one big comm bar overlapped at the end, hidden
+      const n=4, bw=W/n;
+      for(let i=0;i<n;i++){
+        const on = prog> i*0.22;
+        rect(x0+i*bw+1, yc, bw-2, ch, C.gpuActive, on?1:.25);
+      }
+      // overlapped comm: a cyan bar UNDER the compute (hidden), spanning last 60%
+      if(prog>0.5){
+        rect(x0+W*0.4, yc+ch+4, W*0.55, 9, C.signal, 1);
+        label(x0+W*0.67, yc+ch+22, "gradient all-reduce — overlaps backward, hidden", C.signal,9.5,"middle");
+      }
+      // total time marker
+      if(prog>=1) label(x0+W+0, yc+ch/2+4, "", C.dim,10,"start");
+    }
+    if(r.kind==="fsdp"){
+      // 4 compute blocks; before each, a small comm bar that overlaps the PREVIOUS compute (prefetch)
+      const n=4, bw=W/n;
+      for(let i=0;i<n;i++){
+        const on = prog> i*0.22;
+        rect(x0+i*bw+1, yc, bw-2, ch, C.gpuActive, on?1:.25);
+        // prefetch comm for layer i, drawn under the PREVIOUS block (hidden)
+        if(i>0 && prog> (i-0.5)*0.22){
+          rect(x0+(i-1)*bw+bw*0.45, yc+ch+4, bw*0.5, 9, C.signal, 1);
+        }
+      }
+      if(prog>0.4)
+        label(x0+W*0.5, yc+ch+22, "per-layer all-gather — prefetched under prev layer, hidden", C.signal,9.5,"middle");
+    }
+    if(r.kind==="tp"){
+      // compute blocks SEPARATED by exposed comm + idle gaps
+      const n=4, gap=W*0.07, bw=(W - n*gap)/n;
+      let x=x0;
+      for(let i=0;i<n;i++){
+        const on = prog> i*0.24;
+        rect(x, yc, bw, ch, C.gpuActive, on?1:.25);
+        x+=bw;
+        // exposed blocking comm in the gap + idle
+        if(i<n-1){
+          const commOn = prog> (i+0.5)*0.24;
+          if(commOn){
+            rect(x+gap*0.15, yc, gap*0.7, ch, C.danger, 1);     // exposed comm, full height = blocks compute
+            // idle hatch on the compute lane during comm is implicit (no compute block there)
+          }
+          x+=gap;
+        }
+      }
+      if(prog>0.3)
+        label(x0+W*0.5, yc+ch+18, "all-reduce sits IN the compute lane — compute stalls, nothing to hide it", C.danger,9.5,"middle");
+    }
+  }
+  function draw(prog){
+    clear(svg);
+    label(x0+W*0.5, 24, "same number of layers, same wall-clock budget — watch where the GPU idles", C.ink,11,"middle");
+    // time axis
+    svg.appendChild(el("line",{x1:x0,y1:294,x2:x1,y2:294,stroke:C.ruleB,"stroke-width":1}));
+    label(x1, 308, "wall-clock →", C.ruleB,10,"end");
+    rows.forEach(r=>drawRow(r,prog));
+  }
+  function init(){busy=false;draw(0);status.textContent="Ready. Three regimes on the same compute timeline.";}
+  async function play(){
+    if(busy)return;busy=true;
+    const msgs=[
+      "DP: compute runs contiguously; the single gradient all-reduce overlaps the backward pass and is hidden.",
+      "FSDP: comm is frequent (per layer) but each all-gather is prefetched under the previous layer's compute — still hidden.",
+      "TP: each all-reduce sits on the critical path between compute blocks. The GPU stalls — nothing to overlap it with.",
+      "Result: DP and FSDP stay bandwidth-bound (comm hidden); TP is latency-bound (comm exposed). Frequency didn't decide it — overlappability did."
+    ];
+    for(let k=0;k<=1.0001;k+=0.04){draw(Math.min(1,k));await sleep(40);}
+    // staged captions
+    for(let i=0;i<msgs.length;i++){status.innerHTML=msgs[i];await sleep(i===msgs.length-1?10:1600);}
+    busy=false;
+  }
+  document.getElementById("tpo-play").onclick=play;
+  document.getElementById("tpo-reset").onclick=init;
+  init();
+})();
+
+/* =====================================================================
+   4e. f & g GATES  — two persistent GPU rows.
+   all-reduce = two crossing slanted arrows between the rows (partial->reduced)
+   no-op      = straight horizontal arrows (data already replicated)
+   Forward:  input replicated (no-op at f)  ->  output partial -> reduced (g)
+   Backward: grad-out replicated (no-op at g) -> grad-in partial -> reduced (f)
+   ===================================================================== */
+(function(){
+  const svg=document.getElementById("tpfg-svg");
+  if(!svg)return;
+  const status=document.getElementById("tpfg-status");
+  let dir=null; // 'fwd' | 'bwd' | null
+  const R0=104, R1=196;            // y of the two GPU rows
+  function chip(cx,cy,w,h,label,fill,tc,sub){
+    svg.appendChild(el("rect",{x:cx-w/2,y:cy-h/2,width:w,height:h,rx:6,fill,
+      stroke:C.ruleB,"stroke-width":1.2}));
+    svg.appendChild(txt(cx,cy- (sub?6:0),label,{fill:tc||C.ink,"font-size":11,"font-weight":600}));
+    if(sub)svg.appendChild(txt(cx,cy+9,sub,{fill:tc||C.dim,"font-size":8.5,"font-weight":400}));
+  }
+  function harrow(x1,x2,y,col,dashed){ // straight horizontal
+    const mk = (col===C.ruleB)?"url(#fgar2)":"url(#fgar)";
+    svg.appendChild(el("line",{x1,y1:y,x2,y2:y,stroke:col,"stroke-width":2,
+      "stroke-dasharray":dashed?"4 3":"none","marker-end":mk}));
+  }
+  function sarrow(x1,y1,x2,y2,col){ // slanted (the crossing all-reduce arrows)
+    svg.appendChild(el("line",{x1,y1,x2,y2,stroke:col,"stroke-width":2.4,"marker-end":"url(#fgar)"}));
+  }
+  function draw(){
+    clear(svg);
+    const defs=el("defs",{});
+    const mkcol = dir==="bwd"?C.signal:(dir==="fwd"?C.lime:C.ruleB);
+    const mk=el("marker",{id:"fgar",markerWidth:8,markerHeight:8,refX:6.5,refY:3,orient:"auto"});
+    mk.appendChild(el("path",{d:"M0,0 L6,3 L0,6 Z",fill:mkcol}));
+    defs.appendChild(mk);
+    // separate neutral marker for the no-op straight arrows (always rule color)
+    const mk2=el("marker",{id:"fgar2",markerWidth:8,markerHeight:8,refX:6.5,refY:3,orient:"auto"});
+    mk2.appendChild(el("path",{d:"M0,0 L6,3 L0,6 Z",fill:C.ruleB}));
+    defs.appendChild(mk2);
+    svg.appendChild(defs);
+
+    const fwd = dir!=="bwd";
+    const col = dir==="bwd"?C.signal:C.lime;
+    const noop = C.ruleB;
+
+    // title
+    svg.appendChild(txt(360,24,
+      dir?(fwd?"FORWARD  —  flows left → right":"BACKWARD  —  gradient flows right → left")
+        :"Pick a direction", {fill:dir?col:C.dim,"font-size":12,"font-weight":600}));
+    // row labels
+    svg.appendChild(txt(34,R0,"GPU 0",{fill:C.dim,"font-size":11,"text-anchor":"start"}));
+    svg.appendChild(txt(34,R1,"GPU 1",{fill:C.dim,"font-size":11,"text-anchor":"start"}));
+
+    // column x's
+    const xIn=130, xMat=320, xPart=470, xOut=620;
+
+    if(!dir){
+      // neutral: just show the two rows with the gate names
+      [R0,R1].forEach((ry,i)=>{
+        chip(xIn,ry,86,40,"input",C.gpuActive,C.ink);
+        chip(xMat,ry,120,40,"GPU"+i+": X·A"+(i+1),C.gpuActive,C.ink);
+        chip(xOut,ry,86,40,"output",C.gpuActive,C.ink);
+        harrow(xIn+43,xMat-60,ry,noop);
+        harrow(xMat+60,xOut-43,ry,noop);
+      });
+      svg.appendChild(txt(360,256,"f = input gate · g = output gate. Pick a direction to see which one all-reduces.",{fill:C.dim,"font-size":11}));
+      return;
+    }
+
+    if(fwd){
+      // FORWARD: input replicated (no-op straight arrows at f) -> matmul -> partial -> CROSS all-reduce -> reduced out
+      [R0,R1].forEach((ry,i)=>{
+        chip(xIn,ry,90,40, "input X", C.gpuActive, C.ink, "replicated");
+        chip(xMat,ry,120,40,"GPU"+i+": X·A"+(i+1),C.gpuActive,C.ink);
+        chip(xPart,ry,78,40,"Z"+(i+1),C.signal,"#06222a","partial");
+        chip(xOut,ry,92,40,"Z = Z₁+Z₂",C.reduced,"#06222a","reduced");
+        // f = no-op: straight arrows input -> matmul (data already replicated)
+        harrow(xIn+45,xMat-60,ry,noop);
+        // matmul -> partial (local, straight)
+        harrow(xMat+60,xPart-39,ry,noop);
+      });
+      // g = all-reduce: crossing slanted arrows partial(row i) -> reduced(row other)
+      sarrow(xPart+39,R0+6, xOut-46,R1-6, col);   // top-partial down to bottom-reduced
+      sarrow(xPart+39,R1-6, xOut-46,R0+6, col);   // bottom-partial up to top-reduced
+      // also self arrows (each keeps its own) drawn faint horizontal
+      harrow(xPart+39,xOut-46,R0-14,col);
+      harrow(xPart+39,xOut-46,R1+14,col);
+      // gate badges
+      gateBadge(xIn,266,"f","no-op",false);
+      gateBadge((xPart+xOut)/2,266,"g","all-reduce",true,col);
+    } else {
+      // BACKWARD: flow right->left.  Order L->R: reduced ∂L/∂X (xIn), partial (xPart2),
+      // matmul (xMat2), ∂L/∂Z (xOut). Crossing happens in the clear xPart2->xIn span.
+      const xPart2=300, xMat2=470;
+      [R0,R1].forEach((ry,i)=>{
+        chip(xOut,ry,96,40,"∂L/∂Z",C.gpuActive,C.ink,"replicated");
+        chip(xMat2,ry,120,40,"GPU"+i+" backward",C.gpuActive,C.ink);
+        chip(xPart2,ry,86,40,"∂L/∂X|"+i,C.signal,"#06222a","partial");
+        chip(xIn,ry,96,40,"∂L/∂X",C.reduced,"#06222a","summed!");
+        // g = no-op: ∂L/∂Z replicated; straight arrows output -> matmul
+        harrow(xOut-48,xMat2+60,ry,noop,true);
+        // matmul -> partial grad-in (local, straight, leftward)
+        harrow(xMat2-60,xPart2+43,ry,noop,true);
+      });
+      // f = all-reduce: crossing slanted arrows partial -> reduced, flowing LEFT (clear span)
+      sarrow(xPart2-43,R0+6, xIn+48,R1-6, col);
+      sarrow(xPart2-43,R1-6, xIn+48,R0+6, col);
+      harrow(xPart2-43,xIn+48,R0-14,col);
+      harrow(xPart2-43,xIn+48,R1+14,col);
+      gateBadge((xIn+xPart2)/2,266,"f","all-reduce",true,col);
+      gateBadge(xOut,266,"g","no-op",false);
+    }
+
+    // caption
+    const cap = fwd
+      ? "g (output): each GPU has a PARTIAL Zᵢ → the crossing arrows are the all-reduce that sums them into the REDUCED Z. f (input) does nothing — X was already replicated."
+      : "f (input): each GPU has a PARTIAL ∂L/∂X → the crossing arrows all-reduce them into the REDUCED gradient (chain rule). g (output) does nothing — ∂L/∂Z is already replicated.";
+    wrapText(360,290,cap,col,86);
+  }
+  function gateBadge(cx,y,letter,kind,active,col){
+    svg.appendChild(el("rect",{x:cx-46,y:y-13,width:92,height:22,rx:11,
+      fill:active?col:"#0e1419",stroke:active?col:C.ruleB,"stroke-width":1.2,
+      "stroke-dasharray":active?"none":"3 3"}));
+    svg.appendChild(txt(cx,y-2, letter+" : "+kind,
+      {fill:active?"#06222a":C.dim,"font-size":10,"font-weight":700}));
+  }
+  function wrapText(cx,y,s,col,perline){
+    // simple word-wrap into <=perline-char lines, centered
+    const words=s.split(" "); let line="",lines=[];
+    for(const w of words){ if((line+" "+w).trim().length>perline){lines.push(line.trim());line=w;}
+      else line+=" "+w; }
+    if(line.trim())lines.push(line.trim());
+    lines.forEach((ln,i)=>svg.appendChild(txt(cx,y+i*15,ln,{fill:col,"font-size":10.5})));
+  }
+  function init(){dir=null;draw();status.textContent="Ready. Toggle direction to see which gate becomes an all-reduce.";}
+  document.getElementById("tpfg-fwd").onclick=()=>{dir="fwd";draw();
+    status.innerHTML="<b>Forward:</b> inputs are replicated so <code>f</code> is a no-op; the outputs are partial, so <code>g</code> all-reduces them (crossing arrows) into the summed result.";};
+  document.getElementById("tpfg-bwd").onclick=()=>{dir="bwd";draw();
+    status.innerHTML="<b>Backward:</b> ∂L/∂Z is replicated so <code>g</code> is a no-op; each GPU's ∂L/∂X is partial, so <code>f</code> all-reduces them (crossing arrows) into the true gradient.";};
+  document.getElementById("tpfg-reset").onclick=init;
+  init();
+})();
+
+/* =====================================================================
+   8x. COMBINED TP x FSDP on a 2x2 mesh, stepped.
+   Rows = 4 GPUs. mesh[fsdp][tp], fsdp in {0,1}, tp in {0,1}.
+   Phases: 0 idle | 1 FSDP all-gather (overlap) | 2 TP forward matmul |
+           3 TP all-reduce (blocks) | 4 FSDP reduce-scatter (overlap)
+   ===================================================================== */
+(function(){
+  const svg=document.getElementById("cmb-svg");
+  if(!svg)return;
+  const status=document.getElementById("cmb-status");
+  const phasesEl=document.getElementById("cmb-phases");
+  let phase, busy;
+  // four GPU rows; index = fsdp*2 + tp
+  const rowY=[120, 230, 360, 470];      // y center of each GPU row band
+  const labels=[
+    {fsdp:0,tp:0},{fsdp:0,tp:1},{fsdp:1,tp:0},{fsdp:1,tp:1}
+  ];
+  // column x's for the per-row mini dataflow
+  const xLabel=70, xW=190, xMM=300, xX=410, xOut=520, xAnno=600;
+
+  function setPhase(p){
+    phase=p;
+    [...phasesEl.children].forEach(s=>s.classList.toggle("on",+s.dataset.p===p));
+  }
+  function T(x,y,s,o){o=o||{};return txt(x,y,s,Object.assign({"font-size":11,"text-anchor":"middle"},o));}
+  function rrect(x,y,w,h,fill,o){o=o||{};
+    const attrs={x,y,width:w,height:h,rx:5,fill,stroke:o.stroke||C.ruleB,"stroke-width":o.sw||1};
+    if(o.dash)attrs["stroke-dasharray"]=o.dash;
+    if(o.op!=null)attrs.opacity=o.op;
+    svg.appendChild(el("rect",attrs));}
+
+  // draw a small matrix split into two columns (TP shard), with one column highlighted as "this rank's"
+  function weightChip(cx,cy,tp,gathered){
+    const w=64,h=46,x=cx-w/2,y=cy-h/2;
+    // two columns: col0 = tp0's shard, col1 = tp1's shard
+    [0,1].forEach(c=>{
+      const own = (c===tp);
+      const present = own ? true : false;
+      // when gathered, this rank holds its full column shard (both FSDP halves)
+      const top = gathered||own ? C.signal : "#0e1419";
+      rrect(x+c*(w/2), y, w/2, h/2, own?(gathered?C.signal:"#1b2630"):"#0e1419",
+        {stroke:C.ruleB, sw:.8});
+      rrect(x+c*(w/2), y+h/2, w/2, h/2, own?(gathered?C.signal:"#1b2630"):"#0e1419",
+        {stroke:C.ruleB, sw:.8, dash: own&&!gathered?"2 2":null});
+    });
+    svg.appendChild(T(cx+ (tp? w/4 : -w/4), cy, "A"+(tp+1), {fill:gathered?"#06222a":C.dim,"font-size":10,"font-weight":700}));
+    // FSDP halves note
+    if(!gathered) svg.appendChild(T(cx, y+h+10, "½ resident", {fill:C.danger,"font-size":8.5}));
+    else svg.appendChild(T(cx, y+h+10, "full shard", {fill:C.signal,"font-size":8.5}));
+  }
+
+  function drawRow(i){
+    const cy=rowY[i], L=labels[i];
+    // GPU label
+    svg.appendChild(T(xLabel, cy-10, "GPU "+i, {fill:C.ink,"font-size":12,"font-weight":700}));
+    svg.appendChild(T(xLabel, cy+8, "FSDP"+L.fsdp+"·TP"+L.tp, {fill:C.dim,"font-size":9}));
+
+    const gathered = phase>=1;     // after AG, weights are full
+    // weight matrix (TP column shard; FSDP-gathered when phase>=1)
+    weightChip(xW, cy, L.tp, gathered);
+
+    // multiply dot + X
+    if(phase>=2){
+      svg.appendChild(T(xMM, cy, "·", {fill:C.ink,"font-size":18,"font-weight":700}));
+      rrect(xX-22,cy-23,44,46, C.gpuActive); svg.appendChild(T(xX,cy-2,"X",{fill:C.ink,"font-size":11}));
+      svg.appendChild(T(xX,cy+13,"repl.",{fill:C.dim,"font-size":8}));
+      svg.appendChild(T(xOut-58, cy, "=", {fill:C.ink,"font-size":16}));
+      // partial output Yi
+      const reduced = phase>=3;
+      rrect(xOut-22,cy-23,52,46, reduced?C.reduced:C.signal);
+      svg.appendChild(T(xOut+4,cy-2, reduced?"Y":"Y"+(L.tp+1), {fill:"#06222a","font-size":11,"font-weight":700}));
+      svg.appendChild(T(xOut+4,cy+13, reduced?"reduced":"partial", {fill:"#06222a","font-size":8}));
+    }
+  }
+
+  function draw(){
+    clear(svg);
+    // arrowhead markers
+    const defs=el("defs",{});
+    [["cmbR",C.reduced],["cmbC",C.signal],["cmbP",C.partial]].forEach(([id,col])=>{
+      const m=el("marker",{id,markerWidth:8,markerHeight:8,refX:6,refY:3,orient:"auto"});
+      m.appendChild(el("path",{d:"M0,0 L6,3 L0,6 Z",fill:col}));defs.appendChild(m);
+    });
+    svg.appendChild(defs);
+
+    // mesh key (top-right)
+    svg.appendChild(T(650,30,"2×2 mesh",{fill:C.dim,"font-size":10}));
+    [0,1].forEach(f=>[0,1].forEach(t=>{
+      const mx=620+t*40, my=44+f*30;
+      rrect(mx,my,32,22,"#1b2630",{stroke:C.ruleB});
+      svg.appendChild(T(mx+16,my+11,"G"+(f*2+t),{fill:C.dim,"font-size":9}));
+    }));
+    svg.appendChild(T(700,128,"→ TP",{fill:C.signal,"font-size":8}));
+    svg.appendChild(T(690,74,"FSDP ↓",{fill:C.partial,"font-size":8,"text-anchor":"start"}));
+
+    // band separators to show the two FSDP replicas grouped
+    rrect(40, 70, 555, 215, "rgba(123,155,209,.05)", {stroke:"rgba(123,155,209,.25)"});
+    rrect(40, 310, 555, 215, "rgba(123,155,209,.05)", {stroke:"rgba(123,155,209,.25)"});
+    svg.appendChild(txt(48, 84, "FSDP replica 0  (GPU0 = TP0, GPU1 = TP1)", {fill:C.partial,"font-size":9,"text-anchor":"start"}));
+    svg.appendChild(txt(48, 324, "FSDP replica 1  (GPU2 = TP0, GPU3 = TP1)", {fill:C.partial,"font-size":9,"text-anchor":"start"}));
+
+    for(let i=0;i<4;i++) drawRow(i);
+
+    // ---- collective arrows by phase ----
+    if(phase===1){
+      // FSDP all-gather: within each TP column (GPUs sharing same tp), the two FSDP
+      // halves combine. GPU0<->GPU2 (tp0), GPU1<->GPU3 (tp1). vertical arrows at xW.
+      [[0,2],[1,3]].forEach(([a,b])=>{
+        svg.appendChild(el("line",{x1:xW-44,y1:rowY[a]+18,x2:xW-44,y2:rowY[b]-18,
+          stroke:C.signal,"stroke-width":2,"marker-end":"url(#cmbC)"}));
+        svg.appendChild(el("line",{x1:xW+44,y1:rowY[b]-18,x2:xW+44,y2:rowY[a]+18,
+          stroke:C.signal,"stroke-width":2,"marker-end":"url(#cmbC)"}));
+      });
+      svg.appendChild(T(xAnno+40, 270, "all-gather runs", {fill:C.signal,"font-size":10}));
+      svg.appendChild(T(xAnno+40, 285, "UNDER prior compute", {fill:C.signal,"font-size":10}));
+      svg.appendChild(T(xAnno+40, 300, "→ hidden", {fill:C.lime,"font-size":10}));
+    }
+    if(phase===3){
+      // TP all-reduce: within each FSDP row-pair (GPUs sharing fsdp): G0<->G1, G2<->G3
+      [[0,1],[2,3]].forEach(([a,b])=>{
+        const midY=(rowY[a]+rowY[b])/2;
+        // crossing arrows at the output column
+        svg.appendChild(el("line",{x1:xOut+4,y1:rowY[a]+20,x2:xOut+4,y2:rowY[b]-20,
+          stroke:C.reduced,"stroke-width":2.4,"marker-end":"url(#cmbR)"}));
+        svg.appendChild(el("line",{x1:xOut+34,y1:rowY[b]-20,x2:xOut+34,y2:rowY[a]+20,
+          stroke:C.reduced,"stroke-width":2.4,"marker-end":"url(#cmbR)"}));
+      });
+      svg.appendChild(T(xAnno+40, 270, "all-reduce BLOCKS", {fill:C.reduced,"font-size":10}));
+      svg.appendChild(T(xAnno+40, 285, "next op needs Y", {fill:C.reduced,"font-size":10}));
+      svg.appendChild(T(xAnno+40, 300, "→ GPUs stall", {fill:C.danger,"font-size":10}));
+    }
+    if(phase===4){
+      // FSDP reduce-scatter: vertical within TP columns again, partial color
+      [[0,2],[1,3]].forEach(([a,b])=>{
+        svg.appendChild(el("line",{x1:xW,y1:rowY[a]+18,x2:xW,y2:rowY[b]-18,
+          stroke:C.partial,"stroke-width":2,"marker-end":"url(#cmbP)"}));
+      });
+      svg.appendChild(T(xAnno+40, 285, "reduce-scatter also", {fill:C.partial,"font-size":10}));
+      svg.appendChild(T(xAnno+40, 300, "overlaps → hidden", {fill:C.lime,"font-size":10}));
+    }
+
+    // bottom caption strip
+    const caps=[
+      "Idle. Each GPU holds only HALF of its TP column-shard (FSDP-sharded params, dashed). Nothing computed yet.",
+      "① FSDP ALL-GATHER (cyan, vertical): GPUs sharing a TP rank combine their FSDP halves into the full shard. This is prefetched under the previous layer's compute — HIDDEN.",
+      "② TP FORWARD (local matmul): each GPU computes X · Aᵢ on its full column-shard. No communication — the column split keeps it local.",
+      "③ TP ALL-REDUCE (amber, crossing within each FSDP row): partial outputs Yᵢ are summed to the true Y. The next op needs Y, so compute STALLS — cannot hide it.",
+      "④ FSDP REDUCE-SCATTER (blue, vertical, backward): gradients are summed and sharded back. Like the all-gather, it OVERLAPS compute and is hidden."
+    ];
+    wrapCap(400, 552, caps[phase]);
+  }
+  function wrapCap(cx,y,s){
+    const per=92, words=s.split(" "); let line="",lines=[];
+    for(const w of words){if((line+" "+w).trim().length>per){lines.push(line.trim());line=w;}else line+=" "+w;}
+    if(line.trim())lines.push(line.trim());
+    lines.forEach((ln,i)=>svg.appendChild(txt(cx,y+i*15,ln,{fill:C.ink,"font-size":10.5,"text-anchor":"middle"})));
+  }
+
+  function init(){busy=false;setPhase(0);draw();
+    status.textContent="Ready. 4 GPUs as a 2×2 TP×FSDP mesh. Step through one MLP block.";}
+  function stepFn(){
+    if(busy)return;
+    if(phase>=4){setPhase(0);draw();status.innerHTML="Reset to idle. Step again to replay the block.";return;}
+    setPhase(phase+1);draw();
+    const m=["",
+      "<b>Step 1 — FSDP all-gather.</b> Weights reconstructed from FSDP halves; prefetched, so it hides under prior compute.",
+      "<b>Step 2 — TP forward.</b> Local column-parallel matmul X·Aᵢ. No communication.",
+      "<b>Step 3 — TP all-reduce.</b> Sum partial outputs → Y. Blocks: the next op needs Y, so the GPUs wait.",
+      "<b>Step 4 — FSDP reduce-scatter.</b> Gradients summed and re-sharded; overlaps compute, hidden like the all-gather."];
+    status.innerHTML=m[phase];
+  }
+  async function play(){
+    if(busy)return;busy=true;setPhase(0);draw();await sleep(500);
+    for(let p=1;p<=4;p++){setPhase(p);draw();
+      status.innerHTML=["","<b>① FSDP all-gather</b> — hidden under compute.",
+        "<b>② TP forward</b> — local matmul, no comm.",
+        "<b>③ TP all-reduce</b> — BLOCKS, GPUs stall.",
+        "<b>④ FSDP reduce-scatter</b> — hidden under compute."][p];
+      await sleep(2000);}
+    status.innerHTML="<b>One block done.</b> FSDP's two collectives (①④) overlapped compute; TP's all-reduce (③) could not. That contrast is the whole point.";
+    busy=false;
+  }
+  document.getElementById("cmb-step").onclick=stepFn;
+  document.getElementById("cmb-play").onclick=play;
+  document.getElementById("cmb-reset").onclick=init;
+  init();
+})();
+
+/* =====================================================================
+   5. ALL-TO-ALL DISPATCH (MoE)  4 GPUs, each has tokens for various experts
+   ===================================================================== */
+(function(){
+  const svg=document.getElementById("a2a-svg");
+  const status=document.getElementById("a2a-status");
+  const N=4;
+  const xL=120, xR=600, topY=60, gap=72;
+  // token routing: tokens[srcGpu] = [destExpert,...]
+  let tokens, busy;
+  function init(){
+    tokens=[
+      [0,1,2,3],
+      [1,1,2,0],
+      [3,0,3,2],
+      [2,3,0,1]
+    ];
+    busy=false;status.textContent="Ready. Each GPU's tokens are color-coded by destination expert.";
+    draw(false);
+  }
+  function expertColor(e){return (e<2)?C.signal:C.reduced;}
+  function draw(moved){
+    clear(svg);
+    // left: source GPUs with token stacks; right: expert GPUs
+    for(let g=0;g<N;g++){
+      const y=topY+g*gap;
+      // source
+      svg.appendChild(el("rect",{x:xL-50,y:y-20,width:100,height:46,rx:8,fill:C.gpuActive,stroke:C.ruleB}));
+      svg.appendChild(txt(xL,y-32,"GPU "+g,{fill:C.dim,"font-size":11}));
+      if(!moved){
+        tokens[g].forEach((dest,i)=>{
+          svg.appendChild(el("rect",{x:xL-40+i*22,y:y-8,width:18,height:22,rx:3,
+            fill:expertColor(dest),stroke:"#06222a"}));
+          svg.appendChild(txt(xL-31+i*22,y+3,"E"+dest,{fill:"#06222a","font-size":8,"font-weight":700}));
+        });
+      }
+      // right: expert
+      svg.appendChild(el("rect",{x:xR-50,y:y-20,width:100,height:46,rx:8,fill:C.gpuActive,stroke:C.ruleB}));
+      svg.appendChild(txt(xR,y-32,"Expert "+g,{fill:C.dim,"font-size":11}));
+      if(moved){
+        // gather all tokens destined to expert g
+        let collected=[];
+        for(let s=0;s<N;s++)tokens[s].forEach(d=>{if(d===g)collected.push(g);});
+        collected.forEach((d,i)=>{
+          svg.appendChild(el("rect",{x:xR-40+i*22,y:y-8,width:18,height:22,rx:3,
+            fill:expertColor(d),stroke:"#06222a"}));
+          svg.appendChild(txt(xR-31+i*22,y+3,"E"+d,{fill:"#06222a","font-size":8,"font-weight":700}));
+        });
+      }
+    }
+  }
+  async function play(){
+    if(busy)return;busy=true;init();await sleep(200);
+    status.innerHTML="Dispatch — every GPU sends each token to the GPU hosting its <b>assigned expert</b>: a full data transpose.";
+    // animate each token flying to its destination row
+    if(!prefersReduced){
+      const flights=[];
+      for(let g=0;g<N;g++){const y=topY+g*gap;
+        tokens[g].forEach((dest,i)=>{
+          flights.push({x0:xL-31+i*22,y0:y+3,x1:xR,y1:topY+dest*gap+3,col:expertColor(dest)});
+        });}
+      const dots=flights.map(f=>{const d=el("circle",{cx:f.x0,cy:f.y0,r:6,fill:f.col,
+        stroke:"#06222a","stroke-width":1});svg.appendChild(d);return d;});
+      const T=900,t0=performance.now();
+      await new Promise(res=>{function fr(now){let k=Math.min(1,(now-t0)/T);
+        const e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+        dots.forEach((d,i)=>{d.setAttribute("cx",flights[i].x0+(flights[i].x1-flights[i].x0)*e);
+          d.setAttribute("cy",flights[i].y0+(flights[i].y1-flights[i].y0)*e);});
+        if(k<1)requestAnimationFrame(fr);else res();}requestAnimationFrame(fr);});
+    }
+    draw(true);
+    status.innerHTML="<b>Dispatch complete.</b> Each expert now holds exactly the tokens routed to it. A second all-to-all (combine) sends results back.";
+    busy=false;
+  }
+  document.getElementById("a2a-play").onclick=play;
+  document.getElementById("a2a-reset").onclick=init;
+  init();
+})();
+
+/* =====================================================================
+   6. PIPELINE SCHEDULE  (4 stages x 4 microbatches, GPipe fill/drain)
+   ===================================================================== */
+(function(){
+  const svg=document.getElementById("pp-svg");
+  const status=document.getElementById("pp-status");
+  const P=4,M=4;
+  const cellW=44,cellH=40,x0=70,y0=40;
+  let busy;
+  // schedule: forward of microbatch m on stage s happens at time t = s + m
+  // backward at t = (2P-1) + ... (simplified GPipe: all forwards then all backwards)
+  function cellFill(state){return state==="f"?C.signal:state==="b"?C.reduced:C.gpu;}
+  function grid(){
+    // returns timeline[stage][timeslot] = 'f'|'b'|null
+    const totalF=P+M-1; // forward span
+    const T=2*(P+M-1);
+    const tl=[];
+    for(let s=0;s<P;s++){tl.push(new Array(T).fill(null));}
+    // forwards: stage s does microbatch m at t = m + s
+    for(let m=0;m<M;m++)for(let s=0;s<P;s++)tl[s][m+s]="f";
+    // backwards: reverse — stage s does microbatch m backward at t = totalF + (M-1-m) + (P-1-s)
+    for(let m=0;m<M;m++)for(let s=0;s<P;s++)tl[s][totalF+(M-1-m)+(P-1-s)]="b";
+    return {tl,T};
+  }
+  function draw(upTo){
+    clear(svg);
+    const {tl,T}=grid();
+    // axis labels
+    for(let s=0;s<P;s++)svg.appendChild(txt(38,y0+s*(cellH+4)+cellH/2,"S"+s,{fill:C.dim,"font-size":12}));
+    svg.appendChild(txt(360,y0+P*(cellH+4)+18,"time →",{fill:C.ruleB,"font-size":11}));
+    for(let s=0;s<P;s++){
+      for(let t=0;t<T;t++){
+        const st=tl[s][t];
+        const x=x0+t*(cellW+2),y=y0+s*(cellH+4);
+        const visible = t<=upTo;
+        svg.appendChild(el("rect",{x,y,width:cellW,height:cellH,rx:4,
+          fill: (st&&visible)?cellFill(st):"#0e1419",
+          stroke:C.ruleB,"stroke-width":1,opacity:(st&&visible)?1:.5}));
+        if(st&&visible)
+          svg.appendChild(txt(x+cellW/2,y+cellH/2,(st==="f"?"F":"B"),
+            {fill:"#06222a","font-size":13,"font-weight":700}));
+      }
+    }
+  }
+  function init(){busy=false;draw(-1);status.textContent="Ready. 4 stages × 4 microbatches.";}
+  async function play(){
+    if(busy)return;busy=true;
+    const {T}=grid();
+    for(let t=0;t<T;t++){
+      draw(t);
+      const frac=Math.round((P-1)/(M+P-1)*100);
+      status.innerHTML=`Time step <b>${t+1}/${T}</b>. Empty cells are the <b>bubble</b>. Naive bubble fraction = (p−1)/(m+p−1) ≈ <b>${frac}%</b> here.`;
+      await sleep(360);
+    }
+    status.innerHTML="<b>Complete.</b> Raise microbatches m relative to stages p to shrink the bubble; 1F1B reorders to cut activation memory.";
+    busy=false;
+  }
+  document.getElementById("pp-play").onclick=play;
+  document.getElementById("pp-reset").onclick=init;
+  init();
+})();
+
+/* =====================================================================
+   7. OVERLAP  (exposed vs overlapped comm)
+   ===================================================================== */
+(function(){
+  const svg=document.getElementById("ov-svg");
+  const status=document.getElementById("ov-status");
+  let busy;
+  function draw(prog,mode){
+    clear(svg);
+    // two timelines
+    svg.appendChild(txt(60,40,"EXPOSED",{fill:C.dim,"font-size":11,"text-anchor":"start"}));
+    svg.appendChild(txt(60,140,"OVERLAPPED",{fill:C.dim,"font-size":11,"text-anchor":"start"}));
+    // exposed: compute then comm sequentially (long)
+    bar(60,55,260,28,C.gpuActive,"compute",prog>=1);
+    bar(322,55,200,28,C.signal,"comm (waiting)",prog>=2,"#06222a");
+    svg.appendChild(txt(530,69,"⟵ total",{fill:C.ruleB,"font-size":10,"text-anchor":"start"}));
+    // overlapped: comm runs under compute
+    bar(60,155,300,28,C.gpuActive,"compute",prog>=1);
+    bar(60,188,300,14,C.signal,"comm (hidden)",prog>=2,"#06222a",10);
+    svg.appendChild(txt(370,169,"⟵ total (shorter)",{fill:C.lime,"font-size":10,"text-anchor":"start"}));
+    // savings bracket
+    if(prog>=2){
+      svg.appendChild(el("line",{x1:360,y1:200,x2:522,y2:200,stroke:C.lime,"stroke-width":1.5,"stroke-dasharray":"4 3"}));
+      svg.appendChild(txt(441,214,"time saved",{fill:C.lime,"font-size":10}));
+    }
+  }
+  function bar(x,y,w,h,fill,label,show,tc,fs){
+    svg.appendChild(el("rect",{x,y,width:show?w:0,height:h,rx:5,fill,
+      stroke:"none",style:"transition:width .6s ease"}));
+    if(show)svg.appendChild(txt(x+w/2,y+h/2,label,{fill:tc||C.ink,"font-size":fs||11}));
+  }
+  function init(){busy=false;draw(0);status.textContent="Ready. Compare exposed vs overlapped communication.";}
+  async function play(){
+    if(busy)return;busy=true;draw(0);
+    status.innerHTML="Compute runs first on both timelines.";await sleep(700);draw(1);await sleep(900);
+    status.innerHTML="<b>Exposed:</b> comm waits for compute to finish — the GPU stalls. <b>Overlapped:</b> comm is launched async and hides under compute.";
+    draw(2);await sleep(400);
+    status.innerHTML="<b>The goal of every tuning knob:</b> keep comm hidden under compute so GPUs never wait on the network.";
+    busy=false;
+  }
+  document.getElementById("ov-play").onclick=play;
+  document.getElementById("ov-reset").onclick=init;
+  init();
+})();
+
+/* =====================================================================
+   8. ZeRO-3 PER-ITERATION TIMELINE
+   Sequence: AG(fwd) -> fwd compute -> AG(bwd) -> bwd compute -> RS(grads)
+   ===================================================================== */
+(function(){
+  const svg=document.getElementById("z3-svg");
+  if(!svg)return;
+  const status=document.getElementById("z3-status");
+  let busy;
+  // segments along one timeline
+  const segs=[
+    {label:"all-gather W", kind:"ag", w:120, note:"Forward: gather full layer weights, then free after compute."},
+    {label:"forward",      kind:"cp", w:90,  note:"Forward compute on the materialized weights."},
+    {label:"all-gather W", kind:"ag", w:120, note:"Backward: weights were freed, so re-gather them (2nd all-gather)."},
+    {label:"backward",     kind:"cp", w:110, note:"Backward compute produces full-layer gradients."},
+    {label:"reduce-scatter ∇", kind:"rs", w:140, note:"Sum gradients across GPUs; each keeps only its shard, frees rest."}
+  ];
+  function color(k){return k==="ag"?C.reduced:k==="rs"?C.partial:C.gpuActive;}
+  function tc(k){return k==="cp"?C.ink:"#06222a";}
+  function draw(upTo){
+    clear(svg);
+    svg.appendChild(txt(40,30,"one ZeRO-3 iteration (single layer shown)",
+      {fill:C.dim,"font-size":11,"text-anchor":"start"}));
+    // baseline
+    svg.appendChild(el("line",{x1:40,y1:150,x2:680,y2:150,stroke:C.ruleB,"stroke-width":1}));
+    let x=40;
+    segs.forEach((s,i)=>{
+      const on = i<=upTo;
+      svg.appendChild(el("rect",{x,y:110,width:s.w,height:50,rx:6,
+        fill:on?color(s.kind):"#0e1419",stroke:C.ruleB,"stroke-width":1,
+        opacity:on?1:.45}));
+      // wrap label into two lines if needed
+      svg.appendChild(txt(x+s.w/2,135,s.label,{fill:on?tc(s.kind):C.dim,"font-size":11}));
+      // collective count markers
+      if(s.kind==="ag"&&on)svg.appendChild(txt(x+s.w/2,103,"▼ collective",{fill:C.reduced,"font-size":9}));
+      if(s.kind==="rs"&&on)svg.appendChild(txt(x+s.w/2,103,"▼ collective",{fill:C.partial,"font-size":9}));
+      x+=s.w+6;
+    });
+    // tally
+    const agCount=segs.slice(0,upTo+1).filter(s=>s.kind==="ag").length;
+    const rsCount=segs.slice(0,upTo+1).filter(s=>s.kind==="rs").length;
+    svg.appendChild(txt(40,195,`collectives so far:  ${agCount}× all-gather   ${rsCount}× reduce-scatter`,
+      {fill:C.dim,"font-size":12,"text-anchor":"start","font-family":"SF Mono, monospace"}));
+  }
+  function init(){busy=false;draw(-1);status.textContent="Ready. Watch the 2× all-gather + 1× reduce-scatter pattern.";}
+  async function play(){
+    if(busy)return;busy=true;draw(-1);await sleep(200);
+    for(let i=0;i<segs.length;i++){
+      draw(i);status.innerHTML=segs[i].note;
+      await sleep(950);
+    }
+    status.innerHTML="<b>Per iteration: 2 all-gathers (weights, fwd+bwd) + 1 reduce-scatter (grads) ≈ 1.5× DDP volume.</b>";
+    busy=false;
+  }
+  document.getElementById("z3-play").onclick=play;
+  document.getElementById("z3-reset").onclick=init;
+  init();
+})();
+</script>
+</body>
+</html>
